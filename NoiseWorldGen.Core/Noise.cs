@@ -1,12 +1,16 @@
+using System.Runtime.CompilerServices;
+
 namespace NoiseWorldGen.Core;
 
 public class Noise
 {
     private readonly (double offset, double waveLength, double frequency, double amplitude)[] _sineSettings;
+    public double MaxAmplitude { get; }
 
     public Noise(Random rng, int octaves, double maxAmplitude, double baseFrequancy)
     {
         _sineSettings = GenerateSetting(rng, octaves, maxAmplitude, baseFrequancy).ToArray();
+        MaxAmplitude = maxAmplitude;
     }
 
     private static IEnumerable<(double offset, double waveLength, double frequency, double amplitude)> GenerateSetting(Random rng, int octaves, double maxAmplitude, double baseFrequency)
@@ -19,17 +23,16 @@ public class Noise
             .Select(static s => (s.Item1, 1 / s.Item2, s.Item2, s.Item3));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private double Sin(double angle)
+        => Math.Sin(angle) / 2 + .5;
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public double Generate(int x)
     {
         var value = 0d;
         foreach (var (offset, _, frequency, amplitude) in _sineSettings)
-            value += Math.Sin(x * frequency + offset) * amplitude;
+            value += Sin(x * frequency + offset) * amplitude;
         return value;
     }
-
-    public double Generate(int x, int y)
-        => Generate(x) + Generate(y);
-
-    public double Generate(int x, int y, int z)
-        => Generate(x) + Generate(y) + Generate(z);
 }
