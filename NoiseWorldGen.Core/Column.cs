@@ -9,7 +9,7 @@ public class Column
     {
         World = world;
         Blocks = new Block[World.Height];
-        var baseHeight = World.Noise.Generate(x / 100f) * (World.MaxHeight - World.MinHeight) + World.MinHeight;
+        var baseHeight = World.HeightLerp.Lerp(World.Noise.Generate(x / 100f));
         Blocks[0] = Block.Bedrock;
         for (int y = 1; y < World.Height; y++)
         {

@@ -11,6 +11,7 @@ public class World
     public int MinHeight { get; }
     private readonly List<Column> _columnsPositive = new(), _columnsNegative = new();
     public Noise Noise { get; }
+    public Interpolation HeightLerp { get; }
 
     public Column this[int x]
     {
@@ -34,6 +35,7 @@ public class World
         WaterLevel = (int)(Height * .5);
         MinHeight = (int)(Height * .1);
         Noise = new(Seed);
+        HeightLerp = new(MinHeight, MaxHeight);
         _columnsPositive = new();
     }
 
