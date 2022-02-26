@@ -5,28 +5,41 @@ Console.CursorVisible = false;
 
 var world = new World(Environment.TickCount, Console.WindowHeight - 3);
 var width = Console.WindowWidth / 2 - 1;
-var posX = width;
+var posX = 100_000;
 var moveSize = 25;
-for (int x = -width; x < width; x++)
-    DrawColumn(world, x + posX, x + width);
+DrawColumns(world, -width, width, width, posX);
 do
 {
     switch (Console.ReadKey().Key)
     {
         case ConsoleKey.RightArrow:
             posX += moveSize;
-            Console.MoveBufferArea(moveSize, 0, width * 2 - moveSize, Console.WindowHeight, 0, 0);
-            for (int x = width - moveSize; x < width; x++)
-                DrawColumn(world, x + posX, x + width);
+            if (OperatingSystem.IsWindows())
+            {
+                Console.MoveBufferArea(moveSize, 0, width * 2 - moveSize, Console.WindowHeight, 0, 0);
+                DrawColumns(world, width - moveSize, width, width, posX);
+            }
+            else
+                DrawColumns(world, -width, width, width, posX);
             break;
         case ConsoleKey.LeftArrow:
             posX -= moveSize;
-            Console.MoveBufferArea(0, 0, width * 2 - moveSize, Console.WindowHeight, moveSize, 0);
-            for (int x = -width; x < -width + moveSize; x++)
-                DrawColumn(world, x + posX, x + width);
+            if (OperatingSystem.IsWindows())
+            {
+                Console.MoveBufferArea(0, 0, width * 2 - moveSize, Console.WindowHeight, moveSize, 0);
+                DrawColumns(world, -width, -width + moveSize, width, posX);
+            }
+            else
+                DrawColumns(world, -width, width, width, posX);
             break;
     }
 } while (true);
+
+static void DrawColumns(World world, int min, int max, int width, int posX)
+{
+    for (int x = min; x < max; x++)
+        DrawColumn(world, x + posX, x + width);
+}
 
 static void DrawColumn(World world, int x, int screenX)
 {
