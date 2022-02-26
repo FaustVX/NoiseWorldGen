@@ -1,4 +1,6 @@
-﻿namespace NoiseWorldGen.Core;
+﻿using SimplexNoise;
+
+namespace NoiseWorldGen.Core;
 
 public class World
 {
@@ -31,7 +33,7 @@ public class World
         MaxHeight = (int)(Height * .75);
         WaterLevel = (int)(Height * .5);
         MinHeight = (int)(Height * .1);
-        Noise = new(new(Seed), 5, MaxHeight - MinHeight, .025);
+        Noise = new(Seed);
         _columnsPositive = new();
     }
 

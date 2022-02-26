@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseWorldGen.Core", "Noise
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseWorldGen.CLI", "NoiseWorldGen.CLI\NoiseWorldGen.CLI.csproj", "{1D03DA6C-6A86-4C3B-BB1F-A5013484F690}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimplexNoise", "SimplexNoise", "{8393B9D9-1503-466E-BBFC-12A65DF35A96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplexNoise", "SimplexNoise\SimplexNoise\SimplexNoise.csproj", "{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,12 @@ Global
 		{1D03DA6C-6A86-4C3B-BB1F-A5013484F690}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D03DA6C-6A86-4C3B-BB1F-A5013484F690}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D03DA6C-6A86-4C3B-BB1F-A5013484F690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8FC8FD7B-F76F-44DF-925D-676C2BB0CA53} = {8393B9D9-1503-466E-BBFC-12A65DF35A96}
 	EndGlobalSection
 EndGlobal

@@ -7,6 +7,8 @@
             "type": "process",
             "args": [
                 "build",
+                "--configuration",
+                "${input:config}",
                 "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
@@ -19,9 +21,24 @@
             "type": "process",
             "args": [
                 "publish",
+                "--configuration",
+                "${input:config}",
                 "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--configuration",
+                "${input:config}",
+                "--project",
+                "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -36,6 +53,17 @@
                 "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+    ],
+    "inputs": [
+        {
+            "id": "config",
+            "type": "pickString",
+            "options": [
+                "Debug",
+                "Release"
+            ],
+            "description": "dotnet configuration"
         }
     ]
 }
