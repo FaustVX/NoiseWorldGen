@@ -25,11 +25,18 @@ public class World
     {
         Seed = seed;
         Height = maxHeight;
-        MaxHeight = (int)(Height * .75);
-        WaterLevel = (int)(Height * .5);
-        MinHeight = (int)(Height * .1);
+        MaxHeight = GetHeightProportion(.75);
+        WaterLevel = GetHeightProportion(.35);
+        MinHeight = GetHeightProportion(.1);
         Noise = new(Seed);
-        HeightLerp = new(MinHeight, MaxHeight);
+        HeightLerp = new(MinHeight, MaxHeight)
+        {
+            { 0.3f, GetHeightProportion(.4) },
+            { 0.4f, GetHeightProportion(.65) },
+        };
         _columns = new();
+
+        int GetHeightProportion(double proportion)
+            => (int)(Height * proportion);
     }
 }
