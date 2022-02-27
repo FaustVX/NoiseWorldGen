@@ -9,18 +9,18 @@ public class Column
     {
         World = world;
         Blocks = new Block[World.Height];
-        var baseHeight = World.GetBaseHeight(x);
+        var baseHeight = World.Continentalness.Generate(x);
         Blocks[0] = Block.Bedrock;
         for (int y = 1; y < World.Height; y++)
         {
             Blocks[y] = y switch
             {
-                _ when y <= baseHeight && !(World.IsNoodleCave(x, y) || World.IsCave(x, y)) => Block.Stone,
+                _ when y <= baseHeight && !(World.NoodleCave.Generate(x, y) != 0 || World.Cave.Generate(x, y) != 0) => Block.Stone,
                 _ => Block.Air,
             };
         }
 
-        var dirtHeight = World.GetDirtHeight(x);
+        var dirtHeight = World.Dirt.Generate(x);
         for (int y = 0; y < World.Height; y++)
             Blocks[y] = (Blocks[y], y) switch
             {
