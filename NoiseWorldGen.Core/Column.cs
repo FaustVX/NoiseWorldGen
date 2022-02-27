@@ -15,7 +15,7 @@ public class Column
         {
             Blocks[y] = y switch
             {
-                _ when y <= baseHeight && !(World.NoodleCave.Generate(x, y) != 0 || World.Cave.Generate(x, y) != 0) => Block.Stone,
+                _ when y <= baseHeight && !(World.NoodleCave.Generate(x, y) || World.Cave.Generate(x, y)) => Block.Stone,
                 _ => Block.Air,
             };
         }
