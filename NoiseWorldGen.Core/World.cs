@@ -9,23 +9,17 @@ public class World
     public int MaxHeight { get; }
     public int WaterLevel { get; }
     public int MinHeight { get; }
-    private readonly List<Column> _columnsPositive = new(), _columnsNegative = new();
+    private readonly Dictionary<int, Column> _columns;
     public Noise Noise { get; }
     public Interpolation HeightLerp { get; }
 
     public Column this[int x]
-    {
-        get
-        {
-            (var columns, var newX) = x < 0 ? (_columnsNegative, -x - 1) : (_columnsPositive, x);
-            for (var i = columns.Count; i <= newX; i++)
-                GenerateColumn(x);
-            return columns[newX];
-        }
-    }
+        => _columns.TryGetValue(x, out var column)
+            ? column
+            : (_columns[x] = new(this, x));
 
-    public Block this[int x, int y]
-        => this[x].Blocks[y];
+    public ref Block this[int x, int y]
+        => ref this[x].Blocks[y];
 
     public World(int seed, int maxHeight)
     {
@@ -36,12 +30,6 @@ public class World
         MinHeight = (int)(Height * .1);
         Noise = new(Seed);
         HeightLerp = new(MinHeight, MaxHeight);
-        _columnsPositive = new();
-    }
-
-    private void GenerateColumn(int x)
-    {
-        var columns = x < 0 ? _columnsNegative : _columnsPositive;
-        columns.Add(new(this, x));
+        _columns = new();
     }
 }
