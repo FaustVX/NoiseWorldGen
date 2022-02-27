@@ -6,4 +6,6 @@ public enum Block : byte
     Bedrock,
     Stone,
     Water,
+    Dirt,
+    Sand,
 }

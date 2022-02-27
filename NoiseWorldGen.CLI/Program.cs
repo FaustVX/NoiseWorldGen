@@ -49,12 +49,16 @@ static void DrawColumn(World world, int x, int screenX)
 
 static void DrawBlock(World world, int x, int y, int screenX)
 {
+#pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive)
     (Console.ForegroundColor, Console.BackgroundColor, var symbol) = world[x, y] switch
+#pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive)
     {
         Block.Bedrock => (ConsoleColor.Black, ConsoleColor.Black, '#'),
         Block.Stone => (ConsoleColor.Gray, ConsoleColor.Gray, '#'),
         Block.Water => (ConsoleColor.Blue, ConsoleColor.DarkBlue, '~'),
         Block.Air => (ConsoleColor.White, ConsoleColor.Black, ' '),
+        Block.Dirt => (ConsoleColor.Green, ConsoleColor.Black, '#'),
+        Block.Sand => (ConsoleColor.Yellow, ConsoleColor.DarkYellow, '"'),
     };
     Console.SetCursorPosition(screenX, world.Height - y);
     Console.Write(symbol);
