@@ -20,11 +20,15 @@ public class Interpolation : IEnumerable<(float noise, int value)>
 
     public int Lerp(float noise)
     {
+        if (noise <= -1)
+            return _values[-1];
+        if (noise >= 1)
+            return _values[1];
+        if (_values.TryGetValue(noise, out var value))
+            return value;
         var (start, end) = GetInterval(noise);
         var noiseInterpolation = (noise - start.noise) / (end.noise - start.noise);
-        return float.IsNaN(noiseInterpolation)
-            ? start.value
-            : (int)((end.value - start.value) * noiseInterpolation) + start.value;
+        return (int)((end.value - start.value) * noiseInterpolation) + start.value;
 
         ((float noise, int value) start, (float noise, int value) end) GetInterval(float value)
         {
