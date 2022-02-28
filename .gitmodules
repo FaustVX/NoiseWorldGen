@@ -1,0 +1,3 @@
+[submodule "SimplexNoise"]
+	path = SimplexNoise
+	url = git@github.com:FaustVX/SimplexNoise.git
