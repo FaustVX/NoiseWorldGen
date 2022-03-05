@@ -10,6 +10,7 @@ public class World
     public NoiseSettingCave NoodleCave { get; }
     public NoiseSettingCave Cave { get; }
     public NoiseSetting1D Dirt { get; }
+    public NoiseSettingCave Ore { get; }
 
     public Column this[int x]
         => _columns.TryGetValue(x, out var column)
@@ -32,6 +33,8 @@ public class World
         var caveOffset = .75f;
         Cave = NoiseSettingCave.Create(Seed, 100, 1, 1, (-caveOffset - float.Epsilon, 1), (-caveOffset, 0), (caveOffset, 0), (caveOffset + float.Epsilon, 1));
         Dirt = NoiseSetting1D.Create(Seed, 1, 1, 3);
+        var oreOffset = .8f;
+        Ore = NoiseSettingCave.Create(Seed, 15, 0, 1, (oreOffset, 0), (oreOffset + float.Epsilon, 1));
 
         int GetHeightProportion(double proportion)
             => (int)(Height * proportion);

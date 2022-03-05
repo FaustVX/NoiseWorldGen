@@ -59,6 +59,7 @@ static void DrawBlock(World world, int x, int y, int screenX)
         Block.Air => (ConsoleColor.White, ConsoleColor.Black, ' '),
         Block.Dirt => (ConsoleColor.Green, ConsoleColor.Black, '#'),
         Block.Sand => (ConsoleColor.Yellow, ConsoleColor.DarkYellow, '"'),
+        Block.Ore => (ConsoleColor.DarkRed, ConsoleColor.Red, 'O'),
     };
     Console.SetCursorPosition(screenX, world.Height - y);
     Console.Write(symbol);

@@ -8,4 +8,5 @@ public enum Block : byte
     Water,
     Dirt,
     Sand,
+    Ore,
 }

@@ -26,6 +26,7 @@ public class Column
             {
                 (Block.Stone, _) when y > baseHeight - dirtHeight && y <= World.WaterLevel => Block.Sand,
                 (Block.Stone, _) when y > baseHeight - dirtHeight => Block.Dirt,
+                (Block.Stone, _) when World.Ore.Generate(x, y) => Block.Ore,
                 (Block.Air, _) when y <= World.WaterLevel => Block.Water,
                 (var block, _) => block
             };
