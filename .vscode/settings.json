@@ -1,0 +1,12 @@
+{
+    "activitusbar.views": [
+        {
+          "name": "task.run CLI",
+          "codicon": "terminal"
+        },
+        {
+          "name": "task.run OpenGL",
+          "codicon": "window"
+        },
+      ]
+}

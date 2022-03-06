@@ -30,7 +30,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "run",
+            "label": "run CLI",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -41,6 +41,22 @@
                 "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run OpenGL",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--configuration",
+                "${input:config}",
+                "--project",
+                "${workspaceFolder}/NoiseWorldGen.OpenGL/NoiseWorldGen.OpenGL.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "close": true,
+            }
         },
         {
             "label": "watch",
