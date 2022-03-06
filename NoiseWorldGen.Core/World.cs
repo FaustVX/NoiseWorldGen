@@ -32,7 +32,7 @@ public class World
         NoodleCave = NoiseSettingCave.Create(Seed, 100, 0, 0, (-noodleCaveOffset, 0), (0, 1), (noodleCaveOffset, 0));
         var caveOffset = .75f;
         Cave = NoiseSettingCave.Create(Seed, 100, 1, 1, (-caveOffset - float.Epsilon, 1), (-caveOffset, 0), (caveOffset, 0), (caveOffset + float.Epsilon, 1));
-        Dirt = NoiseSetting1D.Create(Seed, 1, 1, 3);
+        Dirt = NoiseSetting1D.Create(Seed, 50, 3, 7);
         var oreOffset = .8f;
         Ore = NoiseSettingCave.Create(Seed, 15, 0, 1, (oreOffset, 0), (oreOffset + float.Epsilon, 1));
 
