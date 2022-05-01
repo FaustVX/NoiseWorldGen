@@ -9,7 +9,7 @@
                 "build",
                 "--configuration",
                 "${input:config}",
-                "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj",
+                "${workspaceFolder}",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -30,7 +30,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "run",
+            "label": "run OpenGL",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -38,9 +38,12 @@
                 "--configuration",
                 "${input:config}",
                 "--project",
-                "${workspaceFolder}/NoiseWorldGen.CLI/NoiseWorldGen.CLI.csproj"
+                "${workspaceFolder}/NoiseWorldGen.OpenGL/NoiseWorldGen.OpenGL.csproj"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "close": true,
+            }
         },
         {
             "label": "watch",
