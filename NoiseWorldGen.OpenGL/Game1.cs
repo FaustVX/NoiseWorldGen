@@ -55,6 +55,7 @@ public class Game1 : Game
 
     public float Speed { get; } = 1.5f;
     public float SpeedMultipler { get; } = 5;
+    public bool ShowChunkBorders { get; set; }
 
     public Game1()
     {
@@ -84,8 +85,8 @@ public class Game1 : Game
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
     private void SetBounds()
     {
-        TopLeftWorldPos = new((int)(Pos.X - ViewSize.Width / 2) - 1, (int)(Pos.Y - ViewSize.Height / 2) - 1);
-        BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width + 2, TopLeftWorldPos.Y + ViewSize.Height + 2);
+        TopLeftWorldPos = new((int)(Pos.X - ViewSize.Width / 2), (int)(Pos.Y - ViewSize.Height / 2));
+        BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
     }
 
     protected override void Update(GameTime gameTime)
@@ -97,13 +98,17 @@ public class Game1 : Game
             Exit();
 
         var speed = IsDown(Keys.RightShift) || IsDown(Keys.LeftShift) ? Speed * SpeedMultipler : Speed;
-        Pos = Pos with
+        var pos = Pos with
         {
             X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
             Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
+        if (_world[(int)pos.X, (int)pos.Y] is Tile.IsWalkable)
+            Pos = pos;
 
         TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
+
+        ShowChunkBorders ^= (OrFunc(IsDown, Keys.LeftAlt, Keys.RightAlt) && IsClicked(Keys.F1));
 
         SetBounds();
 
@@ -115,6 +120,9 @@ public class Game1 : Game
 
     public bool IsDown(Keys key)
         => _currentKeyboard.IsKeyDown(key);
+
+    public bool OrFunc<T>(Func<T, bool> func, T key1, T key2)
+        => func(key1) || func(key2);
 
     public int XorFunc<T>(Func<T, bool> keyFunc, T key1, T key2)
         => (keyFunc(key1), keyFunc(key2)) switch
@@ -138,8 +146,8 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        for (int x = TopLeftWorldPos.X; x < BottomRightWorldPos.X; x++)
-            for (int y = TopLeftWorldPos.Y; y < BottomRightWorldPos.Y; y++)
+        for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
+            for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
                 DrawTile(x, y);
 
         _spriteBatch.End();
@@ -153,17 +161,20 @@ public class Game1 : Game
                 Mountain => Color.DimGray,
                 Stone => Color.DarkGray,
                 ShallowWater => Color.Aqua,
-                Water => Color.DarkBlue,
+                Water or RiverWater => Color.DarkBlue,
                 DeepWater => Color.Blue,
                 _ => Color.Transparent,
             };
             var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
             var y1 = (int)((y - Pos.Y + ViewSize.Height / 2f) * TileSize);
             _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
-            if (x % Chunck.Size == 0)
-                _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
-            if (y % Chunck.Size == 0)
-                _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
+            if (ShowChunkBorders)
+            {
+                if (x % Chunck.Size == 0)
+                    _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
+                if (y % Chunck.Size == 0)
+                    _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
+            }
         }
     }
 }

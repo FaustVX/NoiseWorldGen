@@ -8,14 +8,17 @@ public interface ITile<T>
 
 public abstract class Tile
 {
+    public interface IsWalkable
+    { }
     public static Tile StoneTile => Stone.Value;
     public static Tile MountainTile => Mountain.Value;
+    public static Tile RiverWaterTile => RiverWater.Value;
     public static Tile ShallowWaterTile => ShallowWater.Value;
     public static Tile WaterTile => Water.Value;
     public static Tile DeepWaterTile => DeepWater.Value;
 }
 
-public sealed class Stone : Tile, ITile<Stone>
+public sealed class Stone : Tile, ITile<Stone>, Tile.IsWalkable
 {
     public static Stone Value { get; } = new();
 
@@ -23,7 +26,7 @@ public sealed class Stone : Tile, ITile<Stone>
     { }
 }
 
-public sealed class Mountain : Tile, ITile<Mountain>
+public sealed class Mountain : Tile, ITile<Mountain>, Tile.IsWalkable
 {
     public static Mountain Value { get; } = new();
 
@@ -31,7 +34,15 @@ public sealed class Mountain : Tile, ITile<Mountain>
     { }
 }
 
-public sealed class ShallowWater : Tile, ITile<ShallowWater>
+public sealed class RiverWater : Tile, ITile<RiverWater>, Tile.IsWalkable
+{
+    public static RiverWater Value { get; } = new();
+
+    private RiverWater()
+    { }
+}
+
+public sealed class ShallowWater : Tile, ITile<ShallowWater>, Tile.IsWalkable
 {
     public static ShallowWater Value { get; } = new();
 

@@ -24,7 +24,7 @@ public class Chunck
             var heightness = continentalness >= World.MountainHeight;
             float river = World.RiverNoise.GetNoise(tileX, tileY);
             if (river <= World.RiverClose && river >= -World.RiverClose)
-                return Tile.WaterTile;
+                return Tile.RiverWaterTile;
             return heightness ? Tile.MountainTile : Tile.StoneTile;
         }
         else
