@@ -99,8 +99,8 @@ public class Game1 : Game
         var speed = IsDown(Keys.RightShift) || IsDown(Keys.LeftShift) ? Speed * SpeedMultipler : Speed;
         Pos = Pos with
         {
-            X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.D),
-            Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.S),
+            X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
+            Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
 
         if (IsClicked(Keys.Add))
@@ -121,6 +121,14 @@ public class Game1 : Game
 
     public int XorFunc<T>(Func<T, bool> keyFunc, T key1, T key2)
         => (keyFunc(key1), keyFunc(key2)) switch
+        {
+            (true, false) => -1,
+            (false, true) => +1,
+            _ => 0,
+        };
+
+    public int XorFunc<T>(Func<T, bool> keyFunc, T key1, T key1Alt, T key2, T key2Alt)
+        => (keyFunc(key1) || keyFunc(key1Alt), keyFunc(key2) || keyFunc(key2Alt)) switch
         {
             (true, false) => -1,
             (false, true) => +1,

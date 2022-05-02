@@ -19,14 +19,19 @@ public class Chunck
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var continentalness = World.Continentalness.GetNoise(tileX, tileY);
-        if (continentalness >= .15f)
+        if (continentalness >= World.WaterHeight)
         {
-            var heightness = continentalness >= .5f;
+            var heightness = continentalness >= World.MountainHeight;
+            float river = World.RiverNoise.GetNoise(tileX, tileY);
+            if (river <= World.RiverClose && river >= -World.RiverClose)
+                return Tile.WaterTile;
             return heightness ? Tile.MountainTile : Tile.StoneTile;
         }
         else
         {
-            return continentalness > -.05f ? Tile.ShallowWaterTile : continentalness < -.5f ? Tile.WaterTile : Tile.DeepWaterTile;
+            return continentalness > World.ShallowWaterHeight ? Tile.ShallowWaterTile :
+                continentalness < World.DeepWaterHeight ? Tile.WaterTile :
+                Tile.DeepWaterTile;
         }
     }
 

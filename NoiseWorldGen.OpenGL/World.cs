@@ -6,6 +6,14 @@ namespace NoiseWorldGen.OpenGL;
 public class World
 {
     public FastNoise Continentalness { get; }
+    public FastNoise RiverNoise { get; }
+
+    public float WaterHeight { get; } = .15f;
+    public float MountainHeight { get; } = .5f;
+    public float ShallowWaterHeight { get; } = -.05f;
+    public float DeepWaterHeight { get; } = -.5f;
+    public float RiverClose { get; } = .01f;
+
     private readonly Dictionary<(int x, int y), Chunck> Chunks = new();
 
     public World(int seed)
@@ -13,9 +21,13 @@ public class World
         Continentalness = new(seed ^ 1)
         {
             Frequency = .005f,
-            // Octaves = 0,
-            // Lacunarity = 2,
             UsedNoiseType = NoiseType.SimplexFractal,
+        };
+
+        RiverNoise = new(seed ^ 2)
+        {
+            Frequency = .015f,
+            UsedNoiseType = NoiseType.CubicFractal,
         };
     }
 
