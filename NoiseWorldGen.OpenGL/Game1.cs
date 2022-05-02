@@ -53,7 +53,7 @@ public class Game1 : Game
     /// </summary>
     public Size<int> ViewSize { get; set; }
 
-    public float Speed { get; } = 1;
+    public float Speed { get; } = 1.5f;
     public float SpeedMultipler { get; } = 5;
 
     public Game1()
@@ -103,10 +103,7 @@ public class Game1 : Game
             Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
 
-        if (IsClicked(Keys.Add))
-            TileSize++;
-        if (IsClicked(Keys.Subtract))
-            TileSize--;
+        TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
 
         SetBounds();
 
@@ -160,11 +157,13 @@ public class Game1 : Game
                 DeepWater => Color.Blue,
                 _ => Color.Transparent,
             };
-            x = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
-            y = (int)((y - Pos.Y + ViewSize.Height / 2f) * TileSize);
-            _spriteBatch.Draw(_pixel, new Rectangle(x, y, TileSize, TileSize), color);
-            // _spriteBatch.Draw(_pixel, new Rectangle(x, y, TileSize.Width, 1), Color.Black);
-            // _spriteBatch.Draw(_pixel, new Rectangle(x, y, 1, TileSize.Height), Color.Black);
+            var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
+            var y1 = (int)((y - Pos.Y + ViewSize.Height / 2f) * TileSize);
+            _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
+            if (x % Chunck.Size == 0)
+                _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
+            if (y % Chunck.Size == 0)
+                _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
         }
     }
 }
