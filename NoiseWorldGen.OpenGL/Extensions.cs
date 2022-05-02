@@ -2,7 +2,7 @@ namespace NoiseWorldGen.OpenGL;
 
 public static class Extensions
 {
-    public static T[,] GenerateArray<T>(int width, int height, Func<int, int, T> generator)
+    public static T[,] PopulateArray<T>(int width, int height, Func<int, int, T> generator)
     {
         var array = new T[width, height];
         for (int x = 0; x < width; x++)
@@ -23,7 +23,7 @@ public static class Extensions
     public static (int quotient, int remainder) ProperRemainder(int a, int b)
         => Math.DivRem(a, b) switch
         {
-            (var div, < 0 and var rem) => (div, rem + b),
+            (var div, < 0 and var rem) => (div - 1, rem + b),
             (var div, var rem) => (div, rem),
         };
 

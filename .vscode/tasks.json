@@ -16,6 +16,20 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build Debug",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "--configuration",
+                "Debug",
+                "${workspaceFolder}",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
@@ -36,7 +50,7 @@
             "args": [
                 "run",
                 "--configuration",
-                "${input:config}",
+                "Release",
                 "--project",
                 "${workspaceFolder}/NoiseWorldGen.OpenGL/NoiseWorldGen.OpenGL.csproj"
             ],
