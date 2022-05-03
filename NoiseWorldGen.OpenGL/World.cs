@@ -5,30 +5,27 @@ namespace NoiseWorldGen.OpenGL;
 
 public class World
 {
+    public static event Action<World>? OnWorldCreated;
     public FastNoise Continentalness { get; }
-    public FastNoise RiverNoise { get; }
 
-    public float WaterHeight { get; } = .15f;
+    public float WaterHeight { get; } = 0f;
     public float MountainHeight { get; } = .5f;
-    public float ShallowWaterHeight { get; } = -.05f;
+    public float ShallowWaterHeight { get; } = -.2f;
     public float DeepWaterHeight { get; } = -.5f;
-    public float RiverClose { get; } = .01f;
+    public int Seed { get; }
 
     private readonly Dictionary<(int x, int y), Chunck> Chunks = new();
 
     public World(int seed)
     {
-        Continentalness = new(seed ^ 1)
+        Seed = seed;
+        Continentalness = new(Seed ^ 1)
         {
             Frequency = .005f,
             UsedNoiseType = NoiseType.SimplexFractal,
         };
 
-        RiverNoise = new(seed ^ 2)
-        {
-            Frequency = .015f,
-            UsedNoiseType = NoiseType.CubicFractal,
-        };
+        OnWorldCreated?.Invoke(this);
     }
 
     public Tile this[int x, int y]

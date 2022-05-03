@@ -1,67 +1,37 @@
+using DotnetNoise;
+
 namespace NoiseWorldGen.OpenGL;
 
-public interface ITile<T>
-    where T : Tile, ITile<T>
+public interface ISingletonTile<T>
+    where T : Tile, ISingletonTile<T>
 {
     public static abstract T Value { get; }
 }
 
 public abstract class Tile
 {
-    public interface IsWalkable
-    { }
-    public static Tile StoneTile => Stone.Value;
-    public static Tile MountainTile => Mountain.Value;
-    public static Tile RiverWaterTile => RiverWater.Value;
-    public static Tile ShallowWaterTile => ShallowWater.Value;
-    public static Tile WaterTile => Water.Value;
-    public static Tile DeepWaterTile => DeepWater.Value;
+    public interface IsWalkable { }
+    public interface IsOrePlacable { }
+
+    public static float GetNoise<T>(float x, float y)
+        where T : INoise<T>
+        => T.Noise.GetNoise(x, y);
+
+    public static int GetInterpolatedNoise<T>(float x, float y)
+        where T : IInterpolation<T>
+        => IInterpolation<T>.GetValue(x, y);
 }
 
-public sealed class Stone : Tile, ITile<Stone>, Tile.IsWalkable
+public interface INoise<T>
 {
-    public static Stone Value { get; } = new();
-
-    private Stone()
-    { }
+    public static abstract FastNoise Noise { get; }
 }
 
-public sealed class Mountain : Tile, ITile<Mountain>, Tile.IsWalkable
+public interface IInterpolation<T> : INoise<T>
+    where T : IInterpolation<T>
 {
-    public static Mountain Value { get; } = new();
+    public static abstract Interpolation Interpolation { get; }
 
-    private Mountain()
-    { }
-}
-
-public sealed class RiverWater : Tile, ITile<RiverWater>, Tile.IsWalkable
-{
-    public static RiverWater Value { get; } = new();
-
-    private RiverWater()
-    { }
-}
-
-public sealed class ShallowWater : Tile, ITile<ShallowWater>, Tile.IsWalkable
-{
-    public static ShallowWater Value { get; } = new();
-
-    private ShallowWater()
-    { }
-}
-
-public sealed class Water : Tile, ITile<Water>
-{
-    public static Water Value { get; } = new();
-
-    private Water()
-    { }
-}
-
-public sealed class DeepWater : Tile, ITile<DeepWater>
-{
-    public static DeepWater Value { get; } = new();
-
-    private DeepWater()
-    { }
+    public static int GetValue(float x, float y)
+        => T.Interpolation.Lerp(Tile.GetNoise<T>(x, y));
 }

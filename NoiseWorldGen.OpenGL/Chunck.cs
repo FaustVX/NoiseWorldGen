@@ -22,16 +22,29 @@ public class Chunck
         if (continentalness >= World.WaterHeight)
         {
             var heightness = continentalness >= World.MountainHeight;
-            float river = World.RiverNoise.GetNoise(tileX, tileY);
-            if (river <= World.RiverClose && river >= -World.RiverClose)
-                return Tile.RiverWaterTile;
-            return heightness ? Tile.MountainTile : Tile.StoneTile;
+            Tile tile = Tile.GetInterpolatedNoise<RiverWater>(tileX, tileY) is 1 ? RiverWater.Value
+                : heightness ? Mountain.Value : Stone.Value;
+            if (tile is Tile.IsOrePlacable)
+            {
+                IOre? ore = default!;
+                GenerateOre(tileX, tileY, ref ore, qty => new IronOre(qty));
+                GenerateOre(tileX, tileY, ref ore, qty => new CoalOre(qty));
+                tile = ore as Tile ?? tile;
+
+                static void GenerateOre<T>(float tileX, float tileY, ref IOre? ore, Func<uint, T> ctor)
+                    where T : IInterpolation<T>, IOre
+                    => ore = Tile.GetInterpolatedNoise<T>(tileX, tileY) is > 0 and var qty && (ore?.Quantity ?? 0) < qty
+                        ? ctor((uint)qty)
+                        : ore;
+            }
+
+            return tile;
         }
         else
         {
-            return continentalness > World.ShallowWaterHeight ? Tile.ShallowWaterTile :
-                continentalness < World.DeepWaterHeight ? Tile.WaterTile :
-                Tile.DeepWaterTile;
+            return continentalness > World.ShallowWaterHeight ? ShallowWater.Value :
+                continentalness < World.DeepWaterHeight ? Water.Value :
+                DeepWater.Value;
         }
     }
 

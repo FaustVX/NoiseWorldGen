@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -142,8 +142,6 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.White);
-
         _spriteBatch.Begin();
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
@@ -163,6 +161,8 @@ public class Game1 : Game
                 ShallowWater => Color.Aqua,
                 Water or RiverWater => Color.DarkBlue,
                 DeepWater => Color.Blue,
+                IronOre => Color.Red,
+                CoalOre => Color.Black,
                 _ => Color.Transparent,
             };
             var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
