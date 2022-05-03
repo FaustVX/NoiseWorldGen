@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -55,6 +55,8 @@ public class Game1 : Game
 
     public float Speed { get; } = 1.5f;
     public float SpeedMultipler { get; } = 5;
+    public float FlySpeedMultiplier { get; } = 3f;
+    public bool Fly { get; set; } = true;
     public bool ShowChunkBorders { get; set; }
 
     public Game1()
@@ -97,18 +99,23 @@ public class Game1 : Game
         if (IsDown(Keys.Escape))
             Exit();
 
-        var speed = IsDown(Keys.RightShift) || IsDown(Keys.LeftShift) ? Speed * SpeedMultipler : Speed;
+        var speed = Speed;
+        if (IsDown(Keys.RightShift) || IsDown(Keys.LeftShift))
+            speed *= SpeedMultipler;
+        if (Fly)
+            speed *= FlySpeedMultiplier;
         var pos = Pos with
         {
             X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
             Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
-        if (_world[(int)pos.X, (int)pos.Y] is Tile.IsWalkable)
+        if (Fly || _world[(int)pos.X, (int)pos.Y] is Tile.IsWalkable)
             Pos = pos;
 
         TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
 
         ShowChunkBorders ^= (OrFunc(IsDown, Keys.LeftAlt, Keys.RightAlt) && IsClicked(Keys.F1));
+        Fly ^= IsClicked(Keys.Space);
 
         SetBounds();
 
