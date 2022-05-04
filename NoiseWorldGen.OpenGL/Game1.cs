@@ -5,8 +5,18 @@ using Microsoft.Xna.Framework.Input;
 
 namespace NoiseWorldGen.OpenGL;
 
-public record class Point<T>(T X, T Y);
-public record class Size<T>(T Width, T Height);
+public record class Point<T>(T X, T Y)
+{
+    public Point(T value)
+        : this(value, value)
+    { }
+}
+public record class Size<T>(T Width, T Height)
+{
+    public Size(T value)
+        : this(value, value)
+    { }
+}
 
 public class Game1 : Game
 {
@@ -70,7 +80,7 @@ public class Game1 : Game
         _pixel = new Texture2D(GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
 
-        Pos = new(.5f, .5f);
+        Pos = new(.5f);
         TileSize = 1;
         SetViewSize();
     }
