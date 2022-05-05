@@ -1,5 +1,6 @@
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
+using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL;
 

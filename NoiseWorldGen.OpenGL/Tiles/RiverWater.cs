@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
 
-namespace NoiseWorldGen.OpenGL;
+namespace NoiseWorldGen.OpenGL.Tiles;
 
 public sealed class RiverWater : Tile, ISingletonTile<RiverWater>, Tile.IsWalkable, IInterpolation<RiverWater>
 {
@@ -28,37 +28,5 @@ public sealed class RiverWater : Tile, ISingletonTile<RiverWater>, Tile.IsWalkab
     public static RiverWater Value { get; } = new();
 
     private RiverWater()
-    { }
-}
-
-public sealed class ShallowWater : Tile, ISingletonTile<ShallowWater>, Tile.IsWalkable
-{
-    public static ShallowWater Value { get; } = new();
-
-    private ShallowWater()
-    { }
-}
-
-public sealed class Water : Tile, ISingletonTile<Water>
-{
-    public static Water Value { get; } = new();
-
-    private Water()
-    { }
-}
-
-public sealed class FrozenWater : Tile, ISingletonTile<FrozenWater>
-{
-    public static FrozenWater Value { get; } = new();
-
-    private FrozenWater()
-    { }
-}
-
-public sealed class DeepWater : Tile, ISingletonTile<DeepWater>
-{
-    public static DeepWater Value { get; } = new();
-
-    private DeepWater()
     { }
 }

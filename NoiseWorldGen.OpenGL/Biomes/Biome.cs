@@ -1,5 +1,5 @@
 using System.Linq;
-using System.Runtime.CompilerServices;
+using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL.Biomes;
 
@@ -56,92 +56,4 @@ public abstract class Biome
         static Biome Create(Type type, World world)
             => type.GetMethod("Create")!.CreateDelegate<Func<World, Biome>>()(world);
     }
-}
-
-public sealed class Mountains : Biome, Biome.IBiome<Mountains>
-{
-    [ModuleInitializer]
-    internal static void Init()
-    {
-        AddBiome<Mountains>();
-    }
-
-    public Mountains(World world)
-        : base(world)
-    { }
-
-    public override Tile BaseTile => Mountain.Value;
-
-    public static Mountains Create(World world)
-        => new(world);
-
-    public static (float min, float max)? Continentalness => (.5f, 1f);
-
-    public static (float min, float max)? Temperature => null;
-}
-
-public sealed class Ocean : Biome, Biome.IBiome<Ocean>
-{
-    [ModuleInitializer]
-    internal static void Init()
-    {
-        AddBiome<Ocean>();
-    }
-
-    public Ocean(World world)
-        : base(world)
-    { }
-
-    public override Tile BaseTile => Water.Value;
-
-    public static Ocean Create(World world)
-        => new(world);
-
-    public static (float min, float max)? Continentalness => (-1f, 0f);
-
-    public static (float min, float max)? Temperature => (0f, 1f);
-}
-
-public sealed class FrozenOcean : Biome, Biome.IBiome<FrozenOcean>
-{
-    [ModuleInitializer]
-    internal static void Init()
-    {
-        AddBiome<FrozenOcean>();
-    }
-
-    public FrozenOcean(World world)
-        : base(world)
-    { }
-
-    public override Tile BaseTile => FrozenWater.Value;
-
-    public static FrozenOcean Create(World world)
-        => new(world);
-
-    public static (float min, float max)? Continentalness => Ocean.Continentalness;
-
-    public static (float min, float max)? Temperature => (-1f, 0f);
-}
-
-public sealed class Land : Biome, Biome.IBiome<Land>
-{
-    [ModuleInitializer]
-    internal static void Init()
-    {
-        AddBiome<Land>();
-    }
-
-    public Land(World world)
-        : base(world)
-    { }
-
-    public override Tile BaseTile => Stone.Value;
-
-    public static Land Create(World world)
-        => new(world);
-
-    public static (float min, float max)? Continentalness => (0f, 1f);
-
-    public static (float min, float max)? Temperature => null;
 }

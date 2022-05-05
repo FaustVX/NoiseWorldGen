@@ -1,4 +1,5 @@
 using NoiseWorldGen.OpenGL.Biomes;
+using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL;
 

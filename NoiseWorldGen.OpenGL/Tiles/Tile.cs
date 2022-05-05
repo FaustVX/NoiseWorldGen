@@ -1,6 +1,6 @@
 using DotnetNoise;
 
-namespace NoiseWorldGen.OpenGL;
+namespace NoiseWorldGen.OpenGL.Tiles;
 
 public interface ISingletonTile<T>
     where T : Tile, ISingletonTile<T>
