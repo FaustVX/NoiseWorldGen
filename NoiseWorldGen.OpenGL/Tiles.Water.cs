@@ -47,6 +47,14 @@ public sealed class Water : Tile, ISingletonTile<Water>
     { }
 }
 
+public sealed class FrozenWater : Tile, ISingletonTile<FrozenWater>
+{
+    public static FrozenWater Value { get; } = new();
+
+    private FrozenWater()
+    { }
+}
+
 public sealed class DeepWater : Tile, ISingletonTile<DeepWater>
 {
     public static DeepWater Value { get; } = new();

@@ -32,17 +32,7 @@ public class Chunck
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var biome = Biomes[x, y];
-        switch (biome)
-        {
-            case Mountains:
-                return Mountain.Value;
-            case Ocean:
-                return DeepWater.Value;
-            case FrozenOcean:
-                return ShallowWater.Value;
-            default:
-                return Stone.Value;
-        }
+        return biome.BaseTile;
     }
 
     public World World { get; }

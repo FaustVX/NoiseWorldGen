@@ -175,7 +175,7 @@ public class Game1 : Game
             {
                 Mountain => Color.DimGray,
                 Stone => Color.DarkGray,
-                ShallowWater => Color.Aqua,
+                ShallowWater or FrozenWater => Color.Aqua,
                 Water or RiverWater => Color.DarkBlue,
                 DeepWater => Color.Blue,
                 IronOre => Color.Red,

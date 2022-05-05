@@ -15,6 +15,7 @@ public abstract class Biome
     private static readonly List<Type> _biomes = new();
     public static IReadOnlyList<Type> Biomes => _biomes;
     public World World { get; }
+    public abstract Tile BaseTile { get; }
 
     protected Biome(World world)
     {
@@ -69,6 +70,8 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
         : base(world)
     { }
 
+    public override Tile BaseTile => Mountain.Value;
+
     public static Mountains Create(World world)
         => new(world);
 
@@ -88,6 +91,8 @@ public sealed class Ocean : Biome, Biome.IBiome<Ocean>
     public Ocean(World world)
         : base(world)
     { }
+
+    public override Tile BaseTile => Water.Value;
 
     public static Ocean Create(World world)
         => new(world);
@@ -109,6 +114,8 @@ public sealed class FrozenOcean : Biome, Biome.IBiome<FrozenOcean>
         : base(world)
     { }
 
+    public override Tile BaseTile => FrozenWater.Value;
+
     public static FrozenOcean Create(World world)
         => new(world);
 
@@ -128,6 +135,8 @@ public sealed class Land : Biome, Biome.IBiome<Land>
     public Land(World world)
         : base(world)
     { }
+
+    public override Tile BaseTile => Stone.Value;
 
     public static Land Create(World world)
         => new(world);
