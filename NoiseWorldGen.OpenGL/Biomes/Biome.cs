@@ -17,7 +17,7 @@ public abstract class Biome
     public World World { get; }
     public abstract Tile BaseTile { get; }
 
-    public abstract Tile GenerateTile(int x, int y);
+    public abstract Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature);
 
     protected Biome(World world)
     {
@@ -28,24 +28,25 @@ public abstract class Biome
         where T : Biome, IBiome<T>
         => _biomes.Add(typeof(T));
 
-    public static Biome GetBiome(float continentalness, float temperature, World world)
+    public static Biome GetBiome(float continentalness, float temperature, World world, out float localContinentalness, out float localTemperature)
     {
         var possibleBiomes = new List<(Type type, float continentalness, float temperature)>(Biomes.Count);
         foreach (var type in Biomes)
         {
             if (IsPropertyValid(type, "Continentalness", continentalness, out var cont) && IsPropertyValid(type, "Temperature", temperature, out var temp))
-                possibleBiomes.Add((type, cont, temp));
+                possibleBiomes.Add((type, MathF.Abs(cont - .5f), MathF.Abs(temp - .5f)));
         }
 
-        return Create(possibleBiomes
+        (var t, localContinentalness, localTemperature) = possibleBiomes
             .OrderByDescending(static t => t.continentalness * t.temperature)
-            .First().type, world);
+            .First();
+        return Create(t, world);
 
         static bool IsPropertyValid(Type type, string property, float value, out float percent)
             => type.GetProperty(property)!.GetValue(null) switch
             {
                 null => ReturnOut(true, 1f, out percent),
-                (float min, float max) when min <= value && value < max => ReturnOut(true, MathF.Abs((value - min) / (max - min) - .5f), out percent),
+                (float min, float max) when min <= value && value < max => ReturnOut(true, (value - min) / (max - min), out percent),
                 _ => ReturnOut(false, 0f, out percent),
             };
 

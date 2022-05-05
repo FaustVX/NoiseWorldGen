@@ -20,7 +20,7 @@ public sealed class FrozenOcean : Biome, Biome.IBiome<FrozenOcean>
     public static FrozenOcean Create(World world)
         => new(world);
 
-    public override Tile GenerateTile(int x, int y)
+    public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
     {
         return BaseTile;
     }

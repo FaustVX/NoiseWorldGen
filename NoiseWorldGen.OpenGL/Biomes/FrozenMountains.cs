@@ -3,21 +3,21 @@ using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL.Biomes;
 
-public sealed class Mountains : Biome, Biome.IBiome<Mountains>
+public sealed class FrozenMountains : Biome, Biome.IBiome<FrozenMountains>
 {
     [ModuleInitializer]
     internal static void Init()
     {
-        AddBiome<Mountains>();
+        AddBiome<FrozenMountains>();
     }
 
-    public Mountains(World world)
+    public FrozenMountains(World world)
         : base(world)
     { }
 
-    public override Tile BaseTile => Mountain.Value;
+    public override Tile BaseTile => FrozenMountain.Value;
 
-    public static Mountains Create(World world)
+    public static FrozenMountains Create(World world)
         => new(world);
 
     public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
@@ -27,5 +27,5 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
 
     public static (float min, float max)? Continentalness => (.5f, 1f);
 
-    public static (float min, float max)? Temperature => (0, 1f);
+    public static (float min, float max)? Temperature => (-1f, 0);
 }

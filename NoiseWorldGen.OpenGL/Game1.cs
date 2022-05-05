@@ -175,10 +175,10 @@ public class Game1 : Game
             var color = _world.GetTileAt(x, y) switch
             {
                 Mountain => Color.DimGray,
+                FrozenMountain => Color.WhiteSmoke,
                 Stone => Color.DarkGray,
-                ShallowWater or FrozenWater => Color.Aqua,
+                FrozenWater => Color.Aqua,
                 Water or RiverWater => Color.DarkBlue,
-                DeepWater => Color.Blue,
                 IronOre => Color.Red,
                 CoalOre => Color.Black,
                 _ => Color.Transparent,
