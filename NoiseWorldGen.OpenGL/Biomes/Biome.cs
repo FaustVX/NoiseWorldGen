@@ -17,6 +17,8 @@ public abstract class Biome
     public World World { get; }
     public abstract Tile BaseTile { get; }
 
+    public abstract Tile GenerateTile(int x, int y);
+
     protected Biome(World world)
     {
         World = world;

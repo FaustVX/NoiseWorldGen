@@ -20,6 +20,11 @@ public sealed class Ocean : Biome, Biome.IBiome<Ocean>
     public static Ocean Create(World world)
         => new(world);
 
+    public override Tile GenerateTile(int x, int y)
+    {
+        return BaseTile;
+    }
+
     public static (float min, float max)? Continentalness => (-1f, 0f);
 
     public static (float min, float max)? Temperature => (0f, 1f);

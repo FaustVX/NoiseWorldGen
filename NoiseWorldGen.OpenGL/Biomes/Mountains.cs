@@ -20,6 +20,11 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
     public static Mountains Create(World world)
         => new(world);
 
+    public override Tile GenerateTile(int x, int y)
+    {
+        return BaseTile;
+    }
+
     public static (float min, float max)? Continentalness => (.5f, 1f);
 
     public static (float min, float max)? Temperature => null;

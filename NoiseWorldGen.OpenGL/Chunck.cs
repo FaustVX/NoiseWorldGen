@@ -33,7 +33,7 @@ public class Chunck
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var biome = Biomes[x, y];
-        return biome.BaseTile;
+        return biome.GenerateTile(tileX, tileY);
     }
 
     public World World { get; }
