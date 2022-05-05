@@ -177,10 +177,11 @@ public class Game1 : Game
                 Mountain => Color.DimGray,
                 FrozenMountain => Color.WhiteSmoke,
                 Stone => Color.DarkGray,
-                FrozenWater => Color.Aqua,
+                FrozenWater => Color.CornflowerBlue,
                 Water or RiverWater => Color.DarkBlue,
                 IronOre => Color.Red,
                 CoalOre => Color.Black,
+                Tree => Color.Green,
                 _ => Color.Transparent,
             };
             var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
