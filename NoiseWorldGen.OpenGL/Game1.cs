@@ -82,7 +82,7 @@ public class Game1 : Game
         _pixel.SetData(new[] { Color.White });
 
         Pos = new(.5f);
-        TileSize = 1;
+        TileSize = 16;
         SetViewSize();
     }
 
