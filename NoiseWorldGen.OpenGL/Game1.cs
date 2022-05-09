@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL;
 
@@ -119,7 +120,7 @@ public class Game1 : Game
             X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
             Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
-        if (Fly || _world[(int)pos.X, (int)pos.Y] is Tile.IsWalkable)
+        if (Fly || _world.GetTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
             Pos = pos;
 
         TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
@@ -171,15 +172,16 @@ public class Game1 : Game
 
         void DrawTile(int x, int y)
         {
-            var color = _world[x, y] switch
+            var color = _world.GetTileAt(x, y) switch
             {
                 Mountain => Color.DimGray,
+                FrozenMountain => Color.WhiteSmoke,
                 Stone => Color.DarkGray,
-                ShallowWater => Color.Aqua,
+                FrozenWater => Color.CornflowerBlue,
                 Water or RiverWater => Color.DarkBlue,
-                DeepWater => Color.Blue,
                 IronOre => Color.Red,
                 CoalOre => Color.Black,
+                Tree => Color.Green,
                 _ => Color.Transparent,
             };
             var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
