@@ -15,6 +15,7 @@ public class World
     public float ShallowWaterHeight { get; } = -.2f;
     public float DeepWaterHeight { get; } = -.5f;
     public int Seed { get; }
+    public Player Player { get; }
 
     private readonly Dictionary<(int x, int y), Chunck> Chunks = new();
 
@@ -31,6 +32,8 @@ public class World
             Frequency = .003f,
             UsedNoiseType = NoiseType.Cubic,
         };
+
+        Player = new(this);
 
         OnWorldCreated?.Invoke(this);
     }

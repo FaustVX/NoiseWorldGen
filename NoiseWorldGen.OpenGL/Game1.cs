@@ -28,12 +28,6 @@ public class Game1 : Game
     private KeyboardState _lastKeyboard = default!, _currentKeyboard = default!;
 
     /// <summary>
-    /// Pos in Tile Size
-    /// 0.5 => Middle of Tile
-    /// </summary>
-    public Point<float> Pos { get; set; }
-
-    /// <summary>
     /// Top Left Tile
     /// </summary>
     public Point<int> TopLeftWorldPos { get; set; }
@@ -63,11 +57,6 @@ public class Game1 : Game
     /// Tile seen on screen
     /// </summary>
     public Size<int> ViewSize { get; set; }
-
-    public float Speed { get; } = 1.5f;
-    public float SpeedMultipler { get; } = 5;
-    public float FlySpeedMultiplier { get; } = 3f;
-    public bool Fly { get; set; } = true;
     public bool ShowChunkBorders { get; set; }
 
     public Game1()
@@ -81,7 +70,6 @@ public class Game1 : Game
         _pixel = new Texture2D(GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
 
-        Pos = new(.5f);
         TileSize = 16;
         SetViewSize();
     }
@@ -98,7 +86,7 @@ public class Game1 : Game
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
     private void SetBounds()
     {
-        TopLeftWorldPos = new((int)(Pos.X - ViewSize.Width / 2), (int)(Pos.Y - ViewSize.Height / 2));
+        TopLeftWorldPos = new((int)(_world.Player.Position.X - ViewSize.Width / 2), (int)(_world.Player.Position.Y - ViewSize.Height / 2));
         BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
     }
 
@@ -110,23 +98,23 @@ public class Game1 : Game
         if (IsDown(Keys.Escape))
             Exit();
 
-        var speed = Speed;
+        var speed = _world.Player.Speed;
         if (IsDown(Keys.RightShift) || IsDown(Keys.LeftShift))
-            speed *= SpeedMultipler;
-        if (Fly)
-            speed *= FlySpeedMultiplier;
-        var pos = Pos with
+            speed *= _world.Player.SpeedMultipler;
+        if (_world.Player.IsFlying)
+            speed *= _world.Player.FlySpeedMultiplier;
+        var pos = _world.Player.Position with
         {
-            X = Pos.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
-            Y = Pos.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
+            X = _world.Player.Position.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
+            Y = _world.Player.Position.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
-        if (Fly || _world.GetTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
-            Pos = pos;
+        if (_world.Player.IsFlying || _world.GetTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
+            _world.Player.Position = pos;
 
         TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
 
         ShowChunkBorders ^= (OrFunc(IsDown, Keys.LeftAlt, Keys.RightAlt) && IsClicked(Keys.F1));
-        Fly ^= IsClicked(Keys.Space);
+        _world.Player.IsFlying ^= IsClicked(Keys.Space);
 
         SetBounds();
 
@@ -184,8 +172,8 @@ public class Game1 : Game
                 Tree => Color.Green,
                 _ => Color.Transparent,
             };
-            var x1 = (int)((x - Pos.X + ViewSize.Width / 2f) * TileSize);
-            var y1 = (int)((y - Pos.Y + ViewSize.Height / 2f) * TileSize);
+            var x1 = (int)((x - _world.Player.Position.X + ViewSize.Width / 2f) * TileSize);
+            var y1 = (int)((y - _world.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
             _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
             if (ShowChunkBorders)
             {
