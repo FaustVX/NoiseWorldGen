@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using NoiseWorldGen.OpenGL.Tiles;
+using NoiseWorldGen.OpenGL.Inputs;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace NoiseWorldGen.OpenGL;
 
@@ -25,7 +26,7 @@ public class Game1 : Game
     private readonly World _world;
     private readonly Texture2D _pixel;
     private readonly SpriteBatch _spriteBatch;
-    private KeyboardState _lastKeyboard = default!, _currentKeyboard = default!;
+    // private KeyboardState _lastKeyboard = default!, _currentKeyboard = default!;
 
     /// <summary>
     /// Top Left Tile
@@ -72,6 +73,9 @@ public class Game1 : Game
 
         TileSize = 16;
         SetViewSize();
+
+        Components.Add(_world.Player);
+        Components.Add(Keyboard.Instance);
     }
 
 
@@ -92,59 +96,17 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        _lastKeyboard = _currentKeyboard;
-        _currentKeyboard = Keyboard.GetState();
-
-        if (IsDown(Keys.Escape))
+        if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
 
-        var speed = _world.Player.Speed;
-        if (IsDown(Keys.RightShift) || IsDown(Keys.LeftShift))
-            speed *= _world.Player.SpeedMultipler;
-        if (_world.Player.IsFlying)
-            speed *= _world.Player.FlySpeedMultiplier;
-        var pos = _world.Player.Position with
-        {
-            X = _world.Player.Position.X + speed * XorFunc(IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
-            Y = _world.Player.Position.Y + speed * XorFunc(IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
-        };
-        if (_world.Player.IsFlying || _world.GetTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
-            _world.Player.Position = pos;
+        TileSize += Keyboard.XorFunc(Keyboard.Instance.IsClicked, Keys.Subtract, Keys.Add);
 
-        TileSize += XorFunc(IsClicked, Keys.Subtract, Keys.Add);
-
-        ShowChunkBorders ^= (OrFunc(IsDown, Keys.LeftAlt, Keys.RightAlt) && IsClicked(Keys.F1));
-        _world.Player.IsFlying ^= IsClicked(Keys.Space);
-
-        SetBounds();
+        ShowChunkBorders ^= (Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt) && Keyboard.Instance.IsClicked(Keys.F1));
 
         base.Update(gameTime);
+
+        SetBounds();
     }
-
-    public bool IsClicked(Keys key)
-        => _currentKeyboard.IsKeyDown(key) && _lastKeyboard.IsKeyUp(key);
-
-    public bool IsDown(Keys key)
-        => _currentKeyboard.IsKeyDown(key);
-
-    public bool OrFunc<T>(Func<T, bool> func, T key1, T key2)
-        => func(key1) || func(key2);
-
-    public int XorFunc<T>(Func<T, bool> keyFunc, T key1, T key2)
-        => (keyFunc(key1), keyFunc(key2)) switch
-        {
-            (true, false) => -1,
-            (false, true) => +1,
-            _ => 0,
-        };
-
-    public int XorFunc<T>(Func<T, bool> keyFunc, T key1, T key1Alt, T key2, T key2Alt)
-        => (keyFunc(key1) || keyFunc(key1Alt), keyFunc(key2) || keyFunc(key2Alt)) switch
-        {
-            (true, false) => -1,
-            (false, true) => +1,
-            _ => 0,
-        };
 
     protected override void Draw(GameTime gameTime)
     {
