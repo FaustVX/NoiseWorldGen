@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.OpenGL.Tiles;
@@ -24,8 +24,6 @@ public class Game1 : Game
 {
     private readonly GraphicsDeviceManager _graphics;
     private readonly World _world;
-    private readonly Texture2D _pixel;
-    private readonly SpriteBatch _spriteBatch;
     // private KeyboardState _lastKeyboard = default!, _currentKeyboard = default!;
 
     /// <summary>
@@ -67,9 +65,10 @@ public class Game1 : Game
         _graphics.ApplyChanges();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _pixel = new Texture2D(GraphicsDevice, 1, 1);
-        _pixel.SetData(new[] { Color.White });
+        SpriteBatches.Game = new(GraphicsDevice);
+        SpriteBatches.UI = new(GraphicsDevice);
+        SpriteBatches.Pixel = new Texture2D(GraphicsDevice, 1, 1);
+        SpriteBatches.Pixel.SetData(new[] { Color.White });
 
         TileSize = 16;
         SetViewSize();
@@ -110,13 +109,15 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        _spriteBatch.Begin();
+        SpriteBatches.Game.Begin();
+        SpriteBatches.UI.Begin();
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
                 DrawTile(x, y);
 
-        _spriteBatch.End();
+        SpriteBatches.Game.End();
+        SpriteBatches.UI.End();
 
         base.Draw(gameTime);
 
@@ -136,13 +137,13 @@ public class Game1 : Game
             };
             var x1 = (int)((x - _world.Player.Position.X + ViewSize.Width / 2f) * TileSize);
             var y1 = (int)((y - _world.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
-            _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
+            SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
             if (ShowChunkBorders)
             {
                 if (x % Chunck.Size == 0)
-                    _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
+                    SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
                 if (y % Chunck.Size == 0)
-                    _spriteBatch.Draw(_pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
+                    SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
             }
         }
     }
