@@ -106,17 +106,25 @@ public class Game1 : Game
         SetBounds();
     }
 
-    protected override void Draw(GameTime gameTime)
+    protected override bool BeginDraw()
     {
         SpriteBatches.Game.Begin();
         SpriteBatches.UI.Begin();
+        return base.BeginDraw();
+    }
 
+    protected override void EndDraw()
+    {
+        SpriteBatches.Game.End();
+        SpriteBatches.UI.End();
+        base.EndDraw();
+    }
+
+    protected override void Draw(GameTime gameTime)
+    {
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
                 DrawTile(x, y);
-
-        SpriteBatches.Game.End();
-        SpriteBatches.UI.End();
 
         base.Draw(gameTime);
 
