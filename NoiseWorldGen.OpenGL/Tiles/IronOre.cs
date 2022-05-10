@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -25,9 +26,18 @@ public sealed class IronOre : Tile, IOre, IInterpolation<IronOre>, Tile.IsWalkab
     };
     public uint Quantity { get; set; }
 
+    public override Rectangle TextureRect
+        => Quantity switch
+        {
+            <= 100 => Content.SpriteSheets.Ores.IronOre0,
+            <= 250 => Content.SpriteSheets.Ores.IronOre1,
+            <= 500 => Content.SpriteSheets.Ores.IronOre2,
+            <= 750 => Content.SpriteSheets.Ores.IronOre3,
+            _ => Content.SpriteSheets.Ores.IronOre4,
+        };
 
     public IronOre(uint quantity)
-        : base(Color.Red, default!)
+        : base(Color.Red, Content.SpriteSheets.Ores.Instance.Texture)
     {
         Quantity = quantity;
     }

@@ -41,14 +41,26 @@ public class World
     public Tile GetTileAt(int x, int y)
         => GetChunkAtPos(x, y, out var posX, out var posY).Tiles[posX, posY];
 
+    public Tile GetTileAtPlayer()
+        => GetTileAt((int)Player.Position.X, (int)Player.Position.Y);
+
+    public void SetTileAtPlayer(Tile tile)
+        => SetTileAt((int)Player.Position.X, (int)Player.Position.Y, tile);
+
     public void SetTileAt(int x, int y, Tile tile)
         => GetChunkAtPos(x, y, out var posX, out var posY).Tiles[posX, posY] = tile;
 
     public Biomes.Biome GetBiomeAt(int x, int y)
         => GetChunkAtPos(x, y, out var posX, out var posY).Biomes[posX, posY];
 
+    public Biomes.Biome GetBiomeAtPlayer()
+        => GetBiomeAt((int)Player.Position.X, (int)Player.Position.Y);
+
     public void SetBiomeAt(int x, int y, Biomes.Biome biome)
         => GetChunkAtPos(x, y, out var posX, out var posY).Biomes[posX, posY] = biome;
+
+    public Chunck GetChunkAtPosAtPlayer(out int posX, out int posY)
+        => GetChunkAtPos((int)Player.Position.X, (int)Player.Position.Y, out posX, out posY);
 
     public Chunck GetChunkAtPos(int x, int y, out int posX, out int posY)
     {

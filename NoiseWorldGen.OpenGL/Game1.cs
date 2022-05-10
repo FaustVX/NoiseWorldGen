@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NoiseWorldGen.OpenGL.Content;
 using NoiseWorldGen.OpenGL.Inputs;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
@@ -23,7 +24,6 @@ public class Game1 : Game
 {
     private readonly GraphicsDeviceManager _graphics;
     private readonly World _world;
-    // private KeyboardState _lastKeyboard = default!, _currentKeyboard = default!;
 
     /// <summary>
     /// Top Left Tile
@@ -92,6 +92,12 @@ public class Game1 : Game
         BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
     }
 
+    protected override void LoadContent()
+    {
+        Textures.Ores = Content.Load<Texture2D>($@"{nameof(OpenGL.Content.SpriteSheets)}\{nameof(OpenGL.Content.SpriteSheets.Ores)}");
+        Textures.Font = Content.Load<SpriteFont>($@"Fonts\{nameof(OpenGL.Content.Textures.Font)}");
+    }
+
     protected override void Update(GameTime gameTime)
     {
         if (Keyboard.Instance.IsDown(Keys.Escape))
@@ -122,6 +128,16 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
+        var tile = _world.GetTileAtPlayer();
+        SpriteBatches.UI.Draw(tile.Texture ?? SpriteBatches.Pixel, new Vector2(0), tile.TextureRect, Color.White);
+        SpriteBatches.UI.DrawString(Textures.Font, tile.GetType().Name, new Vector2(32, 0), Color.AliceBlue);
+        if (tile is Tiles.IOre ore)
+        {
+            var size = Textures.Font.MeasureString(tile.GetType().Name);
+            SpriteBatches.UI.DrawString(Textures.Font, $" ({ore.Quantity})", new Vector2(32 + size.X, 0), Color.White);
+        }
+        SpriteBatches.UI.DrawString(Textures.Font, _world.GetBiomeAtPlayer().GetType().Name, new Vector2(32, 25), Color.AliceBlue);
+
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
                 DrawTile(x, y);
@@ -130,10 +146,14 @@ public class Game1 : Game
 
         void DrawTile(int x, int y)
         {
-            var color = _world.GetTileAt(x, y).Color;
+            var tile = _world.GetTileAt(x, y);
             var x1 = (int)((x - _world.Player.Position.X + ViewSize.Width / 2f) * TileSize);
             var y1 = (int)((y - _world.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
-            SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), color);
+
+            SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), tile.Color);
+            if (tile.Texture is { } texture)
+                SpriteBatches.Game.Draw(texture, new Rectangle(x1, y1, TileSize, TileSize), tile.TextureRect, Color.White);
+
             if (ShowChunkBorders)
             {
                 if (x % Chunck.Size == 0)

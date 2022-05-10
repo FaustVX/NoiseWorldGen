@@ -12,10 +12,11 @@ public interface ISingletonTile<T>
 
 public abstract class Tile
 {
-    protected Tile(Color color, Texture2D texture)
+    protected Tile(Color color, Texture2D? texture, Rectangle? textureRect = default)
     {
         Color = color;
-        Texture = texture;
+        Texture = texture!;
+        TextureRect = textureRect ?? texture?.Bounds ?? default;
     }
 
     public interface IsWalkable { }
@@ -23,6 +24,7 @@ public abstract class Tile
 
     public virtual Color Color { get; }
     public virtual Texture2D Texture { get; }
+    public virtual Rectangle TextureRect { get; }
 
     public static float GetNoise<T>(float x, float y)
         where T : INoise<T>

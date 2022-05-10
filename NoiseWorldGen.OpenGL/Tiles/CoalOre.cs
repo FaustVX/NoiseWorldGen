@@ -27,7 +27,7 @@ public sealed class CoalOre : Tile, IOre, IInterpolation<CoalOre>, Tile.IsWalkab
 
 
     public CoalOre(uint quantity)
-        : base(Color.Black, default!)
+        : base(Color.Black, Content.SpriteSheets.Ores.Instance.Texture, Content.SpriteSheets.Ores.CoalOre)
     {
         Quantity = quantity;
     }
