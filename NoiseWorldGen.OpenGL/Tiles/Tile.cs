@@ -1,4 +1,6 @@
 using DotnetNoise;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -10,8 +12,17 @@ public interface ISingletonTile<T>
 
 public abstract class Tile
 {
+    protected Tile(Color color, Texture2D texture)
+    {
+        Color = color;
+        Texture = texture;
+    }
+
     public interface IsWalkable { }
     public interface IsOrePlacable { }
+
+    public virtual Color Color { get; }
+    public virtual Texture2D Texture { get; }
 
     public static float GetNoise<T>(float x, float y)
         where T : INoise<T>

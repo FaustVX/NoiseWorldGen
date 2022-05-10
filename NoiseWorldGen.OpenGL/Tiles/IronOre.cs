@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
+using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -26,6 +27,7 @@ public sealed class IronOre : Tile, IOre, IInterpolation<IronOre>, Tile.IsWalkab
 
 
     public IronOre(uint quantity)
+        : base(Color.Red, default!)
     {
         Quantity = quantity;
     }

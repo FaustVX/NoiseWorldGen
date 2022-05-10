@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace NoiseWorldGen.OpenGL.Tiles;
 
 public sealed class Stone : Tile, ISingletonTile<Stone>, Tile.IsWalkable, Tile.IsOrePlacable
@@ -5,5 +7,6 @@ public sealed class Stone : Tile, ISingletonTile<Stone>, Tile.IsWalkable, Tile.I
     public static Stone Value { get; } = new();
 
     private Stone()
+        : base(Color.DarkGray, default!)
     { }
 }

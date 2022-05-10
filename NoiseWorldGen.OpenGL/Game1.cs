@@ -1,7 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NoiseWorldGen.OpenGL.Tiles;
 using NoiseWorldGen.OpenGL.Inputs;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
@@ -123,18 +122,7 @@ public class Game1 : Game
 
         void DrawTile(int x, int y)
         {
-            var color = _world.GetTileAt(x, y) switch
-            {
-                Mountain => Color.DimGray,
-                FrozenMountain => Color.WhiteSmoke,
-                Stone => Color.DarkGray,
-                FrozenWater => Color.CornflowerBlue,
-                Water or RiverWater => Color.DarkBlue,
-                IronOre => Color.Red,
-                CoalOre => Color.Black,
-                Tree => Color.Green,
-                _ => Color.Transparent,
-            };
+            var color = _world.GetTileAt(x, y).Color;
             var x1 = (int)((x - _world.Player.Position.X + ViewSize.Width / 2f) * TileSize);
             var y1 = (int)((y - _world.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
             SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), color);

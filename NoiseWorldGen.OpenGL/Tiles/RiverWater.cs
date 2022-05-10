@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
+using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -28,5 +29,6 @@ public sealed class RiverWater : Tile, ISingletonTile<RiverWater>, Tile.IsWalkab
     public static RiverWater Value { get; } = new();
 
     private RiverWater()
+        : base(Color.DarkBlue, default!)
     { }
 }

@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
+using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -26,6 +27,7 @@ public sealed class CoalOre : Tile, IOre, IInterpolation<CoalOre>, Tile.IsWalkab
 
 
     public CoalOre(uint quantity)
+        : base(Color.Black, default!)
     {
         Quantity = quantity;
     }
