@@ -62,6 +62,8 @@ public class Game1 : Game
         _world = new World(new Random().Next());
         _graphics = new GraphicsDeviceManager(this);
         _graphics.ApplyChanges();
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += (s, e) => SetViewSize();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         SpriteBatches.Game = new(GraphicsDevice);
