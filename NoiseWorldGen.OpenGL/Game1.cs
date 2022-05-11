@@ -24,7 +24,7 @@ public record class Size<T>(T Width, T Height)
 public class Game1 : Game
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly World _world;
+    public World World { get; }
 
     /// <summary>
     /// Top Left Tile
@@ -60,7 +60,7 @@ public class Game1 : Game
 
     public Game1()
     {
-        _world = new World(new Random().Next());
+        World = new World(new Random().Next());
         _graphics = new GraphicsDeviceManager(this);
         _graphics.ApplyChanges();
         Window.AllowUserResizing = true;
@@ -75,10 +75,9 @@ public class Game1 : Game
         TileSize = 16;
         SetViewSize();
 
-        Components.Add(_world.Player);
+        Components.Add(World.Player);
         Components.Add(Keyboard.Instance);
     }
-
 
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
     [MemberNotNull(nameof(ViewSize))]
@@ -91,21 +90,21 @@ public class Game1 : Game
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
     private void SetBounds()
     {
-        TopLeftWorldPos = new((int)(_world.Player.Position.X - ViewSize.Width / 2), (int)(_world.Player.Position.Y - ViewSize.Height / 2));
+        TopLeftWorldPos = new((int)(World.Player.Position.X - ViewSize.Width / 2), (int)(World.Player.Position.Y - ViewSize.Height / 2));
         BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
     }
 
     public (int x, int y) WorldToScreen(float x, float y)
     {
-        var x1 = (int)((x - _world.Player.Position.X + ViewSize.Width / 2f) * TileSize);
-        var y1 = (int)((y - _world.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
+        var x1 = (int)((x - World.Player.Position.X + ViewSize.Width / 2f) * TileSize);
+        var y1 = (int)((y - World.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
         return (x1, y1);
     }
 
     public (float x, float y) ScreenToWorld(int x, int y)
     {
-        var x1 = ((float)x / TileSize) - ViewSize.Width / 2f + _world.Player.Position.X;
-        var y1 = ((float)y / TileSize) - ViewSize.Height / 2f + _world.Player.Position.Y;
+        var x1 = ((float)x / TileSize) - ViewSize.Width / 2f + World.Player.Position.X;
+        var y1 = ((float)y / TileSize) - ViewSize.Height / 2f + World.Player.Position.Y;
         return (x1, y1);
     }
 
@@ -147,7 +146,7 @@ public class Game1 : Game
     {
         var mouseState = Mouse.GetState();
         var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-        var tile = _world.GetTileAt((int)cursorPos.x, (int)cursorPos.y);
+        var tile = World.GetTileAt((int)cursorPos.x, (int)cursorPos.y);
         SpriteBatches.UI.Draw(tile.Texture ?? SpriteBatches.Pixel, new Vector2(0), tile.TextureRect, Color.White);
         SpriteBatches.UI.DrawString(Textures.Font, tile.GetType().Name, new Vector2(32, 0), Color.AliceBlue);
         if (tile is Tiles.IOre ore)
@@ -155,7 +154,7 @@ public class Game1 : Game
             var size = Textures.Font.MeasureString(tile.GetType().Name);
             SpriteBatches.UI.DrawString(Textures.Font, $" ({ore.Quantity})", new Vector2(32 + size.X, 0), Color.White);
         }
-        SpriteBatches.UI.DrawString(Textures.Font, _world.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).GetType().Name, new Vector2(32, 25), Color.AliceBlue);
+        SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).GetType().Name, new Vector2(32, 25), Color.AliceBlue);
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
@@ -165,7 +164,7 @@ public class Game1 : Game
 
         void DrawTile(int x, int y)
         {
-            var tile = _world.GetTileAt(x, y);
+            var tile = World.GetTileAt(x, y);
             var (x1, y1) = WorldToScreen(x, y);
 
             SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), tile.Color);
