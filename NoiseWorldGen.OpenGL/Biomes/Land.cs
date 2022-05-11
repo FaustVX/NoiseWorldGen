@@ -29,12 +29,6 @@ public sealed class Land : Biome, Biome.IBiome<Land>
             GenerateOre(x, y, ref ore, qty => new IronOre(qty));
             GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
             tile = ore as Tile ?? tile;
-
-            static void GenerateOre<T>(float tileX, float tileY, ref IOre? ore, Func<uint, T> ctor)
-                where T : IInterpolation<T>, IOre
-                => ore = Tile.GetInterpolatedNoise<T>(tileX, tileY) is > 0 and var qty && (ore?.Quantity ?? 0) < qty
-                    ? ctor((uint)qty)
-                    : ore;
         }
         return tile;
     }

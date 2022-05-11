@@ -22,7 +22,15 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
 
     public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
     {
-        return BaseTile;
+        var tile = BaseTile;
+        if (tile is Tile.IsOrePlacable)
+        {
+            IOre? ore = default!;
+            GenerateOre(x, y, ref ore, qty => new IronOre(qty));
+            GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
+            tile = ore as Tile ?? tile;
+        }
+        return tile;
     }
 
     public static (float min, float max)? Continentalness => (.5f, 1f);
