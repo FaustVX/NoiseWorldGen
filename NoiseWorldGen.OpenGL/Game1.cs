@@ -58,11 +58,37 @@ public class Game1 : Game
     public Size<int> ViewSize { get; set; }
     public bool ShowChunkBorders { get; set; }
 
+    private bool _isFullScreen = false;
+    private Size<int> _defaultWindowSize;
+    public bool IsFullScreen
+    {
+        get => _isFullScreen;
+        set
+        {
+            if (value == _isFullScreen)
+                return;
+            _isFullScreen = value;
+            if (IsFullScreen)
+            {
+                Window.IsBorderless = true;
+                (_, _, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight) = GraphicsDevice.Adapter.CurrentDisplayMode.TitleSafeArea;
+                _graphics.ApplyChanges();
+            }
+            else
+            {
+                (_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight) = _defaultWindowSize;
+                Window.IsBorderless = false;
+                _graphics.ApplyChanges();
+            }
+        }
+    }
+
     public Game1()
     {
         World = new World(new Random().Next());
         _graphics = new GraphicsDeviceManager(this);
         _graphics.ApplyChanges();
+        _defaultWindowSize = new(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
         Window.AllowUserResizing = true;
         Window.ClientSizeChanged += (s, e) => SetViewSize();
         Content.RootDirectory = "Content";
@@ -121,7 +147,8 @@ public class Game1 : Game
 
         TileSize += Keyboard.XorFunc(Keyboard.Instance.IsClicked, Keys.Subtract, Keys.Add);
 
-        ShowChunkBorders ^= (Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt) && Keyboard.Instance.IsClicked(Keys.F1));
+        ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
+        IsFullScreen ^= (Keyboard.Instance.IsClicked(Keys.Enter) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftControl, Keys.RightControl));
 
         base.Update(gameTime);
 
