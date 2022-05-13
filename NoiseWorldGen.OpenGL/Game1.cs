@@ -98,7 +98,7 @@ public class Game1 : Game
         SpriteBatches.Pixel = new Texture2D(GraphicsDevice, 1, 1);
         SpriteBatches.Pixel.SetData(new[] { Color.White });
 
-        TileSize = 16;
+        TileSize = 32;
         SetViewSize();
 
         Components.Add(World.Player);
