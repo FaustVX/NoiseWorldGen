@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.OpenGL.Content;
@@ -131,6 +131,10 @@ public class Game1 : Game
     {
         var x1 = ((float)x / TileSize) - ViewSize.Width / 2f + World.Player.Position.X;
         var y1 = ((float)y / TileSize) - ViewSize.Height / 2f + World.Player.Position.Y;
+        if (x1 < 0)
+            x1--;
+        if (y1 < 0)
+            y1--;
         return (x1, y1);
     }
 
