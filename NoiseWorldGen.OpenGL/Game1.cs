@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.OpenGL.Content;
@@ -57,7 +57,22 @@ public class Game1 : Game
     /// </summary>
     public Size<int> ViewSize { get; set; }
     public bool ShowChunkBorders { get; set; }
-
+    private bool showUI = true;
+    private readonly SpriteBatch _tempUI;
+    public bool ShowUI
+    {
+        get => showUI;
+        set
+        {
+            if (value == showUI)
+                return;
+            showUI = value;
+            if (showUI)
+                SpriteBatches.UI = _tempUI;
+            else
+                SpriteBatches.UI = null;
+        }
+    }
     private bool _isFullScreen = false;
     private Size<int> _defaultWindowSize;
     public bool IsFullScreen
@@ -94,7 +109,7 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         SpriteBatches.Game = new(GraphicsDevice);
-        SpriteBatches.UI = new(GraphicsDevice);
+        SpriteBatches.UI = _tempUI = new(GraphicsDevice);
         SpriteBatches.Pixel = new Texture2D(GraphicsDevice, 1, 1);
         SpriteBatches.Pixel.SetData(new[] { Color.White });
 
@@ -151,6 +166,7 @@ public class Game1 : Game
 
         TileSize += Keyboard.XorFunc(Keyboard.Instance.IsClicked, Keys.Subtract, Keys.Add);
 
+        ShowUI ^= (Keyboard.Instance.IsClicked(Keys.F1, isExclusive: true));
         ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
         IsFullScreen ^= (Keyboard.Instance.IsClicked(Keys.Enter) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftControl, Keys.RightControl));
 
@@ -166,14 +182,14 @@ public class Game1 : Game
     protected override bool BeginDraw()
     {
         SpriteBatches.Game.Begin();
-        SpriteBatches.UI.Begin();
+        SpriteBatches.UI?.Begin();
         return base.BeginDraw();
     }
 
     protected override void EndDraw()
     {
         SpriteBatches.Game.End();
-        SpriteBatches.UI.End();
+        SpriteBatches.UI?.End();
         base.EndDraw();
     }
 
@@ -181,7 +197,7 @@ public class Game1 : Game
     {
         var mouseState = Mouse.GetState();
         var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-        if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsInitialized)
+        if (SpriteBatches.UI is not null && World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsInitialized)
         {
             var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
             DrawTileImage(soil);
@@ -202,14 +218,16 @@ public class Game1 : Game
             static void DrawTileImage(Tiles.Tile tile)
             {
                 if (tile.Texture is not null)
-                    SpriteBatches.UI.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
+                    SpriteBatches.UI!.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
                 else
-                    SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
+                    SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
             }
+            var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
+            SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
         }
 
-        for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
-            for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
+        for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
+            for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y + 1; y++)
                 DrawTile(x, y);
 
         base.Draw(gameTime);

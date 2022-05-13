@@ -31,6 +31,9 @@ public sealed class Keyboard : IGameComponent, IUpdateable
     public bool IsClicked(Keys key)
         => _currentKeyboard.IsKeyDown(key) && _lastKeyboard.IsKeyUp(key);
 
+    public bool IsClicked(Keys key, bool isExclusive)
+        => _currentKeyboard.IsKeyDown(key) && _lastKeyboard.IsKeyUp(key) && (!isExclusive || _currentKeyboard.GetPressedKeyCount() == 1);
+
     public bool IsDown(Keys key)
         => _currentKeyboard.IsKeyDown(key);
 
