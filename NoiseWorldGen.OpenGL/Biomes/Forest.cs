@@ -22,17 +22,21 @@ public sealed class Forest : Biome, Biome.IBiome<Forest>
         : base(world)
     { }
 
-    public override Tile BaseTile => Stone.Value;
+    public override SoilTile BaseSoil => Stone.Value;
     public static FastNoise Noise { get; private set; } = default!;
 
     public static Forest Create(World world)
         => new(world);
 
-    public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
     {
         if (IsTreePos(x, y, localTemperature))
             return Tree.Value;
-        return BaseTile;
+
+        IOre? ore = null;
+        GenerateOre(x, y, ref ore, qty => new IronOre(qty));
+        GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
+        return ore as FeatureTile;
     }
 
     private static bool IsTreePos(int x, int y, float temperature)

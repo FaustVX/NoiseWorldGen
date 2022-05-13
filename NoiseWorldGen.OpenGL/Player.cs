@@ -42,7 +42,7 @@ public class Player : IGameComponent, IUpdateable
             X = Position.X + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
             Y = Position.Y + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
-        if (IsFlying || World.GetTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
+        if (IsFlying || World.GetSoilTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
             Position = pos;
         IsFlying ^= Keyboard.Instance.IsClicked(Keys.Space);
     }

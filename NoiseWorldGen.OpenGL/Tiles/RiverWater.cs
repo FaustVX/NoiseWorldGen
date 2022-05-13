@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public sealed class RiverWater : Tile, ISingletonTile<RiverWater>, Tile.IsWalkable, IInterpolation<RiverWater>
+public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWalkable, IInterpolation<RiverWater>
 {
     [ModuleInitializer]
     internal static void Init()

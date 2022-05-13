@@ -15,14 +15,14 @@ public sealed class Ocean : Biome, Biome.IBiome<Ocean>
         : base(world)
     { }
 
-    public override Tile BaseTile => Water.Value;
+    public override SoilTile BaseSoil => Water.Value;
 
     public static Ocean Create(World world)
         => new(world);
 
-    public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
     {
-        return BaseTile;
+        return null;
     }
 
     public static (float min, float max)? Continentalness => (-1f, 0f);

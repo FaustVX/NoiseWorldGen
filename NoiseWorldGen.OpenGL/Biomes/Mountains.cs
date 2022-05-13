@@ -15,22 +15,22 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
         : base(world)
     { }
 
-    public override Tile BaseTile => Mountain.Value;
+    public override SoilTile BaseSoil => Mountain.Value;
 
     public static Mountains Create(World world)
         => new(world);
 
-    public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
     {
-        var tile = BaseTile;
+        var tile = World.GetSoilTileAt(x, y);
         if (tile is Tile.IsOrePlacable)
         {
-            IOre? ore = default!;
+            IOre? ore = null;
             GenerateOre(x, y, ref ore, qty => new IronOre(qty));
             GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
-            tile = ore as Tile ?? tile;
+            return ore as FeatureTile;
         }
-        return tile;
+        return null;
     }
 
     public static (float min, float max)? Continentalness => (.5f, 1f);

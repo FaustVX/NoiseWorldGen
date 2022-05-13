@@ -150,6 +150,10 @@ public class Game1 : Game
         ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
         IsFullScreen ^= (Keyboard.Instance.IsClicked(Keys.Enter) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftControl, Keys.RightControl));
 
+        for (int x = TopLeftWorldPos.X - 9; x <= BottomRightWorldPos.X + 9; x += 8)
+            for (int y = TopLeftWorldPos.Y - 9; y <= BottomRightWorldPos.Y + 9; y += 8)
+                World.GetChunkAtPos(x, y, out _, out _).Initialize();
+
         base.Update(gameTime);
 
         SetBounds();
@@ -173,15 +177,32 @@ public class Game1 : Game
     {
         var mouseState = Mouse.GetState();
         var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-        var tile = World.GetTileAt((int)cursorPos.x, (int)cursorPos.y);
-        SpriteBatches.UI.Draw(tile.Texture ?? SpriteBatches.Pixel, new Vector2(0), tile.TextureRect, Color.White);
-        SpriteBatches.UI.DrawString(Textures.Font, tile.GetType().Name, new Vector2(32, 0), Color.AliceBlue);
-        if (tile is Tiles.IOre ore)
+        if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsInitialized)
         {
-            var size = Textures.Font.MeasureString(tile.GetType().Name);
-            SpriteBatches.UI.DrawString(Textures.Font, $" ({ore.Quantity})", new Vector2(32 + size.X, 0), Color.White);
+            var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
+            DrawTileImage(soil);
+            SpriteBatches.UI.DrawString(Textures.Font, soil.GetType().Name, new Vector2(32, 25), Color.AliceBlue);
+            var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
+            if (feature is not null)
+            {
+                DrawTileImage(feature);
+                SpriteBatches.UI.DrawString(Textures.Font, feature.GetType().Name, new Vector2(32, 50), Color.AliceBlue);
+                if (feature is Tiles.IOre ore)
+                {
+                    var size = Textures.Font.MeasureString(ore.GetType().Name);
+                    SpriteBatches.UI.DrawString(Textures.Font, $" ({ore.Quantity})", new Vector2(32 + size.X, 50), Color.White);
+                }
+            }
+            SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).GetType().Name, new Vector2(32, 0), Color.AliceBlue);
+
+            static void DrawTileImage(Tiles.Tile tile)
+            {
+                if (tile.Texture is not null)
+                    SpriteBatches.UI.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
+                else
+                    SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
+            }
         }
-        SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).GetType().Name, new Vector2(32, 25), Color.AliceBlue);
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y; y++)
@@ -191,12 +212,19 @@ public class Game1 : Game
 
         void DrawTile(int x, int y)
         {
-            var tile = World.GetTileAt(x, y);
+            var soil = World.GetSoilTileAt(x, y);
+            var feature = World.GetFeatureTileAt(x, y);
             var (x1, y1) = WorldToScreen(x, y);
 
-            SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), tile.Color);
-            if (tile.Texture is { } texture)
-                SpriteBatches.Game.Draw(texture, new Rectangle(x1, y1, TileSize, TileSize), tile.TextureRect, Color.White);
+            if (soil.Texture is { } textureSoil)
+                SpriteBatches.Game.Draw(textureSoil, new Rectangle(x1, y1, TileSize, TileSize), soil.TextureRect, Color.White);
+            else
+                SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), soil.Color);
+
+            if (feature?.Texture is { } textureFeature)
+                SpriteBatches.Game.Draw(textureFeature, new Rectangle(x1, y1, TileSize, TileSize), feature.TextureRect, Color.White);
+            else if (feature is not null)
+                SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), feature.Color);
 
             if (ShowChunkBorders)
             {

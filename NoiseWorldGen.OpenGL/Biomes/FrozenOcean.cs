@@ -15,14 +15,14 @@ public sealed class FrozenOcean : Biome, Biome.IBiome<FrozenOcean>
         : base(world)
     { }
 
-    public override Tile BaseTile => FrozenWater.Value;
+    public override SoilTile BaseSoil => FrozenWater.Value;
 
     public static FrozenOcean Create(World world)
         => new(world);
 
-    public override Tile GenerateTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
     {
-        return BaseTile;
+        return null;
     }
 
     public static (float min, float max)? Continentalness => Ocean.Continentalness;

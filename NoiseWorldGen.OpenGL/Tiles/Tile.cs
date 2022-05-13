@@ -35,6 +35,20 @@ public abstract class Tile
         => IInterpolation<T>.GetValue(x, y);
 }
 
+public abstract class SoilTile : Tile
+{
+    protected SoilTile(Color color, Texture2D? texture, Rectangle? textureRect = null)
+        : base(color, texture, textureRect)
+    { }
+}
+
+public abstract class FeatureTile : Tile
+{
+    protected FeatureTile(Color color, Texture2D? texture, Rectangle? textureRect = null)
+        : base(color, texture, textureRect)
+    { }
+}
+
 public interface INoise<T>
 {
     public static abstract FastNoise Noise { get; }

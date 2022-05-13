@@ -7,22 +7,35 @@ public class Chunck
 {
     public static readonly byte Size = 8;
 
-    public Tile[,] Tiles { get; }
+    public FeatureTile?[,] FeatureTiles { get; }
+    public SoilTile[,] SoilTiles { get; }
     public Biome[,] Biomes { get; }
+    public bool IsInitialized { get; private set; }
 
     public Chunck(World world, int chunckX, int chunckY)
     {
         World = world;
         ChunckX = chunckX;
         ChunckY = chunckY;
+        Biomes = new Biome[Size, Size];
+        SoilTiles = new SoilTile[Size, Size];
+        FeatureTiles = new FeatureTile?[Size, Size];
+    }
+
+    public void Initialize()
+    {
+        if (IsInitialized)
+            return;
         (float continentalness, float temperature)[,] localNoise = new (float, float)[Size, Size];
-        Biomes = PopulateArray(Size, Size, (x, y) =>
+        PopulateArray(Biomes, (x, y) =>
         {
-            var biome = GenerateBiome(x, y, world, out var cont, out var temp);
+            var biome = GenerateBiome(x, y, World, out var cont, out var temp);
             localNoise[x, y] = (cont, temp);
             return biome;
         });
-        Tiles = PopulateArray(Size, Size, (x, y) => GenerateTile(x, y, localNoise[x, y]));
+        PopulateArray(SoilTiles, (x, y) => GenerateSoilTile(x, y, localNoise[x, y]));
+        PopulateArray(FeatureTiles, (x, y) => GenerateFeatureTile(x, y, localNoise[x, y]));
+        IsInitialized = true;
     }
 
     private Biome GenerateBiome(int x, int y, World world, out float localContinentalness, out float localTemperature)
@@ -34,12 +47,20 @@ public class Chunck
         return Biome.GetBiome(continentalness, temperature, world, out localContinentalness, out localTemperature);
     }
 
-    private Tile GenerateTile(int x, int y, (float continentalness, float temperature) localNoise)
+    private SoilTile GenerateSoilTile(int x, int y, (float continentalness, float temperature) localNoise)
     {
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var biome = Biomes[x, y];
-        return biome.GenerateTile(tileX, tileY, localNoise.continentalness, localNoise.temperature);
+        return biome.GenerateSoilTile(tileX, tileY, localNoise.continentalness, localNoise.temperature);
+    }
+
+    private FeatureTile? GenerateFeatureTile(int x, int y, (float continentalness, float temperature) localNoise)
+    {
+        int tileX = ChunckX * Size + x;
+        int tileY = ChunckY * Size + y;
+        var biome = Biomes[x, y];
+        return biome.GenerateFeatureTile(tileX, tileY, localNoise.continentalness, localNoise.temperature);
     }
 
     public World World { get; }

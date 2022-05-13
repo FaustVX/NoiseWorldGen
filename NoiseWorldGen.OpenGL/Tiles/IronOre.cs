@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public sealed class IronOre : Tile, IOre, IInterpolation<IronOre>, Tile.IsWalkable
+public sealed class IronOre : FeatureTile, IOre, IInterpolation<IronOre>, Tile.IsWalkable
 {
     [ModuleInitializer]
     internal static void Init()

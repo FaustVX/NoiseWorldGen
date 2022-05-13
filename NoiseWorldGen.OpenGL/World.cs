@@ -38,17 +38,29 @@ public class World
         OnWorldCreated?.Invoke(this);
     }
 
-    public Tile GetTileAt(int x, int y)
-        => GetChunkAtPos(x, y, out var posX, out var posY).Tiles[posX, posY];
+    public FeatureTile? GetFeatureTileAt(int x, int y)
+        => GetChunkAtPos(x, y, out var posX, out var posY).FeatureTiles[posX, posY];
 
-    public Tile GetTileAtPlayer()
-        => GetTileAt((int)Player.Position.X, (int)Player.Position.Y);
+    public FeatureTile? GetFeatureTileAtPlayer()
+        => GetFeatureTileAt((int)Player.Position.X, (int)Player.Position.Y);
 
-    public void SetTileAtPlayer(Tile tile)
-        => SetTileAt((int)Player.Position.X, (int)Player.Position.Y, tile);
+    public void SetFeatureTileAtPlayer(FeatureTile? tile)
+        => SetFeatureTileAt((int)Player.Position.X, (int)Player.Position.Y, tile);
 
-    public void SetTileAt(int x, int y, Tile tile)
-        => GetChunkAtPos(x, y, out var posX, out var posY).Tiles[posX, posY] = tile;
+    public void SetFeatureTileAt(int x, int y, FeatureTile? tile)
+        => GetChunkAtPos(x, y, out var posX, out var posY).FeatureTiles[posX, posY] = tile;
+
+    public SoilTile GetSoilTileAt(int x, int y)
+        => GetChunkAtPos(x, y, out var posX, out var posY).SoilTiles[posX, posY];
+
+    public SoilTile GetSoilTileAtPlayer()
+        => GetSoilTileAt((int)Player.Position.X, (int)Player.Position.Y);
+
+    public void SetSoilTileAtPlayer(SoilTile tile)
+        => SetSoilTileAt((int)Player.Position.X, (int)Player.Position.Y, tile);
+
+    public void SetSoilTileAt(int x, int y, SoilTile tile)
+        => GetChunkAtPos(x, y, out var posX, out var posY).SoilTiles[posX, posY] = tile;
 
     public Biomes.Biome GetBiomeAt(int x, int y)
         => GetChunkAtPos(x, y, out var posX, out var posY).Biomes[posX, posY];

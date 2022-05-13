@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public sealed class CoalOre : Tile, IOre, IInterpolation<CoalOre>, Tile.IsWalkable
+public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.IsWalkable
 {
     [ModuleInitializer]
     internal static void Init()

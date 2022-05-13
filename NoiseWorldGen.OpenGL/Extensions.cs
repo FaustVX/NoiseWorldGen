@@ -2,22 +2,13 @@ namespace NoiseWorldGen.OpenGL;
 
 public static class Extensions
 {
-    public static T[,] PopulateArray<T>(int width, int height, Func<int, int, T> generator)
+    public static void PopulateArray<T>(T[,] array, Func<int, int, T> generator)
     {
-        var array = new T[width, height];
+        var width = array.GetLength(0);
+        var height = array.GetLength(1);
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 array[x, y] = generator(x, y);
-        return array;
-    }
-
-    public static T[,] GenerateArray<T>(int width, int height, T value)
-    {
-        var array = new T[width, height];
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                array[x, y] = value;
-        return array;
     }
 
     public static (int quotient, int remainder) ProperRemainder(int a, int b)
