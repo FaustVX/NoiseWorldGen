@@ -25,6 +25,7 @@ public abstract class Tile
     public virtual Color Color { get; }
     public virtual Texture2D Texture { get; }
     public virtual Rectangle TextureRect { get; }
+    public abstract string Name { get; }
 
     public static float GetNoise<T>(float x, float y)
         where T : INoise<T>

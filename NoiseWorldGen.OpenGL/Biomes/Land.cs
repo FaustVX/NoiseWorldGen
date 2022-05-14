@@ -33,6 +33,8 @@ public sealed class Land : Biome, Biome.IBiome<Land>
         return null;
     }
 
+    public override string Name => "Land";
+
     public static (float min, float max)? Continentalness => (0f, 1f);
 
     public static (float min, float max)? Temperature => null;

@@ -33,6 +33,8 @@ public sealed class Mountains : Biome, Biome.IBiome<Mountains>
         return null;
     }
 
+    public override string Name => "Mountains";
+
     public static (float min, float max)? Continentalness => (.5f, 1f);
 
     public static (float min, float max)? Temperature => (0, 1f);

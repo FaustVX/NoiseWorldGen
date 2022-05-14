@@ -33,6 +33,8 @@ public sealed class FrozenMountains : Biome, Biome.IBiome<FrozenMountains>
         return null;
     }
 
+    public override string Name => "Frozen Mountains";
+
     public static (float min, float max)? Continentalness => (.5f, 1f);
 
     public static (float min, float max)? Temperature => (-1f, 0);

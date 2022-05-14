@@ -51,6 +51,8 @@ public sealed class Forest : Biome, Biome.IBiome<Forest>
         return Noise.GetNoise(x, y) > threshold;
     }
 
+    public override string Name => "Forest";
+
     public static (float min, float max)? Continentalness => (.15f, 1f);
 
     public static (float min, float max)? Temperature => (0f, .5f);

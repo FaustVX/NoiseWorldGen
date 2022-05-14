@@ -201,19 +201,14 @@ public class Game1 : Game
         {
             var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
             DrawTileImage(soil);
-            SpriteBatches.UI.DrawString(Textures.Font, soil.GetType().Name, new Vector2(32, 25), Color.AliceBlue);
+            SpriteBatches.UI.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
             var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
             if (feature is not null)
             {
                 DrawTileImage(feature);
-                SpriteBatches.UI.DrawString(Textures.Font, feature.GetType().Name, new Vector2(32, 50), Color.AliceBlue);
-                if (feature is Tiles.IOre ore)
-                {
-                    var size = Textures.Font.MeasureString(ore.GetType().Name);
-                    SpriteBatches.UI.DrawString(Textures.Font, $" ({ore.Quantity})", new Vector2(32 + size.X, 50), Color.White);
-                }
+                SpriteBatches.UI.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
             }
-            SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).GetType().Name, new Vector2(32, 0), Color.AliceBlue);
+            SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
 
             static void DrawTileImage(Tiles.Tile tile)
             {

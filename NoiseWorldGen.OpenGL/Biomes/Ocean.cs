@@ -25,6 +25,8 @@ public sealed class Ocean : Biome, Biome.IBiome<Ocean>
         return null;
     }
 
+    public override string Name => "Ocean";
+
     public static (float min, float max)? Continentalness => (-1f, 0f);
 
     public static (float min, float max)? Temperature => (0f, 1f);

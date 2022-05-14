@@ -24,6 +24,7 @@ public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.I
         { .3f, 0 },
     };
     public uint Quantity { get; set; }
+    public override string Name => $"Coal Ore ({Quantity})";
 
 
     public CoalOre(uint quantity)

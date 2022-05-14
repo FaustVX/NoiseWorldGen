@@ -15,6 +15,7 @@ public abstract class Biome
     private static readonly List<Type> _biomes = new();
     public static IReadOnlyList<Type> Biomes => _biomes;
     public World World { get; }
+    public abstract string Name { get; }
     public abstract SoilTile BaseSoil { get; }
 
     public virtual SoilTile GenerateSoilTile(int x, int y, float localContinentalness, float localTemperature)

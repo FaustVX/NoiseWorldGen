@@ -27,6 +27,7 @@ public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWa
         { RiverClose, 0 },
     };
     public static RiverWater Value { get; } = new();
+    public override string Name => "River Water";
 
     private RiverWater()
         : base(Color.DarkBlue, default!)

@@ -25,6 +25,7 @@ public sealed class IronOre : FeatureTile, IOre, IInterpolation<IronOre>, Tile.I
         { .3f, 0 },
     };
     public uint Quantity { get; set; }
+    public override string Name => $"Iron Ore ({Quantity})";
 
     public override Rectangle TextureRect
         => Quantity switch
