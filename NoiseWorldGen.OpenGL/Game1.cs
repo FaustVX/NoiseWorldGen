@@ -238,15 +238,16 @@ public class Game1 : Game
             var feature = World.GetFeatureTileAt(x, y);
             var (x1, y1) = WorldToScreen(x, y);
 
-            if (soil.Texture is { } textureSoil)
-                SpriteBatches.Game.Draw(textureSoil, new Rectangle(x1, y1, TileSize, TileSize), soil.TextureRect, Color.White);
-            else
-                SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), soil.Color);
+            DrawTileImage(soil);
+            DrawTileImage(feature);
 
-            if (feature?.Texture is { } textureFeature)
-                SpriteBatches.Game.Draw(textureFeature, new Rectangle(x1, y1, TileSize, TileSize), feature.TextureRect, Color.White);
-            else if (feature is not null)
-                SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), feature.Color);
+            void DrawTileImage(Tiles.Tile? tile)
+            {
+                if (tile?.Texture is not null)
+                    SpriteBatches.Game.Draw(tile.Texture, new Rectangle(x1, y1, TileSize, TileSize), tile.TextureRect, Color.White);
+                else if (tile is not null)
+                    SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, TileSize), tile.Color);
+            }
 
             if (ShowChunkBorders)
             {
