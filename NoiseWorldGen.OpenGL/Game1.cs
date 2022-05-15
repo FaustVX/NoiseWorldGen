@@ -94,6 +94,8 @@ public class Game1 : Game
         }
     }
 
+    private Microsoft.Xna.Framework.Input.MouseState _currentMouse = default!;
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -167,8 +169,8 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        var mouseState = Mouse.GetState();
-        var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
+        (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
+        var cursorPos = ScreenToWorld(oldMouseState.Position.X, oldMouseState.Position.Y);
         if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
 
@@ -177,21 +179,31 @@ public class Game1 : Game
         ShowUI ^= (Keyboard.Instance.IsClicked(Keys.F1, isExclusive: true));
         ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
         IsFullScreen ^= (Keyboard.Instance.IsClicked(Keys.Enter) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftControl, Keys.RightControl));
-        if (Keyboard.Instance.IsClicked(Keys.Tab, isExclusive: true))
-            TileTemplates.CurrentIndex = (TileTemplates.CurrentIndex + 1) % TileTemplates.Tiles.Count;
-        if (mouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed && World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _ ,out _).IsActive)
+        if (Keyboard.Instance.IsClicked(Keys.Tab))
         {
-            switch (TileTemplates.CurrentTemplate.Create())
-            {
-                case Tiles.SoilTile tile when tile is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
-                    World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
-                    break;
-                case Tiles.FeatureTile tile when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
-                    World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
-                    break;
-            }
+            var offset = Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftShift, Keys.RightShift) ? -1 : +1;
+            TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + offset, TileTemplates.Tiles.Count).remainder;
         }
+        else if (oldMouseState.ScrollWheelValue < _currentMouse.ScrollWheelValue)
+            TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex - 1, TileTemplates.Tiles.Count).remainder;
+        else if (oldMouseState.ScrollWheelValue > _currentMouse.ScrollWheelValue)
+            TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + 1, TileTemplates.Tiles.Count).remainder;
 
+        if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
+        {
+            if (oldMouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                switch (TileTemplates.CurrentTemplate.Create())
+                {
+                    case Tiles.SoilTile tile when tile is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
+                        World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                        break;
+                    case Tiles.FeatureTile tile when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
+                        World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                        break;
+                }
+            if (oldMouseState.RightButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, null);
+        }
 
         for (int x = TopLeftWorldPos.X - 9; x <= BottomRightWorldPos.X + 9; x += 8)
             for (int y = TopLeftWorldPos.Y - 9; y <= BottomRightWorldPos.Y + 9; y += 8)
@@ -220,41 +232,40 @@ public class Game1 : Game
     {
         var mouseState = Mouse.GetState();
         var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
-        if (SpriteBatches.UI is not null && World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsInitialized)
+        if (SpriteBatches.UI is not null)
         {
-            var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
-            DrawTileImage(soil);
-            SpriteBatches.UI.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
-            var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
-            if (feature is not null)
+            if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
             {
-                DrawTileImage(feature);
-                SpriteBatches.UI.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
-            }
-            SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
-
-            static void DrawTileImage(Tiles.Tile tile)
-            {
-                if (tile.Texture is not null)
-                    SpriteBatches.UI!.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
-                else
-                    SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
-            }
-            var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
-            SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
-            DrawHotBar();
-
-            void DrawHotBar()
-            {
-                var length = TileTemplates.Tiles.Count;
-                var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
-                SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5), new Point(TileSize * length + 10, TileSize + 5)), Color.Gray * .75f);
-                foreach (var template in TileTemplates.Tiles)
+                var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
+                DrawTileImage(soil);
+                SpriteBatches.UI.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
+                var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
+                if (feature is not null)
                 {
-                    var color = template == TileTemplates.CurrentTemplate ? Color.White * .5f : Color.White;
-                    SpriteBatches.UI!.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
-                    tl += new Point(TileSize, 0);
+                    DrawTileImage(feature);
+                    SpriteBatches.UI.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
                 }
+                SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
+
+                static void DrawTileImage(Tiles.Tile tile)
+                {
+                    if (tile.Texture is not null)
+                        SpriteBatches.UI!.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
+                    else
+                        SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
+                }
+                var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
+                SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
+            }
+
+            var length = TileTemplates.Tiles.Count;
+            var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
+            SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5), new Point(TileSize * length + 10, TileSize + 5)), Color.Gray * .75f);
+            foreach (var template in TileTemplates.Tiles)
+            {
+                var color = template == TileTemplates.CurrentTemplate ? Color.White * .5f : Color.White;
+                SpriteBatches.UI.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
+                tl += new Point(TileSize, 0);
             }
         }
 
