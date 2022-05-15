@@ -14,12 +14,6 @@ public record class Point<T>(T X, T Y)
         : this(value, value)
     { }
 }
-public record class Size<T>(T Width, T Height)
-{
-    public Size(T value)
-        : this(value, value)
-    { }
-}
 
 public class Game1 : Game
 {
@@ -29,12 +23,12 @@ public class Game1 : Game
     /// <summary>
     /// Top Left Tile
     /// </summary>
-    public Point<int> TopLeftWorldPos { get; set; }
+    public Point TopLeftWorldPos { get; set; }
 
     /// <summary>
     /// Bottom Right Tile
     /// </summary>
-    public Point<int> BottomRightWorldPos { get; set; }
+    public Point BottomRightWorldPos { get; set; }
 
     /// <summary>
     /// Size in pixels
@@ -55,7 +49,7 @@ public class Game1 : Game
     /// <summary>
     /// Tile seen on screen
     /// </summary>
-    public Size<int> ViewSize { get; set; }
+    public Point ViewSize { get; set; }
     public Point WindowSize
         => GraphicsDevice.Viewport.TitleSafeArea.Size;
     public bool ShowChunkBorders { get; set; }
@@ -76,7 +70,7 @@ public class Game1 : Game
         }
     }
     private bool _isFullScreen = false;
-    private Size<int> _defaultWindowSize;
+    private Point _defaultWindowSize;
     public bool IsFullScreen
     {
         get => _isFullScreen;
@@ -127,7 +121,7 @@ public class Game1 : Game
     [MemberNotNull(nameof(ViewSize))]
     private void SetViewSize()
     {
-        ViewSize = new(GraphicsDevice.Viewport.Width / TileSize, GraphicsDevice.Viewport.Height / TileSize);
+        ViewSize = WindowSize / new Point(TileSize);
         SetBounds();
     }
 
@@ -135,9 +129,9 @@ public class Game1 : Game
     private void SetBounds()
     {
         var (tl, br) = (TopLeftWorldPos, BottomRightWorldPos);
-        TopLeftWorldPos = new((int)(World.Player.Position.X - ViewSize.Width / 2), (int)(World.Player.Position.Y - ViewSize.Height / 2));
-        BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
-        if (tl is null || br is null)
+        TopLeftWorldPos = new((int)(World.Player.Position.X - ViewSize.X / 2), (int)(World.Player.Position.Y - ViewSize.Y / 2));
+        BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.X, TopLeftWorldPos.Y + ViewSize.Y);
+        if (tl == default && br == default)
             return;
         for (var x = tl.X; x < br.X; x++)
             for (var y = tl.Y; y < br.Y; y++)
@@ -149,15 +143,15 @@ public class Game1 : Game
 
     public (int x, int y) WorldToScreen(float x, float y)
     {
-        var x1 = (int)((x - World.Player.Position.X + ViewSize.Width / 2f) * TileSize);
-        var y1 = (int)((y - World.Player.Position.Y + ViewSize.Height / 2f) * TileSize);
+        var x1 = (int)((x - World.Player.Position.X + ViewSize.X / 2f) * TileSize);
+        var y1 = (int)((y - World.Player.Position.Y + ViewSize.Y / 2f) * TileSize);
         return (x1, y1);
     }
 
     public (float x, float y) ScreenToWorld(int x, int y)
     {
-        var x1 = ((float)x / TileSize) - ViewSize.Width / 2f + World.Player.Position.X;
-        var y1 = ((float)y / TileSize) - ViewSize.Height / 2f + World.Player.Position.Y;
+        var x1 = ((float)x / TileSize) - ViewSize.X / 2f + World.Player.Position.X;
+        var y1 = ((float)y / TileSize) - ViewSize.Y / 2f + World.Player.Position.Y;
         if (x1 < 0)
             x1--;
         if (y1 < 0)
