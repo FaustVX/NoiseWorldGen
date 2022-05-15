@@ -20,7 +20,8 @@ public abstract class Tile
     }
 
     public interface IsWalkable { }
-    public interface IsOrePlacable { }
+    public interface IsFeaturePlacable { }
+    public interface IsOrePlacable : IsFeaturePlacable { }
 
     public virtual Color Color { get; }
     public virtual Texture2D Texture { get; }

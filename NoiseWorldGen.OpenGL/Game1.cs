@@ -56,6 +56,8 @@ public class Game1 : Game
     /// Tile seen on screen
     /// </summary>
     public Size<int> ViewSize { get; set; }
+    public Point WindowSize
+        => GraphicsDevice.Viewport.TitleSafeArea.Size;
     public bool ShowChunkBorders { get; set; }
     private bool showUI = true;
     private readonly SpriteBatch _tempUI;
@@ -100,7 +102,6 @@ public class Game1 : Game
 
     public Game1()
     {
-        World = new World(new Random().Next());
         _graphics = new GraphicsDeviceManager(this);
         _graphics.ApplyChanges();
         _defaultWindowSize = new(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
@@ -112,6 +113,7 @@ public class Game1 : Game
         SpriteBatches.UI = _tempUI = new(GraphicsDevice);
         SpriteBatches.Pixel = new Texture2D(GraphicsDevice, 1, 1);
         SpriteBatches.Pixel.SetData(new[] { Color.White });
+        World = new World(new Random().Next());
 
         TileSize = 32;
         SetViewSize();
@@ -135,7 +137,9 @@ public class Game1 : Game
         var (tl, br) = (TopLeftWorldPos, BottomRightWorldPos);
         TopLeftWorldPos = new((int)(World.Player.Position.X - ViewSize.Width / 2), (int)(World.Player.Position.Y - ViewSize.Height / 2));
         BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
-        for (var x = tl!.X; x < br!.X; x++)
+        if (tl is null || br is null)
+            return;
+        for (var x = tl.X; x < br.X; x++)
             for (var y = tl.Y; y < br.Y; y++)
                 World.GetChunkAtPos(x, y, out _, out _).IsActive = false;
         for (var x = TopLeftWorldPos.X; x < BottomRightWorldPos.X; x++)
@@ -169,6 +173,8 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        var mouseState = Mouse.GetState();
+        var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
         if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
 
@@ -177,6 +183,21 @@ public class Game1 : Game
         ShowUI ^= (Keyboard.Instance.IsClicked(Keys.F1, isExclusive: true));
         ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
         IsFullScreen ^= (Keyboard.Instance.IsClicked(Keys.Enter) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftControl, Keys.RightControl));
+        if (Keyboard.Instance.IsClicked(Keys.Tab, isExclusive: true))
+            TileTemplates.CurrentIndex = (TileTemplates.CurrentIndex + 1) % TileTemplates.Tiles.Count;
+        if (mouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed && World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _ ,out _).IsActive)
+        {
+            switch (TileTemplates.CurrentTemplate.Create())
+            {
+                case Tiles.SoilTile tile when tile is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
+                    World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                    break;
+                case Tiles.FeatureTile tile when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
+                    World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                    break;
+            }
+        }
+
 
         for (int x = TopLeftWorldPos.X - 9; x <= BottomRightWorldPos.X + 9; x += 8)
             for (int y = TopLeftWorldPos.Y - 9; y <= BottomRightWorldPos.Y + 9; y += 8)
@@ -227,6 +248,20 @@ public class Game1 : Game
             }
             var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
             SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
+            DrawHotBar();
+
+            void DrawHotBar()
+            {
+                var length = TileTemplates.Tiles.Count;
+                var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
+                SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5), new Point(TileSize * length + 10, TileSize + 5)), Color.Gray * .75f);
+                foreach (var template in TileTemplates.Tiles)
+                {
+                    var color = template == TileTemplates.CurrentTemplate ? Color.White * .5f : Color.White;
+                    SpriteBatches.UI!.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
+                    tl += new Point(TileSize, 0);
+                }
+            }
         }
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)

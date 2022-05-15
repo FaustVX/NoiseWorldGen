@@ -9,13 +9,17 @@ public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWa
 {
     [ModuleInitializer]
     internal static void Init()
-    {
-        World.OnWorldCreated += w => Noise = new(w.Seed ^ typeof(RiverWater).GetHashCode())
+        => World.OnWorldCreated += w =>
         {
-            Frequency = .015f,
-            UsedNoiseType = NoiseType.CubicFractal,
+            Noise = new(w.Seed ^ typeof(RiverWater).GetHashCode())
+            {
+                Frequency = .015f,
+                UsedNoiseType = NoiseType.CubicFractal,
+            };
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            texture.SetData(new Color[] { Color.DarkBlue });
+            TileTemplates._tiles.Add(new(() => Value, texture));
         };
-    }
 
     public static float RiverClose { get; } = .01f;
     public static FastNoise Noise { get; private set; } = default!;
