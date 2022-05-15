@@ -116,6 +116,7 @@ public class Game1 : Game
         TileSize = 32;
         SetViewSize();
 
+        Components.Add(World);
         Components.Add(World.Player);
         Components.Add(Keyboard.Instance);
     }
@@ -131,8 +132,15 @@ public class Game1 : Game
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
     private void SetBounds()
     {
+        var (tl, br) = (TopLeftWorldPos, BottomRightWorldPos);
         TopLeftWorldPos = new((int)(World.Player.Position.X - ViewSize.Width / 2), (int)(World.Player.Position.Y - ViewSize.Height / 2));
         BottomRightWorldPos = new(TopLeftWorldPos.X + ViewSize.Width, TopLeftWorldPos.Y + ViewSize.Height);
+        for (var x = tl!.X; x < br!.X; x++)
+            for (var y = tl.Y; y < br.Y; y++)
+                World.GetChunkAtPos(x, y, out _, out _).IsActive = false;
+        for (var x = TopLeftWorldPos.X; x < BottomRightWorldPos.X; x++)
+            for (var y = TopLeftWorldPos.Y; y < BottomRightWorldPos.Y; y++)
+                World.GetChunkAtPos(x, y, out _, out _).IsActive = true;
     }
 
     public (int x, int y) WorldToScreen(float x, float y)

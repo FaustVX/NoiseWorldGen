@@ -1,10 +1,11 @@
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
 using NoiseWorldGen.OpenGL.Tiles;
+using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL;
 
-public class World
+public class World : IGameComponent, IUpdateable
 {
     public static event Action<World>? OnWorldCreated;
     public FastNoise Continentalness { get; }
@@ -16,6 +17,12 @@ public class World
     public float DeepWaterHeight { get; } = -.5f;
     public int Seed { get; }
     public Player Player { get; }
+
+    bool IUpdateable.Enabled => true;
+
+    int IUpdateable.UpdateOrder => 0;
+
+    public List<Chunck> ActiveChunks { get; }
 
     private readonly Dictionary<(int x, int y), Chunck> Chunks = new();
 
@@ -34,9 +41,14 @@ public class World
         };
 
         Player = new(this);
+        ActiveChunks = new();
 
         OnWorldCreated?.Invoke(this);
     }
+
+    public event EventHandler<EventArgs>? EnabledChanged;
+
+    public event EventHandler<EventArgs>? UpdateOrderChanged;
 
     public FeatureTile? GetFeatureTileAt(int x, int y)
         => GetChunkAtPos(x, y, out var posX, out var posY).FeatureTiles[posX, posY];
@@ -80,4 +92,15 @@ public class World
         (var divY, posY) = ProperRemainder(y, Chunck.Size);
         return GetOrCreateValue(Chunks, (divX, divY), pos => new(this, divX, divY), out _);
     }
+
+    void IUpdateable.Update(GameTime gameTime)
+    {
+        foreach (var chunk in ActiveChunks)
+        {
+             chunk.Update();
+        }
+    }
+
+    void IGameComponent.Initialize()
+    { }
 }

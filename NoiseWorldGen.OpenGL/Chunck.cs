@@ -12,6 +12,22 @@ public class Chunck
     public Biome[,] Biomes { get; }
     public bool IsInitialized { get; private set; }
 
+    private bool _isActive;
+    public bool IsActive
+    {
+        get => _isActive;
+        set
+        {
+            if (value == _isActive)
+                return;
+            _isActive = value;
+            if (IsActive)
+                World.ActiveChunks.Add(this);
+            else
+                World.ActiveChunks.Remove(this);
+        }
+    }
+
     public Chunck(World world, int chunckX, int chunckY)
     {
         World = world;
@@ -36,6 +52,11 @@ public class Chunck
         PopulateArray(SoilTiles, (x, y) => GenerateSoilTile(x, y, localNoise[x, y]));
         PopulateArray(FeatureTiles, (x, y) => GenerateFeatureTile(x, y, localNoise[x, y]));
         IsInitialized = true;
+    }
+
+    public void Update()
+    {
+
     }
 
     private Biome GenerateBiome(int x, int y, World world, out float localContinentalness, out float localTemperature)
