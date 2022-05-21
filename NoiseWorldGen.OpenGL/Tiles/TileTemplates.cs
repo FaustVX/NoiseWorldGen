@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.OpenGL.Tiles;
 
@@ -13,14 +14,32 @@ public static class TileTemplates
         => Tiles[CurrentIndex];
 }
 
-public sealed class TileTemplate
+public abstract class TileTemplate
 {
-    public Func<Tiles.Tile> Create { get; }
+    public sealed class Static : TileTemplate
+    {
+        public Func<Tiles.Tile> Create { get; }
+
+        public Static(Func<Tile> create, Texture2D texture)
+            : base(texture)
+        {
+            Create = create;
+        }
+    }
+    public sealed class Dynamic : TileTemplate
+    {
+        public Func<World, Point, Tiles.Tile> Create { get; }
+
+        public Dynamic(Func<World, Point, Tile> create, Texture2D texture)
+            : base(texture)
+        {
+            Create = create;
+        }
+    }
     public Texture2D Texture { get; }
 
-    public TileTemplate(Func<Tile> create, Texture2D texture)
+    private TileTemplate(Texture2D texture)
     {
-        Create = create;
         Texture = texture;
     }
 }

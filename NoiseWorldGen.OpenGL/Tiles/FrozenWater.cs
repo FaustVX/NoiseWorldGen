@@ -11,7 +11,7 @@ public sealed class FrozenWater : SoilTile, ISingletonTile<FrozenWater>, Tile.Is
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.CornflowerBlue });
-            TileTemplates._tiles.Add(new(() => Value, texture));
+            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture));
         };
 
     public static FrozenWater Value { get; } = new();

@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using NoiseWorldGen.OpenGL.Biomes;
 using NoiseWorldGen.OpenGL.Tiles;
 
@@ -56,7 +57,11 @@ public class Chunck
 
     public void Update()
     {
-
+        foreach (var tile in FeatureTiles)
+        {
+            if (tile is TickedFeatureTile t and IUpdateable u)
+                u.Update(default!);
+        }
     }
 
     private Biome GenerateBiome(int x, int y, World world, out float localContinentalness, out float localTemperature)

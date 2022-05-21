@@ -192,15 +192,22 @@ public class Game1 : Game
         if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
         {
             if (oldMouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                switch (TileTemplates.CurrentTemplate.Create())
+            {
+                var tile = TileTemplates.CurrentTemplate switch
                 {
-                    case Tiles.SoilTile tile when tile is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
-                        World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                    TileTemplate.Static s => s.Create(),
+                    TileTemplate.Dynamic d => d.Create(World, new((int)cursorPos.x, (int)cursorPos.y)),
+                };
+                switch (tile)
+                {
+                    case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
+                        World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, st);
                         break;
-                    case Tiles.FeatureTile tile when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
-                        World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, tile);
+                    case Tiles.FeatureTile ft when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
+                        World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, ft);
                         break;
                 }
+            }
             if (oldMouseState.RightButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                 World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, null);
         }

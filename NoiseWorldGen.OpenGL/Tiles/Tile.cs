@@ -51,6 +51,53 @@ public abstract class FeatureTile : Tile
     { }
 }
 
+public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateable
+{
+
+    protected TickedFeatureTile(World world, Point pos, Color color, Texture2D? texture, Rectangle? textureRect = null)
+            : base(color, texture, textureRect)
+    {
+        World = world;
+        Pos = pos;
+    }
+
+    public World World { get; }
+    public Point Pos { get; }
+
+    bool IUpdateable.Enabled => true;
+
+    int IUpdateable.UpdateOrder => 0;
+
+    private int tickCount;
+    public int TickCount
+    {
+        get => tickCount;
+        set
+        {
+            tickCount = value;
+            if (TickCount <= 0)
+                OnTick();
+        }
+    }
+
+    protected abstract void OnTick();
+
+    public event EventHandler<EventArgs>? EnabledChanged;
+
+    public event EventHandler<EventArgs>? UpdateOrderChanged;
+
+    void IGameComponent.Initialize()
+    { }
+
+    void IUpdateable.Update(GameTime gameTime)
+        => Update();
+
+    protected virtual void Update()
+    {
+        TickCount--;
+    }
+}
+
 public interface INoise<T>
 {
     public static abstract FastNoise Noise { get; }

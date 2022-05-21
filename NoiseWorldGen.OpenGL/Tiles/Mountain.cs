@@ -11,7 +11,7 @@ public sealed class Mountain : SoilTile, ISingletonTile<Mountain>, Tile.IsWalkab
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DimGray });
-            TileTemplates._tiles.Add(new(() => Value, texture));
+            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture));
         };
 
     public static Mountain Value { get; } = new();
