@@ -14,12 +14,12 @@ public sealed class TreeCutter : TickedFeatureTile
                 texture.SetData(new Color[] { Color.Brown });
                 TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture));
             };
-    public override string Name => $"Tree Cutter ({TickCount:00} ticks, {TreeStored} trees)";
+    public override string Name => $"Tree Cutter ({TickCount} ticks, {TreeStored} trees)";
     public int TreeStored { get; set; }
 
     protected override void OnTick()
     {
-        TickCount = 10;
+        TickCount = 9;
         var rng = new Random();
         var pos = new Point(rng.Next(-10, 11), rng.Next(-10, 11)) + Pos;
         if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)

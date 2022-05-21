@@ -75,7 +75,7 @@ public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateab
         set
         {
             tickCount = value;
-            if (TickCount <= 0)
+            if (TickCount < 0)
                 OnTick();
         }
     }

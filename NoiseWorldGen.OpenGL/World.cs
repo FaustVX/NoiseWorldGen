@@ -25,6 +25,7 @@ public class World : IGameComponent, IUpdateable
     public List<Chunck> ActiveChunks { get; }
 
     private readonly Dictionary<(int x, int y), Chunck> Chunks = new();
+    private TimeSpan _lastUpdate = new();
 
     public World(int seed)
     {
@@ -95,10 +96,14 @@ public class World : IGameComponent, IUpdateable
 
     void IUpdateable.Update(GameTime gameTime)
     {
+        if (gameTime.TotalGameTime - _lastUpdate < TimeSpan.FromSeconds(1 / 10d))
+            return;
+
         foreach (var chunk in ActiveChunks)
         {
-             chunk.Update();
+            chunk.Update();
         }
+        _lastUpdate = gameTime.TotalGameTime;
     }
 
     void IGameComponent.Initialize()

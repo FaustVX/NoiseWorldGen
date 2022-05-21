@@ -14,11 +14,11 @@ public sealed class Forester : TickedFeatureTile
                 texture.SetData(new Color[] { Color.LawnGreen });
                 TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture));
             };
-    public override string Name => $"Forester ({TickCount:00}t)";
+    public override string Name => $"Forester ({TickCount}t)";
 
     protected override void OnTick()
     {
-        TickCount = 10;
+        TickCount = 9;
         var rng = new Random();
         var pos = new Point(rng.Next(-10, 11), rng.Next(-10, 11)) + Pos;
         if (World.GetFeatureTileAt(pos.X, pos.Y) is null && World.GetSoilTileAt(pos.X, pos.Y) is IsFeaturePlacable)
