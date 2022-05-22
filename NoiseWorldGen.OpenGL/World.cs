@@ -33,6 +33,7 @@ public class World : IGameComponent, IUpdateable
         Continentalness = new(Seed ^ 1)
         {
             Frequency = .005f,
+            Octaves = 4,
             UsedNoiseType = NoiseType.SimplexFractal,
         };
         Temperature = new(Seed ^ 2)
