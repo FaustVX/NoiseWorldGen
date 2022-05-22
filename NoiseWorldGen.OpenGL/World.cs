@@ -97,7 +97,7 @@ public class World : IGameComponent, IUpdateable
 
     void IUpdateable.Update(GameTime gameTime)
     {
-        if (gameTime.TotalGameTime - _lastUpdate < TimeSpan.FromSeconds(1 / 10d))
+        if (gameTime.TotalGameTime - _lastUpdate < TimeSpan.FromSeconds(1 / 20d))
             return;
 
         foreach (var chunk in ActiveChunks)
