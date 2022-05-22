@@ -36,10 +36,10 @@ public static class Extensions
     public static Point GetRandomPointinSquare(int radius)
         => new(Random.Shared.Next(-radius, radius + 1), Random.Shared.Next(-radius, radius + 1));
 
-    public static Point GetRandomPointinCircle(int radius)
+    public static Point GetRandomPointinCircle(int radius, bool isfixedDistance = false)
     {
         var angle = Random.Shared.NextSingle() * MathF.PI * 2;
-        var distance = Random.Shared.NextSingle() * (radius + 1);
+        var distance = isfixedDistance ? (radius + 1) : Random.Shared.NextSingle() * (radius + 1);
         return new((int)(distance * MathF.Cos(angle)), (int)(distance * MathF.Sin(angle)));
     }
 }

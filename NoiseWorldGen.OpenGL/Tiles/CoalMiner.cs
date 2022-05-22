@@ -14,21 +14,26 @@ public sealed class CoalMiner : TickedFeatureTile
                 texture.SetData(new Color[] { Color.DimGray });
                 TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new CoalMiner(w, p)), texture));
             };
-    public override string Name => $"Coal Miner ({TickCount} ticks, {CoalStored} Coals)";
+    public override string Name => $"Coal Miner ({TickCount} ticks, {CoalStored} coals)";
     public int CoalStored { get; set; }
+    public int Distance { get; } = 5;
 
     protected override void OnTick()
     {
         TickCount = 9;
         var rng = new Random();
-        var pos = Extensions.GetRandomPointinCircle(5) + Pos;
-        if (World.GetFeatureTileAt(pos.X, pos.Y) is CoalOre ore)
+        for (var i = 1; i <= Distance; i++)
         {
-            if (ore.Quantity > 1)
-                ore.Quantity--;
-            else
-                World.SetFeatureTileAt(pos.X, pos.Y, null);
-            CoalStored++;
+            var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
+            if (World.GetFeatureTileAt(pos.X, pos.Y) is CoalOre ore)
+            {
+                if (ore.Quantity > 1)
+                    ore.Quantity--;
+                else
+                    World.SetFeatureTileAt(pos.X, pos.Y, null);
+                CoalStored++;
+                break;
+            }
         }
     }
 

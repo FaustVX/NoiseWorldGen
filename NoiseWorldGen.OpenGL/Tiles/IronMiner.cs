@@ -16,19 +16,24 @@ public sealed class IronMiner : TickedFeatureTile
             };
     public override string Name => $"Iron Miner ({TickCount} ticks, {IronStored} irons)";
     public int IronStored { get; set; }
+    public int Distance { get; } = 5;
 
     protected override void OnTick()
     {
         TickCount = 9;
         var rng = new Random();
-        var pos = Extensions.GetRandomPointinCircle(5) + Pos;
-        if (World.GetFeatureTileAt(pos.X, pos.Y) is IronOre ore)
+        for (var i = 1; i <= Distance; i++)
         {
-            if (ore.Quantity > 1)
-                ore.Quantity--;
-            else
-                World.SetFeatureTileAt(pos.X, pos.Y, null);
-            IronStored++;
+            var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
+            if (World.GetFeatureTileAt(pos.X, pos.Y) is IronOre ore)
+            {
+                if (ore.Quantity > 1)
+                    ore.Quantity--;
+                else
+                    World.SetFeatureTileAt(pos.X, pos.Y, null);
+                IronStored++;
+                break;
+            }
         }
     }
 

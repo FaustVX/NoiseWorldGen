@@ -16,16 +16,21 @@ public sealed class TreeCutter : TickedFeatureTile
             };
     public override string Name => $"Tree Cutter ({TickCount} ticks, {TreeStored} trees)";
     public int TreeStored { get; set; }
+    public int Distance { get; } = 5;
 
     protected override void OnTick()
     {
         TickCount = 9;
         var rng = new Random();
-        var pos = Extensions.GetRandomPointinCircle(10) + Pos;
-        if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)
+        for (var i = 1; i <= Distance; i++)
         {
-            World.SetFeatureTileAt(pos.X, pos.Y, null);
-            TreeStored++;
+            var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
+            if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)
+            {
+                World.SetFeatureTileAt(pos.X, pos.Y, null);
+                TreeStored++;
+                break;
+            }
         }
     }
 
