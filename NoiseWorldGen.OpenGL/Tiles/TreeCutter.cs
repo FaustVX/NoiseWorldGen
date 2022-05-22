@@ -21,7 +21,7 @@ public sealed class TreeCutter : TickedFeatureTile
     {
         TickCount = 9;
         var rng = new Random();
-        var pos = new Point(rng.Next(-10, 11), rng.Next(-10, 11)) + Pos;
+        var pos = Extensions.GetRandomPointinCircle(10) + Pos;
         if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)
         {
             World.SetFeatureTileAt(pos.X, pos.Y, null);
