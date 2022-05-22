@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL;
 
@@ -42,4 +43,7 @@ public static class Extensions
         var distance = isfixedDistance ? (radius + 1) : Random.Shared.NextSingle() * (radius + 1);
         return new((int)(distance * MathF.Cos(angle)), (int)(distance * MathF.Sin(angle)));
     }
+
+    public static void DrawCenteredString(this SpriteBatch sb, SpriteFont font, string text, Point pos, Vector2 center, Color color)
+        => sb.DrawString(font, text, pos.ToVector2() - font.MeasureString(text) * center, color);
 }

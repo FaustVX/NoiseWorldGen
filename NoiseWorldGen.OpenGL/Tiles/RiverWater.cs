@@ -18,7 +18,7 @@ public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWa
             };
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DarkBlue });
-            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture));
+            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture, "River Water"));
         };
 
     public static float RiverClose { get; } = .01f;

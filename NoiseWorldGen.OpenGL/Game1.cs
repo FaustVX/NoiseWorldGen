@@ -96,7 +96,7 @@ public class Game1 : Game
 
     public bool IsFocused { get; private set; }
 
-    private Microsoft.Xna.Framework.Input.MouseState _currentMouse = default!;
+    private Microsoft.Xna.Framework.Input.MouseState _currentMouse = Mouse.GetState();
 
     public Game1()
     {
@@ -244,8 +244,7 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        var mouseState = Mouse.GetState();
-        var cursorPos = ScreenToWorld(mouseState.Position.X, mouseState.Position.Y);
+        var cursorPos = ScreenToWorld(_currentMouse.Position.X, _currentMouse.Position.Y);
         if (SpriteBatches.UI is not null)
         {
             if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
@@ -274,7 +273,8 @@ public class Game1 : Game
 
             var length = TileTemplates.Tiles.Count;
             var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
-            SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5), new Point(TileSize * length + 10, TileSize + 5)), Color.Gray * .75f);
+            SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
+            SpriteBatches.UI.DrawCenteredString(Textures.Font, TileTemplates.CurrentTemplate.Name, new Rectangle(tl - new Point(5, TileSize), new Point(TileSize * length + 10, TileSize * 2 + 5)).Center, new(.5f, 1), Color.White);
             foreach (var template in TileTemplates.Tiles)
             {
                 var color = template == TileTemplates.CurrentTemplate ? Color.White * .5f : Color.White;

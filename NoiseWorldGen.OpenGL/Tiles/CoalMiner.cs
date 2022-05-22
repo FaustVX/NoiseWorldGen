@@ -12,7 +12,7 @@ public sealed class CoalMiner : TickedFeatureTile
             {
                 var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
                 texture.SetData(new Color[] { Color.DimGray });
-                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new CoalMiner(w, p)), texture));
+                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new CoalMiner(w, p)), texture, "Coal Miner"));
             };
     public override string Name => $"Coal Miner ({TickCount} ticks, {CoalStored} coals)";
     public int CoalStored { get; set; }

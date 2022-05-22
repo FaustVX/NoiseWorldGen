@@ -12,7 +12,7 @@ public sealed class IronMiner : TickedFeatureTile
             {
                 var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
                 texture.SetData(new Color[] { Color.SlateGray });
-                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new IronMiner(w, p)), texture));
+                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new IronMiner(w, p)), texture, "Iron Miner"));
             };
     public override string Name => $"Iron Miner ({TickCount} ticks, {IronStored} irons)";
     public int IronStored { get; set; }

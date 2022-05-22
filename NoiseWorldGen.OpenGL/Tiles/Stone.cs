@@ -11,7 +11,7 @@ public sealed class Stone : SoilTile, ISingletonTile<Stone>, Tile.IsWalkable, Ti
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DarkGray });
-            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture));
+            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture, "Stone"));
         };
 
     public static Stone Value { get; } = new();

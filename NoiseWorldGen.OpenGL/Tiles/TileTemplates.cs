@@ -20,8 +20,8 @@ public abstract class TileTemplate
     {
         public Func<Tiles.Tile> Create { get; }
 
-        public Static(Func<Tile> create, Texture2D texture)
-            : base(texture)
+        public Static(Func<Tile> create, Texture2D texture, string name)
+            : base(texture, name)
         {
             Create = create;
         }
@@ -30,16 +30,18 @@ public abstract class TileTemplate
     {
         public Func<World, Point, Tiles.Tile> Create { get; }
 
-        public Dynamic(Func<World, Point, Tile> create, Texture2D texture)
-            : base(texture)
+        public Dynamic(Func<World, Point, Tile> create, Texture2D texture, string name)
+            : base(texture, name)
         {
             Create = create;
         }
     }
     public Texture2D Texture { get; }
+    public string Name { get; }
 
-    private TileTemplate(Texture2D texture)
+    private TileTemplate(Texture2D texture, string name)
     {
         Texture = texture;
+        Name = name;
     }
 }

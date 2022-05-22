@@ -11,7 +11,7 @@ public sealed class Tree : FeatureTile, ISingletonTile<Tree>, Tile.IsWalkable
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.Green });
-            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture));
+            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture, "Tree"));
         };
 
     public static Tree Value { get; } = new();
