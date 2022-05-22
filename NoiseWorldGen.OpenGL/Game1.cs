@@ -94,6 +94,8 @@ public class Game1 : Game
         }
     }
 
+    public bool IsFocused { get; private set; }
+
     private Microsoft.Xna.Framework.Input.MouseState _currentMouse = default!;
 
     public Game1()
@@ -117,6 +119,9 @@ public class Game1 : Game
         Components.Add(World);
         Components.Add(World.Player);
         Components.Add(Keyboard.Instance);
+
+        Activated += (_, _) => IsFocused = true;
+        Deactivated += (_, _) => IsFocused = false;
     }
 
     [MemberNotNull(nameof(TopLeftWorldPos), nameof(BottomRightWorldPos))]
@@ -169,6 +174,8 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        if (!IsFocused)
+            return;
         (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         var cursorPos = ScreenToWorld(oldMouseState.Position.X, oldMouseState.Position.Y);
         if (Keyboard.Instance.IsDown(Keys.Escape))
