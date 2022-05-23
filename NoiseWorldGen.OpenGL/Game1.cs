@@ -98,6 +98,8 @@ public class Game1 : Game
 
     private Microsoft.Xna.Framework.Input.MouseState _currentMouse = Mouse.GetState();
 
+    private TimeSpan _ups, _fps;
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -177,6 +179,7 @@ public class Game1 : Game
         (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         if (!IsFocused)
             return;
+        _ups = gameTime.ElapsedGameTime;
         var cursorPos = ScreenToWorld(oldMouseState.Position.X, oldMouseState.Position.Y);
         if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
@@ -244,6 +247,7 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
+        _fps = gameTime.ElapsedGameTime;
         var cursorPos = ScreenToWorld(_currentMouse.Position.X, _currentMouse.Position.Y);
         if (SpriteBatches.UI is not null)
         {
@@ -281,6 +285,9 @@ public class Game1 : Game
                 SpriteBatches.UI.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
                 tl += new Point(TileSize, 0);
             }
+
+            SpriteBatches.UI.DrawCenteredString(Textures.Font, $"{1/_fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
+            SpriteBatches.UI.DrawCenteredString(Textures.Font, $"{1/_ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
         }
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
