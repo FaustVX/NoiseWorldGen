@@ -14,7 +14,7 @@ public sealed class TreeCutter : TickedFeatureTile
                 texture.SetData(new Color[] { Color.Brown });
                 TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
             };
-    public override string Name => $"Tree Cutter ({TickCount} ticks, {TreeStored} trees)";
+    public override string Name => $"Tree Cutter ({TreeStored} trees)";
     public int TreeStored { get; set; }
     public int Distance { get; } = 5;
 

@@ -14,7 +14,7 @@ public sealed class Forester : TickedFeatureTile
                 texture.SetData(new Color[] { Color.LawnGreen });
                 TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture, "Forester"));
             };
-    public override string Name => $"Forester ({TickCount}t)";
+    public override string Name => $"Forester";
     public int Distance { get; } = 5;
 
     protected override void OnTick()

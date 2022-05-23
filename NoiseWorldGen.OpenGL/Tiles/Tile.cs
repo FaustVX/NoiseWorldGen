@@ -79,6 +79,7 @@ public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateab
                 OnTick();
         }
     }
+    public override Color Color => Color.Lerp(base.Color * .5f, base.Color, TickCount / 10f);
 
     protected abstract void OnTick();
 

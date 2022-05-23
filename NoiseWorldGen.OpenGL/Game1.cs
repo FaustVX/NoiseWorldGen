@@ -174,9 +174,9 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         if (!IsFocused)
             return;
-        (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         var cursorPos = ScreenToWorld(oldMouseState.Position.X, oldMouseState.Position.Y);
         if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
