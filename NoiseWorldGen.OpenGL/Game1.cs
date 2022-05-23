@@ -249,45 +249,45 @@ public class Game1 : Game
     {
         _fps = gameTime.ElapsedGameTime;
         var cursorPos = ScreenToWorld(_currentMouse.Position.X, _currentMouse.Position.Y);
-        if (SpriteBatches.UI is not null)
+        if (SpriteBatches.UI is {} sb)
         {
             if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
             {
                 var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
-                DrawTileImage(soil);
-                SpriteBatches.UI.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
+                DrawTileImage(soil, sb);
+                sb.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
                 var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
                 if (feature is not null)
                 {
-                    DrawTileImage(feature);
-                    SpriteBatches.UI.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
+                    DrawTileImage(feature, sb);
+                    sb.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
                 }
-                SpriteBatches.UI.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
+                sb.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
 
-                static void DrawTileImage(Tiles.Tile tile)
+                static void DrawTileImage(Tiles.Tile tile, SpriteBatch sb)
                 {
                     if (tile.Texture is not null)
-                        SpriteBatches.UI!.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
+                        sb.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
                     else
-                        SpriteBatches.UI!.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
+                        sb.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
                 }
                 var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
-                SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
+                sb.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
             }
 
             var length = TileTemplates.Tiles.Count;
             var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
-            SpriteBatches.UI.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
-            SpriteBatches.UI.DrawCenteredString(Textures.Font, TileTemplates.CurrentTemplate.Name, new Rectangle(tl - new Point(5, TileSize), new Point(TileSize * length + 10, TileSize * 2 + 5)).Center, new(.5f, 1), Color.White);
+            sb.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
+            sb.DrawCenteredString(Textures.Font, TileTemplates.CurrentTemplate.Name, new Rectangle(tl - new Point(5, TileSize), new Point(TileSize * length + 10, TileSize * 2 + 5)).Center, new(.5f, 1), Color.White);
             foreach (var template in TileTemplates.Tiles)
             {
                 var color = template == TileTemplates.CurrentTemplate ? Color.White * .5f : Color.White;
-                SpriteBatches.UI.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
+                sb.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
                 tl += new Point(TileSize, 0);
             }
 
-            SpriteBatches.UI.DrawCenteredString(Textures.Font, $"{1/_fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
-            SpriteBatches.UI.DrawCenteredString(Textures.Font, $"{1/_ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
+            sb.DrawCenteredString(Textures.Font, $"{1/_fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
+            sb.DrawCenteredString(Textures.Font, $"{1/_ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
         }
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
