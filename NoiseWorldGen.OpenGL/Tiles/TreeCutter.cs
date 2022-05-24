@@ -17,6 +17,7 @@ public sealed class TreeCutter : TickedFeatureTile
     public override string Name => $"Tree Cutter ({TreeStored} trees)";
     public int TreeStored { get; set; }
     public int Distance { get; } = 5;
+    private Point? _lastOrePos;
 
     protected override void OnTick()
     {
@@ -27,11 +28,21 @@ public sealed class TreeCutter : TickedFeatureTile
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
             if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)
             {
+                _lastOrePos = pos;
                 World.SetFeatureTileAt(pos.X, pos.Y, null);
                 TreeStored++;
                 break;
             }
+            else
+                _lastOrePos = null;
         }
+    }
+
+    public override void Draw(Rectangle tileRect, World world, Point pos)
+    {
+        base.Draw(tileRect, world, pos);
+        if (_lastOrePos is {} lastOre)
+            SpriteBatches.UI?.Draw(SpriteBatches.Pixel, tileRect.DrawAtWorldPos(pos, lastOre), Color.Lerp(Color.Black * 0, Color.Black * .75f, TickCount / 10f));
     }
 
     private TreeCutter(World world, Point pos)

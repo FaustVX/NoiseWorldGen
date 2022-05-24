@@ -35,6 +35,14 @@ public abstract class Tile
     public static int GetInterpolatedNoise<T>(float x, float y)
         where T : IInterpolation<T>
         => IInterpolation<T>.GetValue(x, y);
+
+    public virtual void Draw(Rectangle tileRect, World world, Point pos)
+    {
+        if (Texture is {} text)
+            SpriteBatches.Game.Draw(text, tileRect, TextureRect, Color.White);
+        else
+            SpriteBatches.Game.Draw(SpriteBatches.Pixel, tileRect, Color);
+    }
 }
 
 public abstract class SoilTile : Tile

@@ -16,6 +16,7 @@ public sealed class Forester : TickedFeatureTile
             };
     public override string Name => $"Forester";
     public int Distance { get; } = 5;
+    private Point? _lastOrePos;
 
     protected override void OnTick()
     {
@@ -26,10 +27,20 @@ public sealed class Forester : TickedFeatureTile
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
             if (World.GetFeatureTileAt(pos.X, pos.Y) is null && World.GetSoilTileAt(pos.X, pos.Y) is IsFeaturePlacable)
             {
+                _lastOrePos = pos;
                 World.SetFeatureTileAt(pos.X, pos.Y, Tree.Value);
                 break;
             }
+            else
+                _lastOrePos = null;
         }
+    }
+
+    public override void Draw(Rectangle tileRect, World world, Point pos)
+    {
+        base.Draw(tileRect, world, pos);
+        if (_lastOrePos is {} lastOre)
+            SpriteBatches.UI?.Draw(SpriteBatches.Pixel, tileRect.DrawAtWorldPos(pos, lastOre), Color.Lerp(Color.Black * 0, Color.Black * .75f, TickCount / 10f));
     }
 
     private Forester(World world, Point pos)

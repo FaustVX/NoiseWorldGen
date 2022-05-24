@@ -46,4 +46,7 @@ public static class Extensions
 
     public static void DrawCenteredString(this SpriteBatch sb, SpriteFont font, string text, Point pos, Vector2 center, Color color)
         => sb.DrawString(font, text, pos.ToVector2() - font.MeasureString(text) * center, color);
+
+    public static Rectangle DrawAtWorldPos(this in Rectangle rect, Point from, Point to)
+        => new((to - from) * rect.Size + rect.Location, rect.Size);
 }
