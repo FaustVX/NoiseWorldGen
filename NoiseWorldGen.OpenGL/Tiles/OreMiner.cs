@@ -33,8 +33,17 @@ public abstract class OreMiner<TOre> : TickedFeatureTile
     public override void Draw(Rectangle tileRect, World world, Point pos)
     {
         base.Draw(tileRect, world, pos);
-        if (_lastOrePos is {} lastOre)
-            SpriteBatches.UI?.Draw(SpriteBatches.Pixel, tileRect.DrawAtWorldPos(pos, lastOre), Color.Lerp(Color.Black * 0, Color.Black * .75f, TickCount / 10f));
+        if (_lastOrePos is {} lastOre && SpriteBatches.UI is {} sb)
+        {
+            var destRectangle = tileRect.DrawAtWorldPos(pos, lastOre);
+            var line = destRectangle.Center - tileRect.Center;
+            var angleRad = MathF.Atan2(line.Y, line.X);
+            var length = line.ToVector2().Length();
+            sb.Draw(SpriteBatches.Pixel, tileRect.Center.ToVector2(), null, Lerp(Color.Red, TickCount), angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
+            sb.Draw(SpriteBatches.Pixel, destRectangle, Lerp(Color.Black, TickCount));
+            static Color Lerp(Color color, int tickCount)
+                => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
+        }
     }
 
     protected OreMiner(World world, Point pos, string oreName, Color color, Texture2D? texture, Rectangle? textureRect = null)
