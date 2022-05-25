@@ -305,12 +305,12 @@ public class Game1 : Game
             soil.Draw(new(new(x1, y1), new(TileSize)), World, new(x, y));
             feature?.Draw(new(new(x1, y1), new(TileSize)), World, new(x, y));
 
-            if (ShowChunkBorders)
+            if (ShowChunkBorders && SpriteBatches.UI is {} sb)
             {
                 if (x % Chunck.Size == 0)
-                    SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
+                    sb.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
                 if (y % Chunck.Size == 0)
-                    SpriteBatches.Game.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
+                    sb.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
             }
         }
     }
