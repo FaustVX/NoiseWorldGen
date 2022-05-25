@@ -17,6 +17,7 @@ public class World : IGameComponent, IUpdateable
     public float DeepWaterHeight { get; } = -.5f;
     public int Seed { get; }
     public Player Player { get; }
+    public ulong GameTime { get; private set; }
 
     bool IUpdateable.Enabled => true;
 
@@ -105,6 +106,7 @@ public class World : IGameComponent, IUpdateable
             chunk.Update();
         }
         _lastUpdate = gameTime.TotalGameTime;
+        GameTime++;
     }
 
     void IGameComponent.Initialize()

@@ -26,10 +26,10 @@ public sealed class TreeCutter : TickedFeatureTile
         for (var i = 1; i <= Distance; i++)
         {
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
-            if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree)
+            if (World.GetFeatureTileAt(pos.X, pos.Y) is Tree tree)
             {
                 _lastOrePos = pos;
-                World.SetFeatureTileAt(pos.X, pos.Y, null);
+                tree.Mine(World, pos, this);
                 TreeStored++;
                 break;
             }

@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using DotnetNoise;
 using static DotnetNoise.FastNoise;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
@@ -16,6 +15,12 @@ public sealed class IronOre : FeatureTile, IOre, IInterpolation<IronOre>, Tile.I
             Frequency = .02f,
             UsedNoiseType = NoiseType.CubicFractal,
         };
+    }
+
+    public override void Mine(World world, Point pos, Tile tile)
+    {
+        if (--Quantity <= 0)
+            world.SetFeatureTileAt(pos.X, pos.Y, null);
     }
 
     public static uint MaxQuantity { get; } = 1000;

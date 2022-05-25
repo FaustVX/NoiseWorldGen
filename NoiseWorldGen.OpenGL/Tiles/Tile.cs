@@ -28,6 +28,11 @@ public abstract class Tile
     public virtual Rectangle TextureRect { get; }
     public abstract string Name { get; }
 
+    public virtual void Mine(World world, Point pos, Tile tile)
+    { }
+    public virtual void Mine(World world, Player player)
+    { }
+
     public static float GetNoise<T>(float x, float y)
         where T : INoise<T>
         => T.Noise.GetNoise(x, y);
@@ -57,6 +62,10 @@ public abstract class FeatureTile : Tile
     protected FeatureTile(Color color, Texture2D? texture, Rectangle? textureRect = null)
         : base(color, texture, textureRect)
     { }
+    public override void Mine(World world, Point pos, Tile tile)
+        => world.SetFeatureTileAt(pos.X, pos.Y, null);
+    public override void Mine(World world, Player player)
+        => world.SetFeatureTileAt((int)player.Position.X, (int)player.Position.Y, null);
 }
 
 public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateable

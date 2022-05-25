@@ -17,6 +17,12 @@ public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.I
         };
     }
 
+    public override void Mine(World world, Point pos, Tile tile)
+    {
+        if (--Quantity <= 0)
+            world.SetFeatureTileAt(pos.X, pos.Y, null);
+    }
+
     public static uint MaxQuantity { get; } = 1000;
     public static FastNoise Noise { get; private set; } = default!;
     public static Interpolation Interpolation { get; } = new(0, (int)MaxQuantity)
