@@ -78,7 +78,7 @@ public class Chunck
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var biome = Biomes[x, y];
-        return biome.GenerateSoilTile(tileX, tileY, localNoise.continentalness, localNoise.temperature);
+        return biome.GenerateSoilTile(new(tileX, tileY), localNoise.continentalness, localNoise.temperature);
     }
 
     private FeatureTile? GenerateFeatureTile(int x, int y, (float continentalness, float temperature) localNoise)
@@ -86,7 +86,7 @@ public class Chunck
         int tileX = ChunckX * Size + x;
         int tileY = ChunckY * Size + y;
         var biome = Biomes[x, y];
-        return biome.GenerateFeatureTile(tileX, tileY, localNoise.continentalness, localNoise.temperature);
+        return biome.GenerateFeatureTile(new(tileX, tileY), localNoise.continentalness, localNoise.temperature);
     }
 
     public World World { get; }

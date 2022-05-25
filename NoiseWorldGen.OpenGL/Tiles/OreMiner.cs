@@ -18,7 +18,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile
         for (var i = 1; i <= Distance; i++)
         {
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
-            if (World.GetFeatureTileAt(pos.X, pos.Y) is {} tile and TOre)
+            if (World.GetFeatureTileAt(pos) is {} tile and TOre)
             {
                 _lastOrePos = pos;
                 tile.Mine(World, pos, this);

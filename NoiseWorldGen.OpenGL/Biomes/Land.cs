@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL.Biomes;
@@ -20,14 +21,14 @@ public sealed class Land : Biome, Biome.IBiome<Land>
     public static Land Create(World world)
         => new(world);
 
-    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(Point pos, float localContinentalness, float localTemperature)
     {
-        var tile = World.GetSoilTileAt(x, y);
+        var tile = World.GetSoilTileAt(pos);
         if (tile is Tile.IsOrePlacable)
         {
             IOre? ore = null;
-            GenerateOre(x, y, ref ore, qty => new IronOre(qty));
-            GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
+            GenerateOre(pos, ref ore, qty => new IronOre(qty));
+            GenerateOre(pos, ref ore, qty => new CoalOre(qty));
             return ore as FeatureTile;
         }
         return null;

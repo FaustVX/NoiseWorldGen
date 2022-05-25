@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.Xna.Framework;
 using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL.Biomes;
@@ -18,9 +19,9 @@ public abstract class Biome
     public abstract string Name { get; }
     public abstract SoilTile BaseSoil { get; }
 
-    public virtual SoilTile GenerateSoilTile(int x, int y, float localContinentalness, float localTemperature)
+    public virtual SoilTile GenerateSoilTile(Point pos, float localContinentalness, float localTemperature)
         => BaseSoil;
-    public abstract FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature);
+    public abstract FeatureTile? GenerateFeatureTile(Point pos, float localContinentalness, float localTemperature);
 
     protected Biome(World world)
     {
@@ -63,9 +64,9 @@ public abstract class Biome
             => type.GetMethod("Create")!.CreateDelegate<Func<World, Biome>>()(world);
     }
 
-    protected static void GenerateOre<T>(int tileX, int tileY, ref IOre? ore, Func<uint, T> ctor)
+    protected static void GenerateOre<T>(Point pos, ref IOre? ore, Func<uint, T> ctor)
         where T : IInterpolation<T>, IOre
-        => ore = Tile.GetInterpolatedNoise<T>(tileX, tileY) is > 0 and var qty && (ore?.Quantity ?? 0) < qty
+        => ore = Tile.GetInterpolatedNoise<T>(pos.X, pos.Y) is > 0 and var qty && (ore?.Quantity ?? 0) < qty
             ? ctor((uint)qty)
             : ore;
 }

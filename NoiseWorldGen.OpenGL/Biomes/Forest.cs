@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using DotnetNoise;
+using Microsoft.Xna.Framework;
 using NoiseWorldGen.OpenGL.Tiles;
 using static DotnetNoise.FastNoise;
 
@@ -28,18 +29,18 @@ public sealed class Forest : Biome, Biome.IBiome<Forest>
     public static Forest Create(World world)
         => new(world);
 
-    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(Point pos, float localContinentalness, float localTemperature)
     {
-        if (IsTreePos(x, y, localTemperature))
+        if (IsTreePos(pos, localTemperature))
             return Tree.Value;
 
         IOre? ore = null;
-        GenerateOre(x, y, ref ore, qty => new IronOre(qty));
-        GenerateOre(x, y, ref ore, qty => new CoalOre(qty));
+        GenerateOre(pos, ref ore, qty => new IronOre(qty));
+        GenerateOre(pos, ref ore, qty => new CoalOre(qty));
         return ore as FeatureTile;
     }
 
-    private static bool IsTreePos(int x, int y, float temperature)
+    private static bool IsTreePos(Point pos, float temperature)
     {
         var threshold = temperature switch
         {
@@ -48,7 +49,7 @@ public sealed class Forest : Biome, Biome.IBiome<Forest>
             >= 2/3f => .5f,
             _ => 1f,
         };
-        return Noise.GetNoise(x, y) > threshold;
+        return Noise.GetNoise(pos.X, pos.Y) > threshold;
     }
 
     public override string Name => "Forest";

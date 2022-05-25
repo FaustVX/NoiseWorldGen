@@ -8,13 +8,6 @@ using Mouse = Microsoft.Xna.Framework.Input.Mouse;
 
 namespace NoiseWorldGen.OpenGL;
 
-public record class Point<T>(T X, T Y)
-{
-    public Point(T value)
-        : this(value, value)
-    { }
-}
-
 public class Game1 : Game
 {
     private readonly GraphicsDeviceManager _graphics;
@@ -144,28 +137,28 @@ public class Game1 : Game
             return;
         for (var x = tl.X; x < br.X; x++)
             for (var y = tl.Y; y < br.Y; y++)
-                World.GetChunkAtPos(x, y, out _, out _).IsActive = false;
+                World.GetChunkAtPos(new(x, y), out _, out _).IsActive = false;
         for (var x = TopLeftWorldPos.X; x < BottomRightWorldPos.X; x++)
             for (var y = TopLeftWorldPos.Y; y < BottomRightWorldPos.Y; y++)
-                World.GetChunkAtPos(x, y, out _, out _).IsActive = true;
+                World.GetChunkAtPos(new(x, y), out _, out _).IsActive = true;
     }
 
-    public (int x, int y) WorldToScreen(float x, float y)
+    public Point WorldToScreen(Vector2 pos)
     {
-        var x1 = (int)((x - World.Player.Position.X + ViewSize.X / 2f) * TileSize);
-        var y1 = (int)((y - World.Player.Position.Y + ViewSize.Y / 2f) * TileSize);
-        return (x1, y1);
+        var x1 = (int)((pos.X - World.Player.Position.X + ViewSize.X / 2f) * TileSize);
+        var y1 = (int)((pos.Y - World.Player.Position.Y + ViewSize.Y / 2f) * TileSize);
+        return new(x1, y1);
     }
 
-    public (float x, float y) ScreenToWorld(int x, int y)
+    public Vector2 ScreenToWorld(Point pos)
     {
-        var x1 = ((float)x / TileSize) - ViewSize.X / 2f + World.Player.Position.X;
-        var y1 = ((float)y / TileSize) - ViewSize.Y / 2f + World.Player.Position.Y;
+        var x1 = ((float)pos.X / TileSize) - ViewSize.X / 2f + World.Player.Position.X;
+        var y1 = ((float)pos.Y / TileSize) - ViewSize.Y / 2f + World.Player.Position.Y;
         if (x1 < 0)
             x1--;
         if (y1 < 0)
             y1--;
-        return (x1, y1);
+        return new(x1, y1);
     }
 
     protected override void LoadContent()
@@ -180,7 +173,7 @@ public class Game1 : Game
         if (!IsFocused)
             return;
         _ups = gameTime.ElapsedGameTime;
-        var cursorPos = ScreenToWorld(oldMouseState.Position.X, oldMouseState.Position.Y);
+        var cursorPos = ScreenToWorld(oldMouseState.Position).ToPoint();
         if (Keyboard.Instance.IsDown(Keys.Escape))
             Exit();
 
@@ -199,32 +192,32 @@ public class Game1 : Game
         else if (oldMouseState.ScrollWheelValue > _currentMouse.ScrollWheelValue)
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + 1, TileTemplates.Tiles.Count).remainder;
 
-        if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
+        if (World.GetChunkAtPos(cursorPos, out _, out _).IsActive)
         {
             if (oldMouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
                 var tile = TileTemplates.CurrentTemplate switch
                 {
                     TileTemplate.Static s => s.Create(),
-                    TileTemplate.Dynamic d => d.Create(World, new((int)cursorPos.x, (int)cursorPos.y)),
+                    TileTemplate.Dynamic d => d.Create(World, cursorPos),
                 };
                 switch (tile)
                 {
-                    case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y) is null:
-                        World.SetSoilTileAt((int)cursorPos.x, (int)cursorPos.y, st);
+                    case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt(cursorPos) is null:
+                        World.SetSoilTileAt(cursorPos, st);
                         break;
-                    case Tiles.FeatureTile ft when World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y) is Tiles.Tile.IsFeaturePlacable:
-                        World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, ft);
+                    case Tiles.FeatureTile ft when World.GetSoilTileAt(cursorPos) is Tiles.Tile.IsFeaturePlacable:
+                        World.SetFeatureTileAt(cursorPos, ft);
                         break;
                 }
             }
             if (oldMouseState.RightButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                World.SetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y, null);
+                World.SetFeatureTileAt(cursorPos, null);
         }
 
         for (int x = TopLeftWorldPos.X - 9; x <= BottomRightWorldPos.X + 9; x += 8)
             for (int y = TopLeftWorldPos.Y - 9; y <= BottomRightWorldPos.Y + 9; y += 8)
-                World.GetChunkAtPos(x, y, out _, out _).Initialize();
+                World.GetChunkAtPos(new(x, y), out _, out _).Initialize();
 
         base.Update(gameTime);
 
@@ -248,21 +241,21 @@ public class Game1 : Game
     protected override void Draw(GameTime gameTime)
     {
         _fps = gameTime.ElapsedGameTime;
-        var cursorPos = ScreenToWorld(_currentMouse.Position.X, _currentMouse.Position.Y);
+        var cursorPos = ScreenToWorld(_currentMouse.Position).ToPoint();
         if (SpriteBatches.UI is {} sb)
         {
-            if (World.GetChunkAtPos((int)cursorPos.x, (int)cursorPos.y, out _, out _).IsActive)
+            if (World.GetChunkAtPos(cursorPos, out _, out _).IsActive)
             {
-                var soil = World.GetSoilTileAt((int)cursorPos.x, (int)cursorPos.y);
+                var soil = World.GetSoilTileAt(cursorPos);
                 DrawTileImage(soil, sb);
                 sb.DrawString(Textures.Font, soil.Name, new Vector2(32, 25), Color.AliceBlue);
-                var feature = World.GetFeatureTileAt((int)cursorPos.x, (int)cursorPos.y);
+                var feature = World.GetFeatureTileAt(cursorPos);
                 if (feature is not null)
                 {
                     DrawTileImage(feature, sb);
                     sb.DrawString(Textures.Font, feature.Name, new Vector2(32, 50), Color.AliceBlue);
                 }
-                sb.DrawString(Textures.Font, World.GetBiomeAt((int)cursorPos.x, (int)cursorPos.y).Name, new Vector2(32, 0), Color.AliceBlue);
+                sb.DrawString(Textures.Font, World.GetBiomeAt(cursorPos).Name, new Vector2(32, 0), Color.AliceBlue);
 
                 static void DrawTileImage(Tiles.Tile tile, SpriteBatch sb)
                 {
@@ -271,8 +264,8 @@ public class Game1 : Game
                     else
                         sb.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
                 }
-                var currentTilePos = WorldToScreen((int)cursorPos.x, (int)cursorPos.y);
-                sb.Draw(SpriteBatches.Pixel, new Rectangle(new(currentTilePos.x, currentTilePos.y), new(tileSize)), Color.Wheat * .25f);
+                var currentTilePos = WorldToScreen(cursorPos.ToVector2());
+                sb.Draw(SpriteBatches.Pixel, new Rectangle(currentTilePos, new(tileSize)), Color.Wheat * .25f);
             }
 
             var length = TileTemplates.Tiles.Count;
@@ -292,25 +285,25 @@ public class Game1 : Game
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
             for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y + 1; y++)
-                DrawTile(x, y);
+                DrawTile(new(x, y));
 
         base.Draw(gameTime);
 
-        void DrawTile(int x, int y)
+        void DrawTile(Point pos)
         {
-            var soil = World.GetSoilTileAt(x, y);
-            var feature = World.GetFeatureTileAt(x, y);
-            var (x1, y1) = WorldToScreen(x, y);
+            var soil = World.GetSoilTileAt(pos);
+            var feature = World.GetFeatureTileAt(pos);
+            var screen = WorldToScreen(pos.ToVector2());
 
-            soil.Draw(new(new(x1, y1), new(TileSize)), World, new(x, y));
-            feature?.Draw(new(new(x1, y1), new(TileSize)), World, new(x, y));
+            soil.Draw(new(screen, new(TileSize)), World, pos);
+            feature?.Draw(new(screen, new(TileSize)), World, pos);
 
             if (ShowChunkBorders && SpriteBatches.UI is {} sb)
             {
-                if (x % Chunck.Size == 0)
-                    sb.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, 1, TileSize), Color.Black);
-                if (y % Chunck.Size == 0)
-                    sb.Draw(SpriteBatches.Pixel, new Rectangle(x1, y1, TileSize, 1), Color.Black);
+                if (pos.X % Chunck.Size == 0)
+                    sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(1, TileSize)), Color.Black);
+                if (pos.Y % Chunck.Size == 0)
+                    sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(TileSize, 1)), Color.Black);
             }
         }
     }

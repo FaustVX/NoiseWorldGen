@@ -63,9 +63,9 @@ public abstract class FeatureTile : Tile
         : base(color, texture, textureRect)
     { }
     public override void Mine(World world, Point pos, Tile tile)
-        => world.SetFeatureTileAt(pos.X, pos.Y, null);
+        => world.SetFeatureTileAt(pos, null);
     public override void Mine(World world, Player player)
-        => world.SetFeatureTileAt((int)player.Position.X, (int)player.Position.Y, null);
+        => world.SetFeatureTileAt(player.Position.ToPoint(), null);
 }
 
 public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateable

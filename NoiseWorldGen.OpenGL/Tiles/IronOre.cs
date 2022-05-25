@@ -20,7 +20,7 @@ public sealed class IronOre : FeatureTile, IOre, IInterpolation<IronOre>, Tile.I
     public override void Mine(World world, Point pos, Tile tile)
     {
         if (--Quantity <= 0)
-            world.SetFeatureTileAt(pos.X, pos.Y, null);
+            world.SetFeatureTileAt(pos, null);
     }
 
     public static uint MaxQuantity { get; } = 1000;

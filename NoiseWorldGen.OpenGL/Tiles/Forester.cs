@@ -25,10 +25,10 @@ public sealed class Forester : TickedFeatureTile
         for (var i = 1; i <= Distance; i++)
         {
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
-            if (World.GetFeatureTileAt(pos.X, pos.Y) is null && World.GetSoilTileAt(pos.X, pos.Y) is IsFeaturePlacable)
+            if (World.GetFeatureTileAt(pos) is null && World.GetSoilTileAt(pos) is IsFeaturePlacable)
             {
                 _lastOrePos = pos;
-                World.SetFeatureTileAt(pos.X, pos.Y, Tree.Value);
+                World.SetFeatureTileAt(pos, Tree.Value);
                 break;
             }
             else

@@ -12,7 +12,7 @@ public class Player : IGameComponent, IUpdateable
     public event EventHandler<EventArgs>? UpdateOrderChanged;
 
     public World World { get; }
-    public Point<float> Position { get; set; } = new Point<float>(.5f);
+    public Vector2 Position { get; set; } = new(.5f);
     public float Speed { get; } = .75f;
     public float SpeedMultipler { get; } = 5;
     public float FlySpeedMultiplier { get; } = 3f;
@@ -42,7 +42,7 @@ public class Player : IGameComponent, IUpdateable
             X = Position.X + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
             Y = Position.Y + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
         };
-        if (IsFlying || World.GetSoilTileAt((int)pos.X, (int)pos.Y) is Tile.IsWalkable)
+        if (IsFlying || World.GetSoilTileAt(pos.ToPoint()) is Tile.IsWalkable)
             Position = pos;
         IsFlying ^= Keyboard.Instance.IsClicked(Keys.Space);
     }

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using NoiseWorldGen.OpenGL.Tiles;
 
 namespace NoiseWorldGen.OpenGL.Biomes;
@@ -20,7 +21,7 @@ public sealed class FrozenOcean : Biome, Biome.IBiome<FrozenOcean>
     public static FrozenOcean Create(World world)
         => new(world);
 
-    public override FeatureTile? GenerateFeatureTile(int x, int y, float localContinentalness, float localTemperature)
+    public override FeatureTile? GenerateFeatureTile(Point pos, float localContinentalness, float localTemperature)
     {
         return null;
     }
