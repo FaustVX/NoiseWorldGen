@@ -57,11 +57,12 @@ public class Chunck
 
     public void Update()
     {
-        foreach (var tile in FeatureTiles)
-        {
-            if (tile is TickedFeatureTile t and IUpdateable u)
-                u.Update(default!);
-        }
+        for (int x = 0; x < Size; x++)
+            for (int y = 0; y < Size; y++)
+            {
+                SoilTiles[x, y].Update(World, new(Size * ChunckX + x, Size * ChunckY + y));
+                FeatureTiles[x, y]?.Update(World, new(Size * ChunckX + x, Size * ChunckY + y));
+            }
     }
 
     private Biome GenerateBiome(int x, int y, World world, out float localContinentalness, out float localTemperature)

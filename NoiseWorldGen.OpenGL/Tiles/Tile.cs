@@ -48,6 +48,8 @@ public abstract class Tile
         else
             SpriteBatches.Game.Draw(SpriteBatches.Pixel, tileRect, Color);
     }
+    public virtual void Update(World world, Point pos)
+    { }
 }
 
 public abstract class SoilTile : Tile
@@ -68,7 +70,7 @@ public abstract class FeatureTile : Tile
         => world.SetFeatureTileAt(player.Position.ToPoint(), null);
 }
 
-public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateable
+public abstract class TickedFeatureTile : FeatureTile
 {
 
     protected TickedFeatureTile(World world, Point pos, Color color, Texture2D? texture, Rectangle? textureRect = null)
@@ -80,10 +82,6 @@ public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateab
 
     public World World { get; }
     public Point Pos { get; }
-
-    bool IUpdateable.Enabled => true;
-
-    int IUpdateable.UpdateOrder => 0;
 
     private int tickCount;
     public int TickCount
@@ -100,17 +98,7 @@ public abstract class TickedFeatureTile : FeatureTile, IGameComponent, IUpdateab
 
     protected abstract void OnTick();
 
-    public event EventHandler<EventArgs>? EnabledChanged;
-
-    public event EventHandler<EventArgs>? UpdateOrderChanged;
-
-    void IGameComponent.Initialize()
-    { }
-
-    void IUpdateable.Update(GameTime gameTime)
-        => Update();
-
-    protected virtual void Update()
+    public override void Update(World world, Point pos)
     {
         TickCount--;
     }
