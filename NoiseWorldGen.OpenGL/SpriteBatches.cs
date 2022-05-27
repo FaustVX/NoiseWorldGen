@@ -1,10 +1,21 @@
+using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL;
 
 public static class SpriteBatches
 {
-    public static Texture2D Pixel { get; internal set; } = default!;
-    public static SpriteBatch Game { get; internal set; } = default!;
-    public static SpriteBatch? UI { get; internal set; } = default!;
+    [ModuleInitializer]
+    internal static void Init()
+        => Game1.OnCreateGraphicDevice += gd =>
+        {
+            SpriteBatches.Game = new(gd);
+            SpriteBatches.UI = new(gd);
+            SpriteBatches.Pixel = new Texture2D(gd, 1, 1);
+            SpriteBatches.Pixel.SetData(new[] { Color.White });
+        };
+    public static Texture2D Pixel { get; private set; } = default!;
+    public static SpriteBatch Game { get; private set; } = default!;
+    public static SpriteBatch? UI { get; set; } = default!;
 }

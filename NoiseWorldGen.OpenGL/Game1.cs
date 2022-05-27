@@ -10,6 +10,7 @@ namespace NoiseWorldGen.OpenGL;
 
 public class Game1 : Game
 {
+    public static event Action<GraphicsDevice>? OnCreateGraphicDevice;
     private readonly GraphicsDeviceManager _graphics;
     public World World { get; }
 
@@ -102,10 +103,8 @@ public class Game1 : Game
         Window.ClientSizeChanged += (s, e) => SetViewSize();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        SpriteBatches.Game = new(GraphicsDevice);
-        SpriteBatches.UI = _tempUI = new(GraphicsDevice);
-        SpriteBatches.Pixel = new Texture2D(GraphicsDevice, 1, 1);
-        SpriteBatches.Pixel.SetData(new[] { Color.White });
+        OnCreateGraphicDevice?.Invoke(GraphicsDevice);
+        _tempUI = SpriteBatches.UI!;
         World = new World(new Random().Next());
 
         TileSize = 32;
