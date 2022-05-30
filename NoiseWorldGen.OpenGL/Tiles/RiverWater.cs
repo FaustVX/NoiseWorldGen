@@ -16,7 +16,7 @@ public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWa
                 Frequency = .015f,
                 UsedNoiseType = NoiseType.CubicFractal,
             };
-        Game1.OnLoadContent += _ =>
+        Game.OnLoadContent += _ =>
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DarkBlue });

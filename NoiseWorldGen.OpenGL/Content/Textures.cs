@@ -7,7 +7,7 @@ public static class Textures
 {
     [ModuleInitializer]
     internal static void Init()
-        => Game1.OnLoadContent += cm =>
+        => Game.OnLoadContent += cm =>
         {
             Ores = cm.Load<Texture2D>($@"{nameof(SpriteSheets)}\{nameof(Ores)}");
             Font = cm.Load<SpriteFont>($@"Fonts\{nameof(Font)}");

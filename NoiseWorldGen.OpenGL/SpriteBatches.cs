@@ -8,7 +8,7 @@ public static class SpriteBatches
 {
     [ModuleInitializer]
     internal static void Init()
-        => Game1.OnCreateGraphicDevice += gd =>
+        => OpenGL.Game.OnCreateGraphicDevice += gd =>
         {
             SpriteBatches.Game = new(gd);
             SpriteBatches.UI = new(gd);

@@ -7,7 +7,7 @@ public sealed class Stone : SoilTile, ISingletonTile<Stone>, Tile.IsWalkable, Ti
 {
     [ModuleInitializer]
     internal static void Init()
-        => Game1.OnLoadContent += _ =>
+        => Game.OnLoadContent += _ =>
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DarkGray });

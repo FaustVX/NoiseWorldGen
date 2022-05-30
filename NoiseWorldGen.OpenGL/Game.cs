@@ -9,7 +9,7 @@ using Mouse = Microsoft.Xna.Framework.Input.Mouse;
 
 namespace NoiseWorldGen.OpenGL;
 
-public class Game1 : Game
+public class Game : Microsoft.Xna.Framework.Game
 {
     public static event Action<GraphicsDevice>? OnCreateGraphicDevice;
     public static event Action<ContentManager>? OnLoadContent;
@@ -96,7 +96,7 @@ public class Game1 : Game
 
     private TimeSpan _ups, _fps;
 
-    public Game1()
+    public Game()
     {
         _graphics = new GraphicsDeviceManager(this);
         _graphics.ApplyChanges();
