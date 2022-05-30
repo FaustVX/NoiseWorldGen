@@ -7,7 +7,7 @@ public sealed class FrozenMountain : SoilTile, ISingletonTile<FrozenMountain>, T
 {
     [ModuleInitializer]
     internal static void Init()
-        => World.OnWorldCreated += _ =>
+        => Game1.OnLoadContent += _ =>
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.WhiteSmoke });

@@ -8,12 +8,12 @@ public sealed class Forester : TickedFeatureTile
 
     [ModuleInitializer]
     internal static void Init()
-            => World.OnWorldCreated += _ =>
-            {
-                var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
-                texture.SetData(new Color[] { Color.LawnGreen });
-                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture, "Forester"));
-            };
+        => Game1.OnLoadContent += _ =>
+        {
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            texture.SetData(new Color[] { Color.LawnGreen });
+            TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture, "Forester"));
+        };
     public override string Name => $"Forester";
     public int Distance { get; } = 5;
     private Point? _lastOrePos;

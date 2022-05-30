@@ -9,13 +9,12 @@ public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.I
 {
     [ModuleInitializer]
     internal static void Init()
-    {
-        World.OnWorldCreated += w => Noise = new(w.Seed ^ typeof(CoalOre).GetHashCode())
-        {
-            Frequency = .02f,
-            UsedNoiseType = NoiseType.CubicFractal,
-        };
-    }
+        => World.OnWorldCreated += w =>
+            Noise = new(w.Seed ^ typeof(CoalOre).GetHashCode())
+            {
+                Frequency = .02f,
+                UsedNoiseType = NoiseType.CubicFractal,
+            };
 
     public override void Mine(World world, Point pos, Tile tile)
     {

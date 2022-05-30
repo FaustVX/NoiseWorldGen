@@ -13,10 +13,11 @@ public sealed class Forest : Biome, Biome.IBiome<Forest>
     internal static void Init()
     {
         AddBiome<Forest>();
-        World.OnWorldCreated += w => Noise = new(w.Seed ^ typeof(RiverWater).GetHashCode())
-        {
-            UsedNoiseType = NoiseType.WhiteNoise,
-        };
+        World.OnWorldCreated += w =>
+            Noise = new(w.Seed ^ typeof(RiverWater).GetHashCode())
+            {
+                UsedNoiseType = NoiseType.WhiteNoise,
+            };
     }
 
     public Forest(World world)

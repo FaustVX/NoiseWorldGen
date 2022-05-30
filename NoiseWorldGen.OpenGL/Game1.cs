@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.OpenGL.Content;
 using NoiseWorldGen.OpenGL.Inputs;
@@ -11,6 +12,7 @@ namespace NoiseWorldGen.OpenGL;
 public class Game1 : Game
 {
     public static event Action<GraphicsDevice>? OnCreateGraphicDevice;
+    public static event Action<ContentManager>? OnLoadContent;
     private readonly GraphicsDeviceManager _graphics;
     public World World { get; }
 
@@ -162,8 +164,8 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
-        Textures.Ores = Content.Load<Texture2D>($@"{nameof(OpenGL.Content.SpriteSheets)}\{nameof(OpenGL.Content.SpriteSheets.Ores)}");
-        Textures.Font = Content.Load<SpriteFont>($@"Fonts\{nameof(OpenGL.Content.Textures.Font)}");
+        OnLoadContent?.Invoke(Content);
+        Microsoft.Xna.Framework.Audio.SoundEffect.DistanceScale = 000000010000000f;
     }
 
     protected override void Update(GameTime gameTime)

@@ -8,12 +8,12 @@ public sealed class TreeCutter : TickedFeatureTile
 
     [ModuleInitializer]
     internal static void Init()
-            => World.OnWorldCreated += _ =>
-            {
-                var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
-                texture.SetData(new Color[] { Color.Brown });
-                TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
-            };
+        => Game1.OnLoadContent += _ =>
+        {
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            texture.SetData(new Color[] { Color.Brown });
+            TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
+        };
     public override string Name => $"Tree Cutter ({TreeStored} trees)";
     public int TreeStored { get; set; }
     public int Distance { get; } = 5;
