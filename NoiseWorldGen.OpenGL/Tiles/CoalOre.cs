@@ -9,12 +9,25 @@ public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.I
 {
     [ModuleInitializer]
     internal static void Init()
-        => World.OnWorldCreated += w =>
+    {
+        World.OnWorldCreated += w =>
             Noise = new(w.Seed ^ typeof(CoalOre).GetHashCode())
             {
                 Frequency = .02f,
                 UsedNoiseType = NoiseType.CubicFractal,
             };
+        Game.OnLoadContent += _ =>
+        {
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            texture.SetData(new Color[] { Color.Black });
+            TileTemplates.Add<CoalOre>(new TileTemplate.Dynamic(static (w, p) =>
+            {
+                IOre ore = default!;
+                Biomes.Biome.GenerateOre(p, ref ore!, static q => new CoalOre(q));
+                return ore is CoalOre o ? o : new(1);
+            }, texture, "Coal Ore"));
+        };
+    }
 
     public override void Mine(World world, Point pos, Tile tile)
     {
@@ -30,7 +43,6 @@ public sealed class CoalOre : FeatureTile, IOre, IInterpolation<CoalOre>, Tile.I
     };
     public uint Quantity { get; set; }
     public override string Name => $"Coal Ore ({Quantity})";
-
 
     public CoalOre(uint quantity)
         : base(Color.Black, Content.SpriteSheets.Ores.Instance.Texture, Content.SpriteSheets.Ores.CoalOre)

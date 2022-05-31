@@ -64,7 +64,7 @@ public abstract class Biome
             => type.GetMethod("Create")!.CreateDelegate<Func<World, Biome>>()(world);
     }
 
-    protected static void GenerateOre<T>(Point pos, ref IOre? ore, Func<uint, T> ctor)
+    public static void GenerateOre<T>(Point pos, ref IOre? ore, Func<uint, T> ctor)
         where T : IInterpolation<T>, IOre
         => ore = Tile.GetInterpolatedNoise<T>(pos.X, pos.Y) is > 0 and var qty && (ore?.Quantity ?? 0) < qty
             ? ctor((uint)qty)
