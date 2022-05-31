@@ -2,6 +2,7 @@ using DotnetNoise;
 using static DotnetNoise.FastNoise;
 using NoiseWorldGen.OpenGL.Tiles;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace NoiseWorldGen.OpenGL;
 
@@ -85,6 +86,28 @@ public class World : IGameComponent, IUpdateable
 
     public void SetBiomeAt(Point pos, Biomes.Biome biome)
         => GetChunkAtPos(pos, out var posX, out var posY).Biomes[posX, posY] = biome;
+
+    public Networks.Network? GetNetworkAt(Point pos)
+        => Networks.Network.Networks.FirstOrDefault(n => n.World == this && n.Positions.Contains(pos));
+
+    public void PlaceTile(Point pos, Tile tile)
+    {
+        switch (tile)
+        {
+            case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || GetFeatureTileAt(pos) is null:
+                SetSoilTileAt(pos, st);
+                break;
+            case Tiles.FeatureTile ft when GetSoilTileAt(pos) is Tiles.Tile.IsFeaturePlacable:
+                SetFeatureTileAt(pos, ft);
+                if (ft is Tile.INetwork t)
+                {
+                    var network = Networks.Network.GetOrCreateNetworkAt(this, pos);
+                    network.AddTile(pos);
+                    t.Network = network;
+                }
+                break;
+        }
+    }
 
     public Chunck GetChunkAtPosAtPlayer(out int posX, out int posY)
         => GetChunkAtPos(Player.Position.ToPoint(), out posX, out posY);

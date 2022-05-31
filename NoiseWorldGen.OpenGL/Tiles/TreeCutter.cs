@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public sealed class TreeCutter : TickedFeatureTile
+public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
 {
 
     [ModuleInitializer]
@@ -17,6 +17,7 @@ public sealed class TreeCutter : TickedFeatureTile
     public override string Name => $"Tree Cutter ({TreeStored} trees)";
     public int TreeStored { get; set; }
     public int Distance { get; } = 5;
+    public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
 
     protected override void OnTick()

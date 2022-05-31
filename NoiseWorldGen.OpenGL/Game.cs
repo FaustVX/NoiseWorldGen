@@ -202,15 +202,7 @@ public class Game : Microsoft.Xna.Framework.Game
                     TileTemplate.Static s => s.Create(),
                     TileTemplate.Dynamic d => d.Create(World, cursorPos),
                 };
-                switch (tile)
-                {
-                    case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || World.GetFeatureTileAt(cursorPos) is null:
-                        World.SetSoilTileAt(cursorPos, st);
-                        break;
-                    case Tiles.FeatureTile ft when World.GetSoilTileAt(cursorPos) is Tiles.Tile.IsFeaturePlacable:
-                        World.SetFeatureTileAt(cursorPos, ft);
-                        break;
-                }
+                World.PlaceTile(cursorPos, tile);
             }
             if (oldMouseState.RightButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                 World.SetFeatureTileAt(cursorPos, null);

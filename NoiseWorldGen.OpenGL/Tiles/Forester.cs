@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public sealed class Forester : TickedFeatureTile
+public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
 {
 
     [ModuleInitializer]
@@ -16,11 +16,22 @@ public sealed class Forester : TickedFeatureTile
         };
     public override string Name => $"Forester";
     public int Distance { get; } = 5;
-    private Point? _lastOrePos;
+    public Networks.Network Network { get; set; } = default!;
 
+    private Point? _lastOrePos;
     protected override void OnTick()
     {
         TickCount = 9;
+        if (!Network.ContainsFeature<TreeCutter>(static tc =>
+        {
+            if(tc.TreeStored > 0)
+            {
+                tc.TreeStored--;
+                return true;
+            }
+            return false;
+        }))
+            return;
         var rng = new Random();
         for (var i = 1; i <= Distance; i++)
         {

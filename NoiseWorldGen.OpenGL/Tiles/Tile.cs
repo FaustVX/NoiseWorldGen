@@ -22,6 +22,15 @@ public abstract class Tile
     public interface IsWalkable { }
     public interface IsFeaturePlacable { }
     public interface IsOrePlacable : IsFeaturePlacable { }
+    public interface INetwork
+    {
+        public Networks.Network Network { get; set; }
+    }
+    public interface INetworkSupplier : INetwork
+    {
+        // public 
+    }
+    public interface INetworkReceiver : INetwork { }
 
     public virtual Color Color { get; }
     public virtual Texture2D Texture { get; }

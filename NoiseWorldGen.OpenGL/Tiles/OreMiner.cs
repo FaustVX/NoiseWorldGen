@@ -3,13 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public abstract class OreMiner<TOre> : TickedFeatureTile
+public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     where TOre : IOre
 {
     public string OreName { get; }
     public override string Name => $"{OreName} Miner ({OreStored} {OreName})";
     public int OreStored { get; set; }
     public virtual int Distance { get; } = 5;
+    public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
 
     protected override void OnTick()
