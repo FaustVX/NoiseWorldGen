@@ -49,4 +49,12 @@ public static class Extensions
 
     public static Rectangle DrawAtWorldPos(this in Rectangle rect, Point from, Point to)
         => new((to - from) * rect.Size + rect.Location, rect.Size);
+
+    public static void DrawLine(this SpriteBatch sb, Vector2 start, Vector2 end, Color color)
+    {
+        var line = end - start;
+        var angleRad = MathF.Atan2(line.Y, line.X);
+        var length = line.Length();
+        sb.Draw(SpriteBatches.Pixel, start, null, color, angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
+    }
 }

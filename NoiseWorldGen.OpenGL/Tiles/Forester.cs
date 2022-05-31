@@ -42,10 +42,7 @@ public sealed class Forester : TickedFeatureTile
         if (_lastOrePos is {} lastOre && SpriteBatches.UI is {} sb)
         {
             var destRectangle = tileRect.DrawAtWorldPos(pos, lastOre);
-            var line = destRectangle.Center - tileRect.Center;
-            var angleRad = MathF.Atan2(line.Y, line.X);
-            var length = line.ToVector2().Length();
-            sb.Draw(SpriteBatches.Pixel, tileRect.Center.ToVector2(), null, Lerp(Color.Red, TickCount), angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
+            sb.DrawLine(tileRect.Center.ToVector2(), destRectangle.Center.ToVector2(), Lerp(Color.Red, TickCount));
             sb.Draw(SpriteBatches.Pixel, destRectangle, Lerp(Color.Black, TickCount));
             static Color Lerp(Color color, int tickCount)
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
