@@ -6,12 +6,24 @@ namespace NoiseWorldGen.OpenGL;
 
 public static class TileTemplates
 {
-    internal static readonly List<TileTemplate> _tiles = new();
+    private static readonly List<TileTemplate> _tiles = new();
+    private static readonly List<Type> _types = new();
 
     public static IReadOnlyList<TileTemplate> Tiles => _tiles;
     public static int CurrentIndex { get; set; }
     public static TileTemplate CurrentTemplate
         => Tiles[CurrentIndex];
+
+    public static TileTemplate Get<T>()
+        where T : Tile
+        => _tiles[_types.IndexOf(typeof(T))];
+
+    public static void Add<T>(TileTemplate tileTemplate)
+        where T : Tile
+    {
+        _types.Add(typeof(T));
+        _tiles.Add(tileTemplate);
+    }
 }
 
 public abstract class TileTemplate

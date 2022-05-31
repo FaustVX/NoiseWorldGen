@@ -11,7 +11,7 @@ public sealed class FrozenMountain : SoilTile, ISingletonTile<FrozenMountain>, T
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.WhiteSmoke });
-            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture, "Frozen Mountain"));
+            TileTemplates.Add<FrozenMountain>(new TileTemplate.Static(() => Value, texture, "Frozen Mountain"));
         };
 
     public static FrozenMountain Value { get; } = new();

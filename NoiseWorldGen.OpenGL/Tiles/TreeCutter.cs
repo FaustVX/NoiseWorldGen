@@ -12,7 +12,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.Brown });
-            TileTemplates._tiles.Add(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
+            TileTemplates.Add<TreeCutter>(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
         };
     public override string Name => $"Tree Cutter ({TreeStored} trees)";
     public int TreeStored { get; set; }

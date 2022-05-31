@@ -11,7 +11,7 @@ public sealed class Water : SoilTile, ISingletonTile<Water>
         {
             var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
             texture.SetData(new Color[] { Color.DarkBlue });
-            TileTemplates._tiles.Add(new TileTemplate.Static(() => Value, texture, "Water"));
+            TileTemplates.Add<Water>(new TileTemplate.Static(() => Value, texture, "Water"));
         };
 
     public static Water Value { get; } = new();
