@@ -17,6 +17,7 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
     public override string Name => $"Forester";
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
+    public TileStack Quantity { get; }
 
     private Point? _lastOrePos;
     protected override void OnTick()
@@ -24,9 +25,9 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
         TickCount = 9;
         if (!Network.ContainsFeature<TreeCutter>(static tc =>
         {
-            if(tc.TreeStored > 0)
+            if(!tc.TreeStored.IsEmpty)
             {
-                tc.TreeStored--;
+                tc.TreeStored.Quantity--;
                 return true;
             }
             return false;
@@ -62,5 +63,7 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
 
     private Forester(World world, Point pos)
         : base(world, pos, Color.LawnGreen, default!)
-    { }
+    {
+        Quantity = new(TileTemplates.Get<Tree>());
+    }
 }

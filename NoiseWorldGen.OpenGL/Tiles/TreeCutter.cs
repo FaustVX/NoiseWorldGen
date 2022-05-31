@@ -15,7 +15,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             TileTemplates.Add<TreeCutter>(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
         };
     public override string Name => $"Tree Cutter ({TreeStored} trees)";
-    public int TreeStored { get; set; }
+    public TileStack TreeStored { get; }
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
@@ -31,7 +31,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             {
                 _lastOrePos = pos;
                 tree.Mine(World, pos, this);
-                TreeStored++;
+                TreeStored.Quantity++;
                 break;
             }
             else
@@ -54,5 +54,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
 
     private TreeCutter(World world, Point pos)
         : base(world, pos, Color.Brown, default!)
-    { }
+    {
+        TreeStored = new(TileTemplates.Get<Tree>());
+    }
 }

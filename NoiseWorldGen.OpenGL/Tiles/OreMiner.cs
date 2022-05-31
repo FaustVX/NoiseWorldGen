@@ -8,7 +8,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
 {
     public string OreName { get; }
     public override string Name => $"{OreName} Miner ({OreStored} {OreName})";
-    public int OreStored { get; set; }
+    public TileStack OreStored { get; }
     public virtual int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
@@ -23,7 +23,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
             {
                 _lastOrePos = pos;
                 tile.Mine(World, pos, this);
-                OreStored++;
+                OreStored.Quantity++;
                 break;
             }
             else
@@ -44,9 +44,10 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
         }
     }
 
-    protected OreMiner(World world, Point pos, string oreName, Color color, Texture2D? texture, Rectangle? textureRect = null)
+    protected OreMiner(World world, Point pos, TileTemplate tileTemplate, Color color, Texture2D? texture, Rectangle? textureRect = null)
         : base(world, pos, color, texture, textureRect)
     {
-        OreName = oreName;
+        OreName = tileTemplate.Name;
+        OreStored = new(tileTemplate);
     }
 }
