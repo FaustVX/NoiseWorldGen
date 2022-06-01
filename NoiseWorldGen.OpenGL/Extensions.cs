@@ -50,6 +50,9 @@ public static class Extensions
     public static Rectangle DrawAtWorldPos(this in Rectangle rect, Point from, Point to)
         => new((to - from) * rect.Size + rect.Location, rect.Size);
 
+    public static void DrawLine(this SpriteBatch sb, Point start, Point end, Color color)
+        => DrawLine(sb, start.ToVector2(), end.ToVector2(), color);
+
     public static void DrawLine(this SpriteBatch sb, Vector2 start, Vector2 end, Color color)
     {
         var line = end - start;

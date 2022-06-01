@@ -279,7 +279,7 @@ public class Game : Microsoft.Xna.Framework.Game
                 foreach (var tile in network.Positions)
                     if (network.World.GetFeatureTileAt(tile) is Tiles.Tile.INetwork n)
                         foreach (var connection in network.GetConnection(n))
-                            sb.DrawLine(WorldToScreen(n.Pos.ToVector2() + Vector2.One / 2).ToVector2(), WorldToScreen(connection.Pos.ToVector2() + Vector2.One / 2).ToVector2(), Color.SkyBlue);
+                            sb.DrawLine(WorldToScreen(n.Pos.ToVector2() + Vector2.One / 2), WorldToScreen(connection.Pos.ToVector2() + Vector2.One / 2), Color.SkyBlue);
         }
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)

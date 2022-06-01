@@ -47,7 +47,7 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
         if (_lastOrePos is {} lastOre && SpriteBatches.UI is {} sb)
         {
             var destRectangle = tileRect.DrawAtWorldPos(pos, lastOre);
-            sb.DrawLine(tileRect.Center.ToVector2(), destRectangle.Center.ToVector2(), Lerp(Color.Red, TickCount));
+            sb.DrawLine(tileRect.Center, destRectangle.Center, Lerp(Color.Red, TickCount));
             sb.Draw(SpriteBatches.Pixel, destRectangle, Lerp(Color.Black, TickCount));
             static Color Lerp(Color color, int tickCount)
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
