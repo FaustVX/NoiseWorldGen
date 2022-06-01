@@ -73,6 +73,11 @@ public class Network
         }
     }
 
+    public Tiles.Tile.INetworkSupplier? Request(TileTemplate tile)
+        => _positions.Select(World.GetFeatureTileAt)
+            .OfType<Tiles.Tile.INetworkSupplier>()
+            .FirstOrDefault(t => t.CanSupply(tile));
+
     public static void Remove(Network network)
     {
         Networks.Remove(network);

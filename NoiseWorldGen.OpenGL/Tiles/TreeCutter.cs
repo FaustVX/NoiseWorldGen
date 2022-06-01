@@ -14,7 +14,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             texture.SetData(new Color[] { Color.Brown });
             TileTemplates.Add<TreeCutter>(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
         };
-    public override string Name => $"Tree Cutter ({TreeStored} trees)";
+    public override string Name => $"Tree Cutter ({TreeStored})";
     public TileStack TreeStored { get; }
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
@@ -23,6 +23,9 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
     protected override void OnTick()
     {
         TickCount = 9;
+        _lastOrePos = null;
+        if (TreeStored.RemainingQuantity < 3)
+            return;
         var rng = new Random();
         for (var i = 1; i <= Distance; i++)
         {
@@ -34,8 +37,6 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
                 TreeStored.Quantity++;
                 break;
             }
-            else
-                _lastOrePos = null;
         }
     }
 
@@ -51,6 +52,12 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
         }
     }
+
+    public bool CanSupply(TileTemplate tileTemplate)
+        => TreeStored.Tile == tileTemplate && !TreeStored.IsEmpty;
+
+    public int TrySupply(TileTemplate tileTemplate, int maxQuantity)
+        => CanSupply(tileTemplate) ? TreeStored.Request(maxQuantity) : 0;
 
     private TreeCutter(World world, Point pos)
         : base(world, pos, Color.Brown, default!)

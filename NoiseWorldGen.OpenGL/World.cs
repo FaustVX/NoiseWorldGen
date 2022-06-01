@@ -97,7 +97,7 @@ public class World : IGameComponent, IUpdateable
             case Tiles.SoilTile st when st is Tiles.Tile.IsFeaturePlacable || GetFeatureTileAt(pos) is null:
                 SetSoilTileAt(pos, st);
                 break;
-            case Tiles.FeatureTile ft when GetSoilTileAt(pos) is Tiles.Tile.IsFeaturePlacable:
+            case Tiles.FeatureTile ft when GetSoilTileAt(pos) is Tiles.Tile.IsFeaturePlacable && GetFeatureTileAt(pos) is null:
                 SetFeatureTileAt(pos, ft);
                 if (ft is Tile.INetwork t)
                 {

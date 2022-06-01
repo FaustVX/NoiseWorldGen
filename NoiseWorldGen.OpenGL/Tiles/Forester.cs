@@ -14,24 +14,18 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
             texture.SetData(new Color[] { Color.LawnGreen });
             TileTemplates.Add<Forester>(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture, "Forester"));
         };
-    public override string Name => $"Forester";
+    public override string Name => $"Forester ({TreeStored})";
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
-    public TileStack Quantity { get; }
+    public TileStack TreeStored { get; }
 
     private Point? _lastOrePos;
     protected override void OnTick()
     {
         TickCount = 9;
-        if (!Network.ContainsFeature<TreeCutter>(static tc =>
-        {
-            if(!tc.TreeStored.IsEmpty)
-            {
-                tc.TreeStored.Quantity--;
-                return true;
-            }
-            return false;
-        }))
+        _lastOrePos = null;
+        TreeStored.Quantity += Network.Request(TreeStored.Tile)?.TrySupply(TreeStored.Tile, TreeStored.RemainingQuantity) ?? 0;
+        if (TreeStored.IsEmpty)
             return;
         var rng = new Random();
         for (var i = 1; i <= Distance; i++)
@@ -40,11 +34,10 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
             if (World.GetFeatureTileAt(pos) is null && World.GetSoilTileAt(pos) is IsFeaturePlacable)
             {
                 _lastOrePos = pos;
+                TreeStored.Quantity--;
                 World.SetFeatureTileAt(pos, Tree.Value);
                 break;
             }
-            else
-                _lastOrePos = null;
         }
     }
 
@@ -64,6 +57,6 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
     private Forester(World world, Point pos)
         : base(world, pos, Color.LawnGreen, default!)
     {
-        Quantity = new(TileTemplates.Get<Tree>());
+        TreeStored = new(TileTemplates.Get<Tree>());
     }
 }

@@ -7,7 +7,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     where TOre : IOre
 {
     public string OreName { get; }
-    public override string Name => $"{OreName} Miner ({OreStored} {OreName})";
+    public override string Name => $"{OreName} Miner ({OreStored})";
     public TileStack OreStored { get; }
     public virtual int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
@@ -16,6 +16,9 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     protected override void OnTick()
     {
         TickCount = 9;
+        _lastOrePos = null;
+        if (OreStored.IsFull)
+            return;
         for (var i = 1; i <= Distance; i++)
         {
             var pos = Extensions.GetRandomPointinCircle(i, isfixedDistance: true) + Pos;
@@ -26,8 +29,6 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
                 OreStored.Quantity++;
                 break;
             }
-            else
-                _lastOrePos = null;
         }
     }
 
@@ -43,6 +44,12 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
         }
     }
+
+    public bool CanSupply(TileTemplate tileTemplate)
+        => OreStored.Tile == tileTemplate && !OreStored.IsEmpty;
+
+    public int TrySupply(TileTemplate tileTemplate, int maxQuantity)
+        => CanSupply(tileTemplate) ? OreStored.Request(maxQuantity) : 0;
 
     protected OreMiner(World world, Point pos, TileTemplate tileTemplate, Color color, Texture2D? texture, Rectangle? textureRect = null)
         : base(world, pos, color, texture, textureRect)
