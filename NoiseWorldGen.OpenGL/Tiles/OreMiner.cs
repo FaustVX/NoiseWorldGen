@@ -22,10 +22,10 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
         if (OreStored.IsFull)
             return;
         Network.Request(TreeStored);
-        if (Energy < 8 && !TreeStored.IsEmpty)
+        if (Energy < 10 && !TreeStored.IsEmpty)
         {
             TreeStored.Quantity--;
-            Energy += 2;
+            Energy += 5;
         }
         if (Energy <= 0)
             return;

@@ -24,6 +24,10 @@ public class Network
     public World World { get; }
     public string? Name { get; set; }
 
+    private readonly Dictionary<Point, List<Point>> _connections = new();
+    public IEnumerable<Tiles.Tile.INetwork> GetConnection(Tiles.Tile.INetwork Tile)
+        => _connections[Tile.Pos].Select(World.GetFeatureTileAt).OfType<Tiles.Tile.INetwork>();
+
     public Network(World world, string? name = null)
     {
         if (name is not null)
@@ -39,12 +43,22 @@ public class Network
             return;
         var rangeSquared = MaxRange * MaxRange;
         if (_positions.Count == 0)
+        {
             _positions.Add(position);
+            _connections[position] = new();
+        }
         else
             foreach (var pos in _positions)
                 if ((pos - position).ToVector2().LengthSquared() <= rangeSquared)
                 {
                     _positions.Add(position);
+                    var connection = _connections[position] = new();
+                    foreach (var pos0 in _positions)
+                        if ((pos0 - position).ToVector2().LengthSquared() <= rangeSquared)
+                        {
+                            connection.Add(pos0);
+                            _connections[pos0].Add(position);
+                        }
                     break;
                 }
     }

@@ -34,7 +34,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             {
                 _lastOrePos = pos;
                 tree.Mine(World, pos, this);
-                TreeStored.Quantity++;
+                TreeStored.Quantity += 3;
                 break;
             }
         }
