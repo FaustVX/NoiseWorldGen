@@ -53,11 +53,11 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
         }
     }
 
-    public bool CanSupply(TileTemplate tileTemplate)
+    bool INetworkSupplier.CanSupply(TileTemplate tileTemplate)
         => TreeStored.Tile == tileTemplate && !TreeStored.IsEmpty;
 
-    public int TrySupply(TileTemplate tileTemplate, int maxQuantity)
-        => CanSupply(tileTemplate) ? TreeStored.Request(maxQuantity) : 0;
+    int INetworkSupplier.TrySupply(TileTemplate tileTemplate, int maxQuantity)
+        => ((INetworkSupplier)this).CanSupply(tileTemplate) ? TreeStored.Request(maxQuantity) : 0;
 
     private TreeCutter(World world, Point pos)
         : base(world, pos, Color.Brown, default!)

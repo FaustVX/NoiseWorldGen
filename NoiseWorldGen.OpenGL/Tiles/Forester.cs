@@ -24,7 +24,7 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
     {
         TickCount = 9;
         _lastOrePos = null;
-        TreeStored.Quantity += Network.Request(TreeStored.Tile)?.TrySupply(TreeStored.Tile, TreeStored.RemainingQuantity) ?? 0;
+        Network.Request(TreeStored);
         if (TreeStored.IsEmpty)
             return;
         var rng = new Random();

@@ -78,6 +78,17 @@ public class Network
             .OfType<Tiles.Tile.INetworkSupplier>()
             .FirstOrDefault(t => t.CanSupply(tile));
 
+    public bool Request(TileStack stack)
+    {
+        if (stack.IsFull)
+            return false;
+        var quantity = Request(stack.Tile)?.TrySupply(stack.Tile, stack.RemainingQuantity);
+        if (quantity is not (int q and > 0))
+            return false;
+        stack.Quantity += q;
+        return true;
+    }
+
     public static void Remove(Network network)
     {
         Networks.Remove(network);
