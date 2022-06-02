@@ -15,13 +15,18 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
 
+    public override void Update(World world, Point pos)
+    {
+        Network.Request(TreeStored);
+        base.Update(world, pos);
+    }
+
     protected override void OnTick()
     {
         TickCount = 9;
         _lastOrePos = null;
         if (OreStored.IsFull)
             return;
-        Network.Request(TreeStored);
         if (Energy < 10 && !TreeStored.IsEmpty)
         {
             TreeStored.Quantity--;

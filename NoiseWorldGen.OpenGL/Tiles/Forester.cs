@@ -20,11 +20,16 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
     public TileStack TreeStored { get; }
 
     private Point? _lastOrePos;
+
+    public override void Update(World world, Point pos)
+    {
+        Network.Request(TreeStored);
+        base.Update(world, pos);
+    }
     protected override void OnTick()
     {
         TickCount = 9;
         _lastOrePos = null;
-        Network.Request(TreeStored);
         if (TreeStored.IsEmpty)
             return;
         var rng = new Random();

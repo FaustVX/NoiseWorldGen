@@ -124,6 +124,11 @@ public class World : IGameComponent, IUpdateable
         if (gameTime.TotalGameTime - _lastUpdate < TimeSpan.FromSeconds(1 / 20d))
             return;
 
+        foreach (var network in Networks.Network.Networks)
+        {
+            network.Update();
+        }
+
         foreach (var chunk in ActiveChunks)
         {
             chunk.Update();

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Concurrent;
 using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.OpenGL.Networks;
@@ -23,6 +24,7 @@ public class Network
     public int MaxRange { get; } = 8;
     public World World { get; }
     public string? Name { get; set; }
+    private readonly ConcurrentBag<TileStack> _request = new();
 
     private readonly Dictionary<Point, List<Point>> _connections = new();
     public IEnumerable<Tiles.Tile.INetwork> GetConnection(Tiles.Tile.INetwork Tile)
@@ -87,20 +89,23 @@ public class Network
         }
     }
 
-    public Tiles.Tile.INetworkSupplier? Request(TileTemplate tile)
+    public void Update()
+    {
+        foreach (var stack in _request)
+            if (!stack.IsFull && Request(stack.Tile)?.TrySupply(stack.Tile, 1) is int q and > 0)
+                stack.Quantity += q;
+        _request.Clear();
+    }
+
+    private Tiles.Tile.INetworkSupplier? Request(TileTemplate tile)
         => _positions.Select(World.GetFeatureTileAt)
             .OfType<Tiles.Tile.INetworkSupplier>()
             .FirstOrDefault(t => t.CanSupply(tile));
 
-    public bool Request(TileStack stack)
+    public void Request(TileStack stack)
     {
-        if (stack.IsFull)
-            return false;
-        var quantity = Request(stack.Tile)?.TrySupply(stack.Tile, stack.RemainingQuantity);
-        if (quantity is not (int q and > 0))
-            return false;
-        stack.Quantity += q;
-        return true;
+        if (!stack.IsFull)
+            _request.Add(stack);
     }
 
     public static void Remove(Network network)
