@@ -88,7 +88,7 @@ public class World : IGameComponent, IUpdateable
         => GetChunkAtPos(pos, out var posX, out var posY).Biomes[posX, posY] = biome;
 
     public Networks.Network? GetNetworkAt(Point pos)
-        => Networks.Network.Networks.FirstOrDefault(n => n.World == this && n.Positions.Contains(pos));
+        => Networks.Network.Networks.FirstOrDefault(n => n.World == this && n.Tiles.Any(t => t.Pos == pos));
 
     public void PlaceTile(Point pos, Tile tile)
     {
@@ -102,7 +102,7 @@ public class World : IGameComponent, IUpdateable
                 if (ft is Tile.INetwork t)
                 {
                     var network = Networks.Network.GetOrCreateNetworkAt(this, pos);
-                    network.AddTile(pos);
+                    network.AddTile(t);
                     t.Network = network;
                 }
                 break;

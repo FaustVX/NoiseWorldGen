@@ -7,84 +7,78 @@ namespace NoiseWorldGen.OpenGL.Networks;
 public class Network
 {
     public static HashSet<Network> Networks { get; } = new();
-    public static Dictionary<string, Network> NamedNetworks { get; } = new();
     public static Network GetOrCreateNetworkAt(World world, Point position)
     {
         foreach (var network in Networks)
         {
             var rangeSquared = network.MaxRange * network.MaxRange;
-            foreach (var pos in network._positions)
-                if ((pos - position).ToVector2().LengthSquared() <= rangeSquared)
+            foreach (var pos in network._tiles)
+                if ((pos.Pos - position).ToVector2().LengthSquared() <= rangeSquared)
                     return network;
         }
         return new(world, null);
     }
-    private readonly HashSet<Point> _positions = new();
-    public IReadOnlySet<Point> Positions => _positions;
+    private readonly HashSet<Tiles.Tile.INetwork> _tiles = new();
+    private readonly HashSet<Tiles.Tile.INetworkReceiver> _receivers = new();
+    private readonly HashSet<Tiles.Tile.INetworkSupplier> _suppliers = new();
+    public IReadOnlySet<Tiles.Tile.INetwork> Tiles => _tiles;
     public int MaxRange { get; } = 8;
     public World World { get; }
-    public string? Name { get; set; }
     private readonly ConcurrentBag<ItemStack> _request = new();
 
-    private readonly Dictionary<Point, List<Point>> _connections = new();
+    private readonly Dictionary<Tiles.Tile.INetwork, List<Tiles.Tile.INetwork>> _connections = new();
     public IEnumerable<Tiles.Tile.INetwork> GetConnection(Tiles.Tile.INetwork Tile)
-        => _connections[Tile.Pos].Select(World.GetFeatureTileAt).OfType<Tiles.Tile.INetwork>();
+        => _connections[Tile];
 
     public Network(World world, string? name = null)
     {
-        if (name is not null)
-            NamedNetworks.Add(name, this);
         Networks.Add(this);
         World = world;
-        Name = name;
     }
 
-    public void AddTile(Point position)
+    public void AddTile(Tiles.Tile.INetwork tile)
     {
-        if (World.GetFeatureTileAt(position) is not Tiles.Tile.INetwork)
-            return;
         var rangeSquared = MaxRange * MaxRange;
-        if (_positions.Count == 0)
+        if (_tiles.Count == 0)
         {
-            _positions.Add(position);
-            _connections[position] = new();
+            AddTileImpl(tile);
         }
         else
-            foreach (var pos in _positions)
-                if ((pos - position).ToVector2().LengthSquared() <= rangeSquared)
+            foreach (var tile0 in _tiles)
+                if ((tile0.Pos - tile.Pos).ToVector2().LengthSquared() <= rangeSquared)
                 {
-                    _positions.Add(position);
-                    var connection = _connections[position] = new();
-                    foreach (var pos0 in _positions)
-                        if ((pos0 - position).ToVector2().LengthSquared() <= rangeSquared)
+                    var connection = AddTileImpl(tile);
+                    foreach (var tile1 in _tiles)
+                        if ((tile1.Pos - tile.Pos).ToVector2().LengthSquared() <= rangeSquared)
                         {
-                            connection.Add(pos0);
-                            _connections[pos0].Add(position);
+                            connection.Add(tile1);
+                            _connections[tile1].Add(tile);
                         }
                     break;
                 }
     }
 
-    public bool ContainsFeature<T>(Func<T, bool>? predicate = null)
-        where T : Tiles.FeatureTile, Tiles.Tile.INetwork
-        => _positions.Select(World.GetFeatureTileAt)
-            .OfType<T>()
-            .Any(predicate ?? (static _ => true));
+    private IList<Tiles.Tile.INetwork> AddTileImpl(Tiles.Tile.INetwork tile)
+    {
+        _tiles.Add(tile);
+        if (tile is Tiles.Tile.INetworkReceiver r)
+            _receivers.Add(r);
+        if (tile is Tiles.Tile.INetworkSupplier s)
+            _suppliers.Add(s);
+        return _connections[tile] = new();
+    }
 
     public void Merge(Network other)
     {
         if (other.World != World)
             return;
-        if ((Name, other.Name) is (null, not null))
-            other.Merge(this);
         else
         {
-            Remove(other);
-            foreach (var pos in other._positions)
+            Networks.Remove(other);
+            foreach (var tile in other._tiles)
             {
-                _positions.Add(pos);
-                if (World.GetFeatureTileAt(pos) is Tiles.Tile.INetwork tile)
-                    tile.Network = this;
+                AddTileImpl(tile);
+                tile.Network = this;
             }
         }
     }
@@ -98,20 +92,11 @@ public class Network
     }
 
     private Tiles.Tile.INetworkSupplier? Request(Items.Item item)
-        => _positions.Select(World.GetFeatureTileAt)
-            .OfType<Tiles.Tile.INetworkSupplier>()
-            .FirstOrDefault(t => t.CanSupply(item));
+        => _suppliers.FirstOrDefault(t => t.CanSupply(item));
 
     public void Request(ItemStack stack)
     {
         if (!stack.IsFull)
             _request.Add(stack);
-    }
-
-    public static void Remove(Network network)
-    {
-        Networks.Remove(network);
-        if (network.Name is not null)
-            NamedNetworks.Remove(network.Name);
     }
 }
