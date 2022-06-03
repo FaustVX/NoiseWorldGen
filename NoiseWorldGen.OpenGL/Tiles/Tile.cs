@@ -29,8 +29,8 @@ public abstract class Tile
     }
     public interface INetworkSupplier : INetwork
     {
-        public bool CanSupply(TileTemplate tileTemplate);
-        public int TrySupply(TileTemplate tileTemplate, int maxQuantity);
+        public bool CanSupply(Items.Item item);
+        public int TrySupply(Items.Item item, int maxQuantity);
     }
     public interface INetworkReceiver : INetwork { }
 

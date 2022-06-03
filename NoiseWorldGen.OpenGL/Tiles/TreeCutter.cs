@@ -14,8 +14,9 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             texture.SetData(new Color[] { Color.Brown });
             TileTemplates.Add<TreeCutter>(new TileTemplate.Dynamic((static (w, p) => new TreeCutter(w, p)), texture, "Tree Cutter"));
         };
-    public override string Name => $"Tree Cutter ({TreeStored})";
-    public TileStack TreeStored { get; }
+    public override string Name => $"Tree Cutter ({WoodStored} {SapplingStored})";
+    public ItemStack WoodStored { get; }
+    public ItemStack SapplingStored { get; }
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
@@ -24,7 +25,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
     {
         TickCount = 9;
         _lastOrePos = null;
-        if (TreeStored.RemainingQuantity < 3)
+        if (WoodStored.RemainingQuantity < 3 || SapplingStored.IsFull)
             return;
         var rng = new Random();
         for (var i = 1; i <= Distance; i++)
@@ -34,7 +35,8 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
             {
                 _lastOrePos = pos;
                 tree.Mine(World, pos, this);
-                TreeStored.Quantity += 3;
+                WoodStored.Quantity += 3;
+                SapplingStored.Quantity += Random.Shared.Next(1, 3);
                 break;
             }
         }
@@ -53,15 +55,26 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
         }
     }
 
-    bool INetworkSupplier.CanSupply(TileTemplate tileTemplate)
-        => TreeStored.Tile == tileTemplate && !TreeStored.IsEmpty;
+    bool INetworkSupplier.CanSupply(Items.Item item)
+        => item switch
+        {
+            Items.Sapling => !SapplingStored.IsEmpty,
+            Items.Wood => !WoodStored.IsEmpty,
+            _ => false,
+        };
 
-    int INetworkSupplier.TrySupply(TileTemplate tileTemplate, int maxQuantity)
-        => ((INetworkSupplier)this).CanSupply(tileTemplate) ? TreeStored.Request(maxQuantity) : 0;
+    int INetworkSupplier.TrySupply(Items.Item item, int maxQuantity)
+        => (item, ((INetworkSupplier)this).CanSupply(item)) switch
+        {
+            (Items.Sapling, true) => SapplingStored.Request(maxQuantity),
+            (Items.Wood, true) => WoodStored.Request(maxQuantity),
+            _ => 0,
+        };
 
     private TreeCutter(World world, Point pos)
         : base(world, pos, Color.Brown, default!)
     {
-        TreeStored = new(TileTemplates.Get<Tree>());
+        WoodStored = new(Items.Item.Get<Items.Wood>());
+        SapplingStored = new(Items.Item.Get<Items.Sapling>());
     }
 }

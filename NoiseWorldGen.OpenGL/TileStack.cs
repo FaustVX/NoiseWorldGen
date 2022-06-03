@@ -1,6 +1,6 @@
 namespace NoiseWorldGen.OpenGL;
 
-public class TileStack
+public class ItemStack
 {
     public static readonly int Max = 99;
     private int quantity;
@@ -14,7 +14,8 @@ public class TileStack
             quantity = value;
         }
     }
-    public TileTemplate Tile { get; }
+    public Items.Item item { get; }
+
     public bool IsEmpty
         => Quantity <= 0;
 
@@ -31,11 +32,11 @@ public class TileStack
         return quantity;
     }
 
-    public TileStack(TileTemplate tile)
+    public ItemStack(Items.Item item)
     {
-        Tile = tile;
+        this.item = item;
     }
 
     public override string ToString()
-        => $"{Quantity} {Tile.Name}";
+        => $"{Quantity} {item.Name}";
 }

@@ -16,6 +16,6 @@ public sealed class IronMiner : OreMiner<IronOre>
         };
 
     private IronMiner(World world, Point pos)
-        : base(world, pos, TileTemplates.Get<IronOre>(), Color.SlateGray, default!)
+        : base(world, pos, Items.Item.Get<Items.IronOre>(), Color.SlateGray, default!)
     { }
 }

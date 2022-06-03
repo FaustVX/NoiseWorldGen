@@ -7,17 +7,19 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     where TOre : IOre
 {
     public string OreName { get; }
-    public override string Name => $"{OreName} Miner ({OreStored}, {TreeStored}, {Energy})";
-    public TileStack OreStored { get; }
-    public TileStack TreeStored { get; }
+    public override string Name => $"{OreName} Miner ({OreStored}, {WoodStored}, {Energy})";
+    public ItemStack OreStored { get; }
+    public ItemStack WoodStored { get; }
     public int Energy { get; set; }
     public virtual int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
     private Point? _lastOrePos;
+    private readonly SRLatch _requestWood, _requestEnergy;
 
     public override void Update(World world, Point pos)
     {
-        Network.Request(TreeStored);
+        if (_requestWood)
+            Network.Request(WoodStored);
         base.Update(world, pos);
     }
 
@@ -27,9 +29,9 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
         _lastOrePos = null;
         if (OreStored.IsFull)
             return;
-        if (Energy < 10 && !TreeStored.IsEmpty)
+        if (_requestEnergy && !WoodStored.IsEmpty)
         {
-            TreeStored.Quantity--;
+            WoodStored.Quantity--;
             Energy += 5;
         }
         if (Energy <= 0)
@@ -61,17 +63,19 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
         }
     }
 
-    bool INetworkSupplier.CanSupply(TileTemplate tileTemplate)
-        => OreStored.Tile == tileTemplate && !OreStored.IsEmpty;
+    bool INetworkSupplier.CanSupply(Items.Item item)
+        => OreStored.item == item && !OreStored.IsEmpty;
 
-    int INetworkSupplier.TrySupply(TileTemplate tileTemplate, int maxQuantity)
-        => ((INetworkSupplier)this).CanSupply(tileTemplate) ? OreStored.Request(maxQuantity) : 0;
+    int INetworkSupplier.TrySupply(Items.Item item, int maxQuantity)
+        => ((INetworkSupplier)this).CanSupply(item) ? OreStored.Request(maxQuantity) : 0;
 
-    protected OreMiner(World world, Point pos, TileTemplate tileTemplate, Color color, Texture2D? texture, Rectangle? textureRect = null)
+    protected OreMiner(World world, Point pos, Items.Item oreItem, Color color, Texture2D? texture, Rectangle? textureRect = null)
         : base(world, pos, color, texture, textureRect)
     {
-        OreName = tileTemplate.Name;
-        OreStored = new(tileTemplate);
-        TreeStored = new(TileTemplates.Get<Tree>());
+        OreName = oreItem.Name;
+        OreStored = new(oreItem);
+        WoodStored = new(Items.Item.Get<Items.Wood>());
+        _requestEnergy = new(() => Energy, 75, 100);
+        _requestWood = new(() => WoodStored.Quantity, 5, 10);
     }
 }

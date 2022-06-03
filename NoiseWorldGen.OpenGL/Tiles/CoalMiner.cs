@@ -16,6 +16,6 @@ public sealed class CoalMiner : OreMiner<CoalOre>
         };
 
     private CoalMiner(World world, Point pos)
-        : base(world, pos, TileTemplates.Get<CoalOre>(), Color.DimGray, default!)
+        : base(world, pos, Items.Item.Get<Items.CoalOre>(), Color.DimGray, default!)
     { }
 }
