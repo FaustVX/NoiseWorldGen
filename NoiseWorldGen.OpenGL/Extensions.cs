@@ -61,6 +61,9 @@ public static class Extensions
         sb.Draw(SpriteBatches.Pixel, start, null, color, angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
     }
 
+    public static void Request(this Tiles.Tile.INetworkReceiver from, ItemStack stack)
+        => from.Network.Request(stack);
+
     public class SRLatch
     {
         private readonly Func<int> _quantity;

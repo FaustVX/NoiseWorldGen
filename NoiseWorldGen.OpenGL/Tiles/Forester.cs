@@ -25,7 +25,7 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
     public override void Update(World world, Point pos)
     {
         if (_requestWood)
-            Network.Request(SaplingStored);
+            this.Request(SaplingStored);
         base.Update(world, pos);
     }
     protected override void OnTick()

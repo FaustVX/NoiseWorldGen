@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.OpenGL.Tiles;
 
-public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
+public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier, Tile.INetworkReceiver
     where TOre : IOre
 {
     public string OreName { get; }
@@ -19,7 +19,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier
     public override void Update(World world, Point pos)
     {
         if (_requestWood)
-            Network.Request(WoodStored);
+            this.Request( WoodStored);
         base.Update(world, pos);
     }
 
