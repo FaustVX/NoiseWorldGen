@@ -11,7 +11,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         public MonoGameGraphicsDeviceService()
         {
         }
-        
+
         public void Dispose()
         {
             DeviceDisposing?.Invoke(this, EventArgs.Empty);
@@ -52,7 +52,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             GraphicsDevice = CreateGraphicsDevice(new WindowInteropHelper(window).Handle, 1, 1);
             DeviceCreated?.Invoke(this, EventArgs.Empty);
         }
-        
+
         // Store the current device settings.
         private PresentationParameters _parameters = default!;
 
