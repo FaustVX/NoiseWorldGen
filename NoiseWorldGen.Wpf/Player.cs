@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
-using NoiseWorldGen.Wpf.Inputs;
+using Key = System.Windows.Input.Key;
 using NoiseWorldGen.Wpf.Tiles;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace NoiseWorldGen.Wpf;
 
@@ -33,17 +32,17 @@ public class Player : IGameComponent, IUpdateable
     void IUpdateable.Update(GameTime gameTime)
     {
         var speed = Speed;
-        if (Keyboard.Instance.IsDown(Keys.RightShift) || Keyboard.Instance.IsDown(Keys.LeftShift))
+        if (Key.LeftShift.IsKeyDown() || Key.RightShift.IsKeyDown())
             speed *= SpeedMultipler;
         if (IsFlying)
             speed *= FlySpeedMultiplier;
-        var pos = Position with
+        var pos = Position + speed * new Vector2()
         {
-            X = Position.X + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Q, Keys.Left, Keys.D, Keys.Right),
-            Y = Position.Y + speed * Keyboard.XorFunc(Keyboard.Instance.IsDown, Keys.Z, Keys.Up, Keys.S, Keys.Down),
+            X = Key.Q.IsKeyDown() || Key.Left.IsKeyDown() ? -1 : Key.D.IsKeyDown() || Key.Right.IsKeyDown() ? 1 : 0,
+            Y = Key.Z.IsKeyDown() || Key.Up.IsKeyDown() ? -1 : Key.S.IsKeyDown() || Key.Down.IsKeyDown() ? 1 : 0,
         };
         if (IsFlying || World.GetSoilTileAt(pos.ToPoint()) is Tile.IsWalkable)
             Position = pos;
-        IsFlying ^= Keyboard.Instance.IsClicked(Keys.Space);
+        IsFlying ^= Key.Space.IsKeyClicked();
     }
 }

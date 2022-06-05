@@ -4,10 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.Wpf.Content;
-using NoiseWorldGen.Wpf.Inputs;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
 using Mouse = Microsoft.Xna.Framework.Input.Mouse;
-// using System.Windows;
+using Key = System.Windows.Input.Key;
 
 namespace NoiseWorldGen.Wpf;
 
@@ -88,7 +86,6 @@ public class MainWindowViewModel : MonoGameViewModel
 
         Components.Add(World);
         Components.Add(World.Player);
-        Components.Add(Keyboard.Instance);
     }
 
     public override void SizeChanged(object sender, System.Windows.SizeChangedEventArgs args)
@@ -148,13 +145,17 @@ public class MainWindowViewModel : MonoGameViewModel
         _ups = gameTime.ElapsedGameTime;
         var cursorPos = ScreenToWorld(oldMouseState.Position).ToPoint();
 
-        TileSize += Keyboard.XorFunc(Keyboard.Instance.IsClicked, Keys.Subtract, Keys.Add);
+        TileSize += (Key.Add, Key.Subtract).IsKeyXor(Extensions.IsKeyClicked);
 
-        ShowUI ^= (Keyboard.Instance.IsClicked(Keys.F1, isExclusive: true));
-        ShowChunkBorders ^= (Keyboard.Instance.IsClicked(Keys.F1) && Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftAlt, Keys.RightAlt));
-        if (Keyboard.Instance.IsClicked(Keys.Tab))
+        if (Key.F1.IsKeyClicked())
+            if ((Key.LeftAlt, Key.RightAlt).IsKeyDown())
+                ShowChunkBorders ^= true;
+            else
+                ShowUI ^= true;
+
+        if (Key.Tab.IsKeyClicked())
         {
-            var offset = Keyboard.OrFunc(Keyboard.Instance.IsDown, Keys.LeftShift, Keys.RightShift) ? -1 : +1;
+            var offset = (Key.LeftShift, Key.RightShift).IsKeyDown() ? -1 : +1;
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + offset, TileTemplates.Tiles.Count).remainder;
         }
         else if (oldMouseState.ScrollWheelValue < _currentMouse.ScrollWheelValue)
