@@ -73,10 +73,15 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public MainWindowViewModel()
     {
-        Content.RootDirectory = "Content";
-        OnCreateGraphicDevice?.Invoke(GraphicsDevice);
         _tempUI = SpriteBatches.UI!;
         World = new World(new Random().Next());
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        Content.RootDirectory = "Content";
+        OnCreateGraphicDevice?.Invoke(GraphicsDevice);
 
         TileSize = 32;
         SetViewSize();
@@ -196,8 +201,6 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public override void Draw(GameTime gameTime)
     {
-        SpriteBatches.Game.Begin();
-        SpriteBatches.UI?.Begin();
         _fps = gameTime.ElapsedGameTime;
         var cursorPos = ScreenToWorld(_currentMouse.Position).ToPoint();
         if (SpriteBatches.UI is {} sb)

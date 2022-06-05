@@ -57,7 +57,6 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
                 if (_viewModel != null)
                     _viewModel.GraphicsDeviceService = _graphicsDeviceService;
             };
-            SizeChanged += (sender, args) => _viewModel?.SizeChanged(sender, args);
         }
 
         public static GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice!;
@@ -133,6 +132,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             CompositionTarget.Rendering += OnRender;
             _stopwatch.Start();
             _isInitialized = true;
+            SizeChanged += (sender, args) => _viewModel?.SizeChanged(sender, args);
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
