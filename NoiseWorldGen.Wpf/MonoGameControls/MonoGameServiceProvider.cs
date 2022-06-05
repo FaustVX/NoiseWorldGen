@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NoiseWorldGen.Wpf.MonoGameControls
+﻿namespace NoiseWorldGen.Wpf.MonoGameControls
 {
     public class MonoGameServiceProvider : IServiceProvider
     {
@@ -17,7 +14,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             _services.Add(type, provider);
         }
 
-        public object GetService(Type type)
+        public object? GetService(Type type)
         {
             if (_services.TryGetValue(type, out var service))
                 return service;
@@ -30,7 +27,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             _services.Remove(type);
         }
 
-        public void AddService<T>(T service)
+        public void AddService<T>(T service) where T : notnull
         {
             AddService(typeof(T), service);
         }
@@ -38,7 +35,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         public T GetService<T>() where T : class
         {
             var service = GetService(typeof(T));
-            return (T) service;
+            return (T) service!;
         }
     }
 }

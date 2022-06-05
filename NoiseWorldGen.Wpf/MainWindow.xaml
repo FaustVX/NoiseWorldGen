@@ -16,32 +16,6 @@
     </Window.DataContext>
 
     <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_New" />
-                <MenuItem Header="_Open..." />
-                <Separator />
-                <MenuItem Header="_Save" />
-                <MenuItem Header="Save _As..." />
-                <Separator />
-                <MenuItem Header="E_xit" />
-            </MenuItem>
-            <MenuItem Header="_Edit">
-                <MenuItem Header="_Undo" />
-                <MenuItem Header="_Redo" />
-                <Separator />
-                <MenuItem Header="Cu_t" />
-                <MenuItem Header="_Copy" />
-                <MenuItem Header="_Paste" />
-                <MenuItem Header="_Delete" />
-                <Separator />
-                <MenuItem Header="Select _All" />
-            </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_About NoiseWorldGen.Wpf" />
-            </MenuItem>
-        </Menu>
-
         <monoGameControls:MonoGameContentControl />
     </DockPanel>
 </Window>

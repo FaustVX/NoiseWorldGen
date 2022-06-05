@@ -33,22 +33,45 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             Content?.Dispose();
         }
 
-        public IGraphicsDeviceService GraphicsDeviceService { get; set; }
-        protected GraphicsDevice GraphicsDevice => GraphicsDeviceService?.GraphicsDevice;
-        protected MonoGameServiceProvider Services { get; private set; }
-        protected ContentManager Content { get; set; }
+        public IGraphicsDeviceService GraphicsDeviceService { get; set; } = default!;
+        protected GraphicsDevice GraphicsDevice => GraphicsDeviceService?.GraphicsDevice!;
+        protected MonoGameServiceProvider Services { get; private set; } = default!;
+        protected ContentManager Content { get; set; } = default!;
+        protected List<IGameComponent> Components { get; } = new();
 
         public virtual void Initialize()
         {
             Services = new MonoGameServiceProvider();
             Services.AddService(GraphicsDeviceService);
             Content = new ContentManager(Services) { RootDirectory = "Content" };
+            foreach (var component in Components)
+                component.Initialize();
         }
 
         public virtual void LoadContent() { }
         public virtual void UnloadContent() { }
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime)
+        {
+            foreach (var component in Components)
+                if (component is IUpdateable updateable && updateable.Enabled)
+                    updateable.Update(gameTime);
+            {
+            }
+        }
+        public virtual bool BeginDraw() => true;
         public virtual void Draw(GameTime gameTime) { }
+        public virtual void EndDraw() { }
+        void IMonoGameViewModel.Draw(GameTime gameTime)
+        {
+            if (BeginDraw())
+            {
+                foreach (var component in Components)
+                    if (component is IDrawable drawable && drawable.Visible)
+                        drawable.Draw(gameTime);
+                Draw(gameTime);
+                EndDraw();
+            }
+        }
         public virtual void OnActivated(object sender, EventArgs args) { }
         public virtual void OnDeactivated(object sender, EventArgs args) { }
         public virtual void OnExiting(object sender, EventArgs args) { }

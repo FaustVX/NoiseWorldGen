@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseWorldGen.Core", "NoiseWorldGen.Core\NoiseWorldGen.Core.csproj", "{DD7A2A3E-9218-427E-9574-0A9995178333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseWorldGen.OpenGL", "NoiseWorldGen.OpenGL\NoiseWorldGen.OpenGL.csproj", "{5E22196B-B91A-412F-BDAF-CD672774EBB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseWorldGen.Wpf", "NoiseWorldGen.Wpf\NoiseWorldGen.Wpf.csproj", "{D16815AC-E1BC-47E1-A8DE-81FA53B9A117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{DD7A2A3E-9218-427E-9574-0A9995178333}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD7A2A3E-9218-427E-9574-0A9995178333}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD7A2A3E-9218-427E-9574-0A9995178333}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E22196B-B91A-412F-BDAF-CD672774EBB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E22196B-B91A-412F-BDAF-CD672774EBB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E22196B-B91A-412F-BDAF-CD672774EBB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E22196B-B91A-412F-BDAF-CD672774EBB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16815AC-E1BC-47E1-A8DE-81FA53B9A117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16815AC-E1BC-47E1-A8DE-81FA53B9A117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16815AC-E1BC-47E1-A8DE-81FA53B9A117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16815AC-E1BC-47E1-A8DE-81FA53B9A117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

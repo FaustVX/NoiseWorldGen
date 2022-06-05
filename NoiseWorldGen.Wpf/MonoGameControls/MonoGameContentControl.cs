@@ -33,12 +33,12 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
     {
         private static readonly MonoGameGraphicsDeviceService _graphicsDeviceService = new MonoGameGraphicsDeviceService();
         private int _instanceCount;
-        private IMonoGameViewModel _viewModel;
+        private IMonoGameViewModel? _viewModel;
         private readonly GameTime _gameTime = new GameTime();
         private readonly Stopwatch _stopwatch = new Stopwatch();
-        private D3DImage _direct3DImage;
-        private RenderTarget2D _renderTarget;
-        private SharpDX.Direct3D9.Texture _renderTargetD3D9;
+        private D3DImage _direct3DImage = default!;
+        private RenderTarget2D? _renderTarget;
+        private SharpDX.Direct3D9.Texture? _renderTargetD3D9;
         private bool _isFirstLoad = true;
         private bool _isInitialized;
 
@@ -60,7 +60,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             SizeChanged += (sender, args) => _viewModel?.SizeChanged(sender, args);
         }
 
-        public static GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice;
+        public static GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice!;
 
         public bool IsDisposed { get; private set; }
 
@@ -161,7 +161,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             }
         }
 
-        private void OnGraphicsDeviceServiceDeviceResetting(object sender, EventArgs e)
+        private void OnGraphicsDeviceServiceDeviceResetting(object? sender, EventArgs e)
         {
             ResetBackBufferReference();
         }
@@ -188,7 +188,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             _direct3DImage.Unlock();
         }
 
-        private RenderTarget2D CreateRenderTarget()
+        private RenderTarget2D? CreateRenderTarget()
         {
             var actualWidth = (int)ActualWidth;
             var actualHeight = (int)ActualHeight;
@@ -223,7 +223,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             return renderTarget;
         }
 
-        private void OnRender(object sender, EventArgs e)
+        private void OnRender(object? sender, EventArgs e)
         {
             _gameTime.ElapsedGameTime = _stopwatch.Elapsed;
             _gameTime.TotalGameTime += _gameTime.ElapsedGameTime;

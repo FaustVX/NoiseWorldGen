@@ -20,13 +20,13 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             Direct3DContext?.Dispose();
         }
 
-        public Direct3DEx Direct3DContext { get; private set; }
-        public DeviceEx Direct3DDevice { get; private set; }
+        public Direct3DEx Direct3DContext { get; private set; } = default!;
+        public DeviceEx Direct3DDevice { get; private set; } = default!;
 
-        public event EventHandler<EventArgs> DeviceCreated;
-        public event EventHandler<EventArgs> DeviceDisposing;
-        public event EventHandler<EventArgs> DeviceReset;
-        public event EventHandler<EventArgs> DeviceResetting;
+        public event EventHandler<EventArgs>? DeviceCreated;
+        public event EventHandler<EventArgs>? DeviceDisposing;
+        public event EventHandler<EventArgs>? DeviceReset;
+        public event EventHandler<EventArgs>? DeviceResetting;
 
         public void StartDirect3D(Window window)
         {
@@ -54,9 +54,9 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         }
         
         // Store the current device settings.
-        private PresentationParameters _parameters;
+        private PresentationParameters _parameters = default!;
 
-        public GraphicsDevice GraphicsDevice { get; private set; }
+        public GraphicsDevice GraphicsDevice { get; private set; } = default!;
 
         public GraphicsDevice CreateGraphicsDevice(IntPtr windowHandle, int width, int height)
         {
