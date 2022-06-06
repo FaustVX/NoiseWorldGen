@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.Wpf.Content;
+using static NoiseWorldGen.Wpf.Inputs.Keyboard;
 using Mouse = Microsoft.Xna.Framework.Input.Mouse;
 using Key = System.Windows.Input.Key;
 
@@ -86,6 +87,14 @@ public class MainWindowViewModel : MonoGameViewModel
 
         Components.Add(World);
         Components.Add(World.Player);
+        Inputs.Keyboard.RegisterKey(Key.Tab);
+        Inputs.Keyboard.RegisterKey(Key.F1);
+        Inputs.Keyboard.RegisterKey(Key.LeftAlt);
+        Inputs.Keyboard.RegisterKey(Key.RightAlt);
+        Inputs.Keyboard.RegisterKey(Key.LeftShift);
+        Inputs.Keyboard.RegisterKey(Key.RightShift);
+
+        PostInitialize();
     }
 
     public override void SizeChanged(object sender, System.Windows.SizeChangedEventArgs args)
@@ -143,19 +152,19 @@ public class MainWindowViewModel : MonoGameViewModel
     {
         (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         _ups = gameTime.ElapsedGameTime;
+        SetViewSize();
         var cursorPos = ScreenToWorld(oldMouseState.Position).ToPoint();
+        Inputs.Keyboard.Update();
 
-        TileSize += (Key.Add, Key.Subtract).IsKeyXor(Extensions.IsKeyClicked);
-
-        if (Key.F1.IsKeyClicked())
-            if ((Key.LeftAlt, Key.RightAlt).IsKeyDown())
+        if (Key.F1.IsPressed())
+            if ((Key.LeftAlt, Key.RightAlt).IsDown())
                 ShowChunkBorders ^= true;
             else
                 ShowUI ^= true;
 
-        if (Key.Tab.IsKeyClicked())
+        if (Key.Tab.IsPressed())
         {
-            var offset = (Key.LeftShift, Key.RightShift).IsKeyDown() ? -1 : +1;
+            var offset = (Key.LeftShift, Key.RightShift).IsDown() ? -1 : +1;
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + offset, TileTemplates.Tiles.Count).remainder;
         }
         else if (oldMouseState.ScrollWheelValue < _currentMouse.ScrollWheelValue)

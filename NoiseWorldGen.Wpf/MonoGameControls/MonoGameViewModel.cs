@@ -44,6 +44,10 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             Services = new MonoGameServiceProvider();
             Services.AddService(GraphicsDeviceService);
             Content = new ContentManager(Services) { RootDirectory = "Content" };
+        }
+
+        protected void PostInitialize()
+        {
             foreach (var component in Components)
                 component.Initialize();
         }

@@ -65,26 +65,6 @@ public static class Extensions
     public static void Request(this Tiles.Tile.INetworkReceiver from, ItemStack stack)
         => from.Network.Request(stack);
 
-    public static bool IsKeyClicked(this Key key)
-        => Keyboard.IsKeyDown(key) && Keyboard.IsKeyToggled(key);
-
-    public static bool IsKeyClicked(this (Key, Key) keys)
-        => IsKeyClicked(keys.Item1) || IsKeyClicked(keys.Item2);
-
-    public static bool IsKeyDown(this Key key)
-        => Keyboard.IsKeyDown(key);
-
-    public static bool IsKeyDown(this (Key, Key) keys)
-        => IsKeyDown(keys.Item1) || IsKeyDown(keys.Item2);
-
-    public static int IsKeyXor(this (Key, Key) keys, Func<Key, bool> func)
-        => (func(keys.Item1), func(keys.Item2)) switch
-        {
-            (true, false) => -1,
-            (false, true) => +1,
-            _ => 0,
-        };
-
     public class SRLatch
     {
         private readonly Func<int> _quantity;
