@@ -44,7 +44,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "run OpenGL",
+            "label": "run Wpf",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -52,7 +52,7 @@
                 "--configuration",
                 "Release",
                 "--project",
-                "${workspaceFolder}/NoiseWorldGen.OpenGL/NoiseWorldGen.OpenGL.csproj"
+                "${workspaceFolder}/NoiseWorldGen.Wpf/NoiseWorldGen.Wpf.csproj"
             ],
             "problemMatcher": "$msCompile",
             "presentation": {

@@ -1,7 +1,7 @@
 {
     "activitusbar.views": [
         {
-          "name": "task.run OpenGL",
+          "name": "task.run Wpf",
           "codicon": "window"
         },
       ]
