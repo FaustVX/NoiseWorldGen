@@ -1,11 +1,11 @@
-using NoiseWorldGen.Wpf.MonoGameControls;
+﻿using NoiseWorldGen.Wpf.MonoGameControls;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NoiseWorldGen.Wpf.Content;
 using static NoiseWorldGen.Wpf.Inputs.Keyboard;
-using Mouse = Microsoft.Xna.Framework.Input.Mouse;
+using static NoiseWorldGen.Wpf.Inputs.Mouse;
 using Key = System.Windows.Input.Key;
 
 namespace NoiseWorldGen.Wpf;
@@ -49,8 +49,6 @@ public class MainWindowViewModel : MonoGameViewModel
     public Point WindowSize
         => GraphicsDevice.Viewport.TitleSafeArea.Size;
     public bool ShowChunkBorders { get; set; }
-
-    private Microsoft.Xna.Framework.Input.MouseState _currentMouse = Mouse.GetState();
 
     private TimeSpan _ups, _fps;
 
@@ -132,11 +130,9 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public override void Update(GameTime gameTime)
     {
-        (var oldMouseState, _currentMouse) = (_currentMouse, Mouse.GetState());
         _ups = gameTime.ElapsedGameTime;
         SetViewSize();
-        var cursorPos = ScreenToWorld(oldMouseState.Position).ToPoint();
-        Inputs.Keyboard.Update();
+        var cursorPos = ScreenToWorld(MousePosition).ToPoint();
 
         if (Key.F1.IsPressed())
             if ((Key.LeftAlt, Key.RightAlt).IsDown())
@@ -149,14 +145,14 @@ public class MainWindowViewModel : MonoGameViewModel
             var offset = (Key.LeftShift, Key.RightShift).IsDown() ? -1 : +1;
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + offset, TileTemplates.Tiles.Count).remainder;
         }
-        else if (oldMouseState.ScrollWheelValue < _currentMouse.ScrollWheelValue)
+        else if (ScroolWheelDirection < 0)
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex - 1, TileTemplates.Tiles.Count).remainder;
-        else if (oldMouseState.ScrollWheelValue > _currentMouse.ScrollWheelValue)
+        else if (ScroolWheelDirection > 0)
             TileTemplates.CurrentIndex = ProperRemainder(TileTemplates.CurrentIndex + 1, TileTemplates.Tiles.Count).remainder;
 
         if (World.GetChunkAtPos(cursorPos, out _, out _).IsActive)
         {
-            if (oldMouseState.LeftButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (Button.LeftClick.IsPressed())
             {
                 var tile = TileTemplates.CurrentTemplate switch
                 {
@@ -165,7 +161,7 @@ public class MainWindowViewModel : MonoGameViewModel
                 };
                 World.PlaceTile(cursorPos, tile);
             }
-            if (oldMouseState.RightButton is Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            if (Button.RightClick.IsPressed())
                 World.SetFeatureTileAt(cursorPos, null);
         }
 
@@ -174,6 +170,8 @@ public class MainWindowViewModel : MonoGameViewModel
                 World.GetChunkAtPos(new(x, y), out _, out _).Initialize();
 
         base.Update(gameTime);
+        Inputs.Keyboard.Update();
+        Inputs.Mouse.Update();
 
         SetBounds();
     }
@@ -194,7 +192,7 @@ public class MainWindowViewModel : MonoGameViewModel
     public override void Draw(GameTime gameTime)
     {
         _fps = gameTime.ElapsedGameTime;
-        var cursorPos = ScreenToWorld(_currentMouse.Position).ToPoint();
+        var cursorPos = ScreenToWorld(MousePosition).ToPoint();
         if (SpriteBatches.UI is {} sb)
         {
             if (World.GetChunkAtPos(cursorPos, out _, out _).IsActive)
