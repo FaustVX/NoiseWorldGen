@@ -1,4 +1,4 @@
-﻿using NoiseWorldGen.Wpf.MonoGameControls;
+using NoiseWorldGen.Wpf.MonoGameControls;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -49,22 +49,6 @@ public class MainWindowViewModel : MonoGameViewModel
     public Point WindowSize
         => GraphicsDevice.Viewport.TitleSafeArea.Size;
     public bool ShowChunkBorders { get; set; }
-    private bool showUI = true;
-    private readonly SpriteBatch _tempUI;
-    public bool ShowUI
-    {
-        get => showUI;
-        set
-        {
-            if (value == showUI)
-                return;
-            showUI = value;
-            if (showUI)
-                SpriteBatches.UI = _tempUI;
-            else
-                SpriteBatches.UI = null;
-        }
-    }
 
     private Microsoft.Xna.Framework.Input.MouseState _currentMouse = Mouse.GetState();
 
@@ -72,7 +56,6 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public MainWindowViewModel()
     {
-        _tempUI = SpriteBatches.UI!;
         World = new World(new Random().Next());
     }
 
@@ -83,7 +66,6 @@ public class MainWindowViewModel : MonoGameViewModel
         OnCreateGraphicDevice?.Invoke(GraphicsDevice);
 
         TileSize = 32;
-        SetViewSize();
 
         Components.Add(World);
         Components.Add(World.Player);
@@ -160,7 +142,7 @@ public class MainWindowViewModel : MonoGameViewModel
             if ((Key.LeftAlt, Key.RightAlt).IsDown())
                 ShowChunkBorders ^= true;
             else
-                ShowUI ^= true;
+                SpriteBatches.ShowUI ^= true;
 
         if (Key.Tab.IsPressed())
         {
