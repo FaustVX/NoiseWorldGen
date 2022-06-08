@@ -19,7 +19,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
     public override void Update(World world, Point pos)
     {
         if (_requestWood)
-            this.Request( WoodStored);
+            this.Request(WoodStored);
         base.Update(world, pos);
     }
 
@@ -29,10 +29,10 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
         _lastOrePos = null;
         if (OreStored.IsFull)
             return;
-        if (_requestEnergy && !WoodStored.IsEmpty)
+        if (_requestEnergy && WoodStored is { IsEmpty: false, item: Items.ICombustable c })
         {
             WoodStored.Quantity--;
-            Energy += 5;
+            Energy += c.EnergyQuantity;
         }
         if (Energy <= 0)
             return;

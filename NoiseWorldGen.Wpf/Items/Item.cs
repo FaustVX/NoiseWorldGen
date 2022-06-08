@@ -16,3 +16,8 @@ public abstract class Item
         where T : Item
         => (T)_items[typeof(T)];
 }
+
+public interface ICombustable
+{
+    public int EnergyQuantity { get; }
+}

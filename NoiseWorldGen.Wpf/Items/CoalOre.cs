@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace NoiseWorldGen.Wpf.Items;
 
-public class CoalOre : Item
+public class CoalOre : Item, ICombustable
 {
     [ModuleInitializer]
     internal static void Init()
@@ -11,4 +11,6 @@ public class CoalOre : Item
     private CoalOre()
         : base("Coal Ore")
     { }
+
+    public int EnergyQuantity => 15;
 }
