@@ -65,6 +65,12 @@ public static class Extensions
     public static void Request(this Tiles.Tile.INetworkReceiver from, ItemStack stack)
         => from.Network.Request(stack);
 
+    public static void Update<TKey, TValue>(this IDictionary<TKey, (TValue previous, TValue current)> dictionary, Func<TKey, TValue> updater)
+    {
+        foreach (var key in dictionary.Keys)
+            dictionary[key] = (dictionary[key].current, updater(key));
+    }
+
     public class SRLatch
     {
         private readonly Func<int> _quantity;

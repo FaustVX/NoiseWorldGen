@@ -11,10 +11,7 @@ public static class Keyboard
         => _registeredKeys[key] = new();
 
     public static void Update()
-    {
-        foreach (var key in _registeredKeys.Keys)
-            _registeredKeys[key] = (_registeredKeys[key].current, KB.IsKeyDown(key));
-    }
+        => _registeredKeys.Update(KB.IsKeyDown);
 
     public static bool IsPressed(this Key key)
         => _registeredKeys[key] is (false, true);

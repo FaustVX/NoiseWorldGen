@@ -36,12 +36,11 @@ public static class Mouse
     {
         MousePosition = M.GetPosition(App.Current.MainWindow) is { X: var x, Y : var y }
             ? new((int)x, (int)y)
-            : default;
+            : MousePosition;
 
         ScroolWheelDirection = 0;
 
-        foreach (var button in _states.Keys)
-            _states[button] = (_states[button].current, GetCurrentStates(button));
+        _states.Update(GetCurrentStates);
     }
 
     public static bool IsPressed(this Button button)
