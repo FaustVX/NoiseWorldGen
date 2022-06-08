@@ -192,9 +192,47 @@ public class MainWindowViewModel : MonoGameViewModel
     public override void Draw(GameTime gameTime)
     {
         _fps = gameTime.ElapsedGameTime;
-        var cursorPos = ScreenToWorld(MousePosition).ToPoint();
-        if (SpriteBatches.UI is {} sb)
+        DrawUI();
+
+        for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
+            for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y + 1; y++)
+                DrawTile(new(x, y));
+    }
+
+    private void DrawTile(Point pos)
+    {
+        var soil = World.GetSoilTileAt(pos);
+        var feature = World.GetFeatureTileAt(pos);
+        var screen = WorldToScreen(pos.ToVector2());
+
+        soil.Draw(new(screen, new(TileSize)), World, pos);
+        feature?.Draw(new(screen, new(TileSize)), World, pos);
+
+        if (ShowChunkBorders && SpriteBatches.UI is {} sb)
         {
+            if (pos.X % Chunck.Size == 0)
+                sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(1, TileSize)), Color.Black);
+            if (pos.Y % Chunck.Size == 0)
+                sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(TileSize, 1)), Color.Black);
+        }
+    }
+
+    private void DrawUI()
+    {
+        if (SpriteBatches.UI is not { } sb)
+            return;
+
+        DrawTileInfo(sb);
+
+        DrawHotBar(sb);
+
+        DrawFPS_UPS(sb);
+
+        DrawNetworks(sb);
+
+        void DrawTileInfo(SpriteBatch sb)
+        {
+            var cursorPos = ScreenToWorld(MousePosition).ToPoint();
             if (World.GetChunkAtPos(cursorPos, out _, out _).IsActive)
             {
                 var soil = World.GetSoilTileAt(cursorPos);
@@ -218,7 +256,10 @@ public class MainWindowViewModel : MonoGameViewModel
                 var currentTilePos = WorldToScreen(cursorPos.ToVector2());
                 sb.Draw(SpriteBatches.Pixel, new Rectangle(currentTilePos, new(tileSize)), Color.Wheat * .25f);
             }
+        }
 
+        void DrawHotBar(SpriteBatch sb)
+        {
             var length = TileTemplates.Tiles.Count;
             var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
             sb.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
@@ -229,36 +270,20 @@ public class MainWindowViewModel : MonoGameViewModel
                 sb.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
                 tl += new Point(TileSize, 0);
             }
+        }
 
-            sb.DrawCenteredString(Textures.Font, $"{1/_fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
-            sb.DrawCenteredString(Textures.Font, $"{1/_ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
+        void DrawFPS_UPS(SpriteBatch sb)
+        {
+            sb.DrawCenteredString(Textures.Font, $"{1 / _fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
+            sb.DrawCenteredString(Textures.Font, $"{1 / _ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
+        }
 
+        void DrawNetworks(SpriteBatch sb)
+        {
             foreach (var network in Networks.Network.Networks)
                 foreach (var tile in network.Tiles)
                     foreach (var connection in network.GetConnection(tile))
-                            sb.DrawLine(WorldToScreen(tile.Pos.ToVector2() + Vector2.One / 2), WorldToScreen(connection.Pos.ToVector2() + Vector2.One / 2), Color.SkyBlue);
-        }
-
-        for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
-            for (int y = TopLeftWorldPos.Y - 1; y <= BottomRightWorldPos.Y + 1; y++)
-                DrawTile(new(x, y));
-
-        void DrawTile(Point pos)
-        {
-            var soil = World.GetSoilTileAt(pos);
-            var feature = World.GetFeatureTileAt(pos);
-            var screen = WorldToScreen(pos.ToVector2());
-
-            soil.Draw(new(screen, new(TileSize)), World, pos);
-            feature?.Draw(new(screen, new(TileSize)), World, pos);
-
-            if (ShowChunkBorders && SpriteBatches.UI is {} sb)
-            {
-                if (pos.X % Chunck.Size == 0)
-                    sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(1, TileSize)), Color.Black);
-                if (pos.Y % Chunck.Size == 0)
-                    sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(TileSize, 1)), Color.Black);
-            }
+                        sb.DrawLine(WorldToScreen(tile.Pos.ToVector2() + Vector2.One / 2), WorldToScreen(connection.Pos.ToVector2() + Vector2.One / 2), Color.SkyBlue);
         }
     }
 }
