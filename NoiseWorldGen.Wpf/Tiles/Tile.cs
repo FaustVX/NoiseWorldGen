@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using DotnetNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -81,8 +83,12 @@ public abstract class FeatureTile : Tile
         => world.SetFeatureTileAt(player.Position.ToPoint(), null);
 }
 
-public abstract class TickedFeatureTile : FeatureTile
+public abstract class TickedFeatureTile : FeatureTile, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName]string propertyName = null!)
+        => PropertyChanged?.Invoke(this, new(propertyName));
 
     protected TickedFeatureTile(World world, Point pos, Color color, Texture2D? texture, Rectangle? textureRect = null)
             : base(color, texture, textureRect)
@@ -94,18 +100,24 @@ public abstract class TickedFeatureTile : FeatureTile
     public World World { get; }
     public Point Pos { get; }
 
-    private int tickCount;
+    protected int _tickCount;
+
     public int TickCount
     {
-        get => tickCount;
+        get => _tickCount;
         set
         {
-            tickCount = value;
+            if (value == _tickCount)
+                return;
+            _tickCount = value;
             if (TickCount < 0)
                 OnTick();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Color));
         }
     }
-    public override Color Color => Color.Lerp(base.Color * .5f, base.Color, TickCount / 10f);
+    public override Color Color => Color.Lerp(BaseColor * .5f, BaseColor, TickCount / 10f);
+    public Color BaseColor => base.Color;
 
     protected abstract void OnTick();
 

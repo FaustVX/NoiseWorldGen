@@ -254,6 +254,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
                 {
                     _direct3DImage.Unlock();
                     GraphicsDevice.SetRenderTarget(null);
+                    _viewModel?.AfterRender();
                 }
             }
         }

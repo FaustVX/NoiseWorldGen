@@ -15,6 +15,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         void UnloadContent();
         void Update(GameTime gameTime);
         void Draw(GameTime gameTime);
+        void AfterRender();
         void OnActivated(object sender, EventArgs args);
         void OnDeactivated(object sender, EventArgs args);
         void OnExiting(object sender, EventArgs args);
@@ -59,8 +60,6 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             foreach (var component in Components)
                 if (component is IUpdateable updateable && updateable.Enabled)
                     updateable.Update(gameTime);
-            {
-            }
         }
         public virtual bool BeginDraw() => true;
         public virtual void Draw(GameTime gameTime) { }
@@ -76,6 +75,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
                 EndDraw();
             }
         }
+        public virtual void AfterRender() { }
         public virtual void OnActivated(object sender, EventArgs args) { }
         public virtual void OnDeactivated(object sender, EventArgs args) { }
         public virtual void OnExiting(object sender, EventArgs args) { }

@@ -51,6 +51,7 @@ public class MainWindowViewModel : MonoGameViewModel
     public bool ShowChunkBorders { get; set; }
 
     private TimeSpan _ups, _fps;
+    private Tiles.Windows.Window? _windowToShow;
 
     public MainWindowViewModel()
     {
@@ -73,6 +74,7 @@ public class MainWindowViewModel : MonoGameViewModel
         Inputs.Keyboard.RegisterKey(Key.RightAlt);
         Inputs.Keyboard.RegisterKey(Key.LeftShift);
         Inputs.Keyboard.RegisterKey(Key.RightShift);
+        Inputs.Keyboard.RegisterKey(Key.E);
 
         PostInitialize();
     }
@@ -125,7 +127,12 @@ public class MainWindowViewModel : MonoGameViewModel
     public override void LoadContent()
     {
         OnLoadContent?.Invoke(Content);
-        Microsoft.Xna.Framework.Audio.SoundEffect.DistanceScale = 000000010000000f;
+    }
+
+    public override void AfterRender()
+    {
+        _windowToShow?.Show();
+        _windowToShow = null;
     }
 
     public override void Update(GameTime gameTime)
@@ -133,6 +140,14 @@ public class MainWindowViewModel : MonoGameViewModel
         _ups = gameTime.ElapsedGameTime;
         SetViewSize();
         var cursorPos = ScreenToWorld(MousePosition).ToPoint();
+
+        if (Key.E.IsPressed())
+        {
+            if (World.GetFeatureTileAt(cursorPos) is Tiles.Windows.IWindow { WindowType: var t } and Tiles.FeatureTile ft)
+            {
+                _windowToShow = (Tiles.Windows.Window)Activator.CreateInstance(t, new object[] { ft })!;
+            }
+        }
 
         if (Key.F1.IsPressed())
             if ((Key.LeftAlt, Key.RightAlt).IsDown())

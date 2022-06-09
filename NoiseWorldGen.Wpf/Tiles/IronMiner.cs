@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.Wpf.Tiles;
 
-public sealed class IronMiner : OreMiner<IronOre>
+public sealed class IronMiner : OreMiner<IronOre>, Windows.IWindow
 {
+    Type Windows.IWindow.WindowType => typeof(Windows.OreMiner);
 
     [ModuleInitializer]
     internal static void Init()

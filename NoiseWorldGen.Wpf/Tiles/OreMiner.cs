@@ -9,7 +9,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
     public string OreName { get; }
     public override string Name => $"{OreName} Miner ({OreStored}, {WoodStored}, {Energy})";
     public ItemStack OreStored { get; }
-    public ItemStack WoodStored { get; }
+    public ItemStack? WoodStored { get; set; }
     public int Energy { get; set; }
     public virtual int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
@@ -18,7 +18,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
 
     public override void Update(World world, Point pos)
     {
-        if (_requestWood)
+        if (_requestWood && WoodStored is not null)
             this.Request(WoodStored);
         base.Update(world, pos);
     }
@@ -74,8 +74,7 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
     {
         OreName = oreItem.Name;
         OreStored = new(oreItem);
-        WoodStored = new(Items.Item.Get<Items.Wood>());
         _requestEnergy = new(() => Energy, 75, 100);
-        _requestWood = new(() => WoodStored.Quantity, 5, 10);
+        _requestWood = new(() => WoodStored?.Quantity ?? 0, 5, 10);
     }
 }
