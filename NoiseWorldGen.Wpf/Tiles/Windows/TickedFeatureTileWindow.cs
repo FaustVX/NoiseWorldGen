@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace NoiseWorldGen.Wpf.Tiles.Windows;
 
-public class TickedFeatureTileWindow : Window
+public class TickedFeatureTileWindow : FeatureTileWindow
 {
     protected readonly ProgressBar _tick;
     protected readonly ToggleButton _pause;

@@ -1,4 +1,4 @@
-﻿<Window
+﻿<local:Window
     x:Class="NoiseWorldGen.Wpf.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,4 +18,4 @@
     <DockPanel LastChildFill="True">
         <monoGameControls:MonoGameContentControl />
     </DockPanel>
-</Window>
+</local:Window>

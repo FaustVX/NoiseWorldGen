@@ -51,11 +51,23 @@ public class MainWindowViewModel : MonoGameViewModel
     public bool ShowChunkBorders { get; set; }
 
     private TimeSpan _ups, _fps;
-    private Tiles.Windows.Window? _windowToShow;
+    private Tiles.Windows.FeatureTileWindow? _windowToShow;
 
     public MainWindowViewModel()
     {
         World = new World(new Random().Next());
+    }
+
+    private bool _showUI = true;
+    [MaybeNull]
+    private SpriteBatch UI
+    {
+        get => _showUI ? base[nameof(UI)] : null;
+    }
+
+    private SpriteBatch Game
+    {
+        get => base[nameof(Game)];
     }
 
     public override void Initialize()
@@ -63,6 +75,9 @@ public class MainWindowViewModel : MonoGameViewModel
         base.Initialize();
         Content.RootDirectory = "Content";
         OnCreateGraphicDevice?.Invoke(GraphicsDevice);
+
+        CreateSpriteBatch(nameof(Game));
+        CreateSpriteBatch(nameof(UI));
 
         TileSize = 32;
 
@@ -145,7 +160,7 @@ public class MainWindowViewModel : MonoGameViewModel
         {
             if (World.GetFeatureTileAt(cursorPos) is Tiles.Windows.IWindow { WindowType: var t } and Tiles.FeatureTile ft)
             {
-                _windowToShow = (Tiles.Windows.Window)Activator.CreateInstance(t, new object[] { ft })!;
+                _windowToShow = (Tiles.Windows.FeatureTileWindow)Activator.CreateInstance(t, new object[] { ft })!;
             }
         }
 
@@ -153,7 +168,7 @@ public class MainWindowViewModel : MonoGameViewModel
             if ((Key.LeftAlt, Key.RightAlt).IsDown())
                 ShowChunkBorders ^= true;
             else
-                SpriteBatches.ShowUI ^= true;
+                _showUI ^= true;
 
         if (Key.Tab.IsPressed())
         {
@@ -191,19 +206,6 @@ public class MainWindowViewModel : MonoGameViewModel
         SetBounds();
     }
 
-    public override bool BeginDraw()
-    {
-        SpriteBatches.Game.Begin();
-        SpriteBatches.UI?.Begin();
-        return true;
-    }
-
-    public override void EndDraw()
-    {
-        SpriteBatches.Game.End();
-        SpriteBatches.UI?.End();
-    }
-
     public override void Draw(GameTime gameTime)
     {
         _fps = gameTime.ElapsedGameTime;
@@ -220,21 +222,21 @@ public class MainWindowViewModel : MonoGameViewModel
         var feature = World.GetFeatureTileAt(pos);
         var screen = WorldToScreen(pos.ToVector2());
 
-        soil.Draw(new(screen, new(TileSize)), World, pos);
-        feature?.Draw(new(screen, new(TileSize)), World, pos);
+        soil.Draw(new(screen, new(TileSize)), World, pos, Game);
+        feature?.Draw(new(screen, new(TileSize)), World, pos, Game);
 
-        if (ShowChunkBorders && SpriteBatches.UI is {} sb)
+        if (ShowChunkBorders && UI is {} sb)
         {
             if (pos.X % Chunck.Size == 0)
-                sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(1, TileSize)), Color.Black);
+                sb.Draw(sb.Pixel(), new Rectangle(screen, new(1, TileSize)), Color.Black);
             if (pos.Y % Chunck.Size == 0)
-                sb.Draw(SpriteBatches.Pixel, new Rectangle(screen, new(TileSize, 1)), Color.Black);
+                sb.Draw(sb.Pixel(), new Rectangle(screen, new(TileSize, 1)), Color.Black);
         }
     }
 
     private void DrawUI()
     {
-        if (SpriteBatches.UI is not { } sb)
+        if (UI is not { } sb)
             return;
 
         DrawTileInfo(sb);
@@ -261,15 +263,15 @@ public class MainWindowViewModel : MonoGameViewModel
                 }
                 sb.DrawString(Textures.Font, World.GetBiomeAt(cursorPos).Name, new Vector2(32, 0), Color.AliceBlue);
 
-                static void DrawTileImage(Tiles.Tile tile, SpriteBatch sb)
+                void DrawTileImage(Tiles.Tile tile, SpriteBatch sb)
                 {
                     if (tile.Texture is not null)
                         sb.Draw(tile.Texture, new Rectangle(new(0), new(32)), tile.TextureRect, Color.White);
                     else
-                        sb.Draw(SpriteBatches.Pixel, new Rectangle(new(0), new(32)), tile.Color);
+                        sb.Draw(sb.Pixel(), new Rectangle(new(0), new(32)), tile.Color);
                 }
                 var currentTilePos = WorldToScreen(cursorPos.ToVector2());
-                sb.Draw(SpriteBatches.Pixel, new Rectangle(currentTilePos, new(tileSize)), Color.Wheat * .25f);
+                sb.Draw(sb.Pixel(), new Rectangle(currentTilePos, new(tileSize)), Color.Wheat * .25f);
             }
         }
 
@@ -277,7 +279,7 @@ public class MainWindowViewModel : MonoGameViewModel
         {
             var length = TileTemplates.Tiles.Count;
             var tl = new Point(WindowSize.X / 2 - length * TileSize / 2, WindowSize.Y - TileSize);
-            sb.Draw(SpriteBatches.Pixel, new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
+            sb.Draw(sb.Pixel(), new Rectangle(tl - new Point(5, TileSize + 5), new Point(TileSize * length + 10, TileSize * 2 + 5)), Color.Gray * .75f);
             sb.DrawCenteredString(Textures.Font, TileTemplates.CurrentTemplate.Name, new Rectangle(tl - new Point(5, TileSize), new Point(TileSize * length + 10, TileSize * 2 + 5)).Center, new(.5f, 1), Color.White);
             foreach (var template in TileTemplates.Tiles)
             {

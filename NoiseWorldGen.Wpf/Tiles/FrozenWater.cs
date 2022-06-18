@@ -7,9 +7,9 @@ public sealed class FrozenWater : SoilTile, ISingletonTile<FrozenWater>, Tile.Is
 {
     [ModuleInitializer]
     internal static void Init()
-        => MainWindowViewModel.OnLoadContent += _ =>
+        => MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.CornflowerBlue });
             TileTemplates.Add<FrozenWater>(new TileTemplate.Static(() => Value, texture, "Frozen Water"));
         };

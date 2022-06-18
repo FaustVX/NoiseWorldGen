@@ -54,12 +54,12 @@ public abstract class Tile
         where T : IInterpolation<T>
         => IInterpolation<T>.GetValue(x, y);
 
-    public virtual void Draw(Rectangle tileRect, World world, Point pos)
+    public virtual void Draw(Rectangle tileRect, World world, Point pos, SpriteBatch sb)
     {
         if (Texture is {} text)
-            SpriteBatches.Game.Draw(text, tileRect, TextureRect, Color.White);
+            sb.Draw(text, tileRect, TextureRect, Color.White);
         else
-            SpriteBatches.Game.Draw(SpriteBatches.Pixel, tileRect, Color);
+            sb.Draw(sb.Pixel(), tileRect, Color);
     }
     public virtual void Update(World world, Point pos)
     { }

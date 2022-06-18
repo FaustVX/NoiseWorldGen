@@ -7,36 +7,27 @@ namespace NoiseWorldGen.Wpf.Tiles.Windows;
 
 public class TreeCutter : TickedFeatureTileWindow
 {
-    private sealed class ItemStackVM : MonoGameControls.MonoGameViewModel
+    private sealed class ItemStackVM : MonoGameControls.MonoGameViewModelEmbeded
     {
-        public ItemStackVM(ItemStack stack, UIElement space, Window window)
+        public ItemStackVM(ItemStack stack, UIElement space, FeatureTileWindow window)
+            : base(window, space)
         {
             Stack = stack;
-            _space = space;
-            _window = window;
         }
 
         public ItemStack Stack { get; }
         private SpriteBatch _sb = default!;
-        private Texture2D _pixel = default!;
-        private readonly UIElement _space;
-        private readonly Window _window;
 
         public override void Initialize()
         {
             base.Initialize();
-            _sb = new(GraphicsDevice);
-            _pixel = new(GraphicsDevice, 1, 1);
-            _pixel.SetData(new Color[] { Color.White });
+            _sb = CreateSpriteBatch(nameof(_sb));
         }
 
         public override void Draw(GameTime gameTime)
         {
-            var _drawableArea = new System.Windows.Rect(_space.TranslatePoint(new(0, 0), _window), _space.RenderSize);
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _sb.Begin(transformMatrix: Matrix.CreateTranslation((float)_drawableArea.Left, (float)_drawableArea.Top, 0));
-            _sb.Draw(_pixel, new Rectangle(new(5), new(500)), Color.Black);
-            _sb.End();
+            _sb.Draw(_sb.Pixel(), new Rectangle(new(5), new(500)), Color.Black);
         }
     }
     public new Tiles.TreeCutter Tile => (Tiles.TreeCutter)base.Tile;

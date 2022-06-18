@@ -5,11 +5,11 @@ public interface IWindow
     public Type WindowType { get; }
 }
 
-public abstract class Window : System.Windows.Window
+public abstract class FeatureTileWindow : Window
 {
     public FeatureTile Tile { get; }
 
-    protected Window(FeatureTile tile)
+    protected FeatureTileWindow(FeatureTile tile)
     {
         DataContext = Tile = tile;
     }

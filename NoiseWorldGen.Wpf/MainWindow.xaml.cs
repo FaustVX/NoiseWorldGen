@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace NoiseWorldGen.Wpf
+﻿namespace NoiseWorldGen.Wpf
 {
     public partial class MainWindow : Window
     {

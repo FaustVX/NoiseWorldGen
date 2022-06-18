@@ -7,9 +7,9 @@ public sealed class Water : SoilTile, ISingletonTile<Water>
 {
     [ModuleInitializer]
     internal static void Init()
-        => MainWindowViewModel.OnLoadContent += _ =>
+        => MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.DarkBlue });
             TileTemplates.Add<Water>(new TileTemplate.Static(() => Value, texture, "Water"));
         };

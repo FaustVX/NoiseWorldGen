@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NoiseWorldGen.Wpf.Tiles;
 
@@ -9,9 +10,9 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver, Windows
 
     [ModuleInitializer]
     internal static void Init()
-        => MainWindowViewModel.OnLoadContent += _ =>
+        => MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.LawnGreen });
             TileTemplates.Add<Forester>(new TileTemplate.Dynamic((static (w, p) => new Forester(w, p)), texture, "Forester"));
         };
@@ -49,14 +50,14 @@ public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver, Windows
         }
     }
 
-    public override void Draw(Rectangle tileRect, World world, Point pos)
+    public override void Draw(Rectangle tileRect, World world, Point pos, SpriteBatch sb)
     {
-        base.Draw(tileRect, world, pos);
-        if (_lastOrePos is {} lastOre && SpriteBatches.UI is {} sb)
+        base.Draw(tileRect, world, pos, sb);
+        if (_lastOrePos is {} lastOre)
         {
             var destRectangle = tileRect.DrawAtWorldPos(pos, lastOre);
             sb.DrawLine(tileRect.Center, destRectangle.Center, Lerp(Color.Red, TickCount));
-            sb.Draw(SpriteBatches.Pixel, destRectangle, Lerp(Color.Black, TickCount));
+            sb.Draw(sb.Pixel(), destRectangle, Lerp(Color.Black, TickCount));
             static Color Lerp(Color color, int tickCount)
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
         }

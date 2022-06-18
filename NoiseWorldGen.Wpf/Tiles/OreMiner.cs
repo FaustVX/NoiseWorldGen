@@ -50,14 +50,14 @@ public abstract class OreMiner<TOre> : TickedFeatureTile, Tile.INetworkSupplier,
         }
     }
 
-    public override void Draw(Rectangle tileRect, World world, Point pos)
+    public override void Draw(Rectangle tileRect, World world, Point pos, SpriteBatch sb)
     {
-        base.Draw(tileRect, world, pos);
-        if (_lastOrePos is {} lastOre && SpriteBatches.UI is {} sb)
+        base.Draw(tileRect, world, pos, sb);
+        if (_lastOrePos is {} lastOre)
         {
             var destRectangle = tileRect.DrawAtWorldPos(pos, lastOre);
             sb.DrawLine(tileRect.Center, destRectangle.Center, Lerp(Color.Red, TickCount));
-            sb.Draw(SpriteBatches.Pixel, destRectangle, Lerp(Color.Black, TickCount));
+            sb.Draw(sb.Pixel(), destRectangle, Lerp(Color.Black, TickCount));
             static Color Lerp(Color color, int tickCount)
                 => Color.Lerp(color * 0, color * 75f, tickCount / 10f);
         }

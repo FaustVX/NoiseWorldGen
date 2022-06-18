@@ -7,9 +7,9 @@ public sealed class Mountain : SoilTile, ISingletonTile<Mountain>, Tile.IsWalkab
 {
     [ModuleInitializer]
     internal static void Init()
-        => MainWindowViewModel.OnLoadContent += _ =>
+        => MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.DimGray });
             TileTemplates.Add<Mountain>(new TileTemplate.Static(() => Value, texture, "Mountain"));
         };

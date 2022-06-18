@@ -59,7 +59,7 @@ public static class Extensions
         var line = end - start;
         var angleRad = MathF.Atan2(line.Y, line.X);
         var length = line.Length();
-        sb.Draw(SpriteBatches.Pixel, start, null, color, angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
+        sb.Draw(sb.Pixel(), start, null, color, angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
     }
 
     public static void Request(this Tiles.Tile.INetworkReceiver from, ItemStack stack)
@@ -71,32 +71,16 @@ public static class Extensions
             dictionary[key] = (dictionary[key].current, updater(key));
     }
 
-    public class SRLatch
+    private static readonly Dictionary<int, WeakReference<Texture2D>> _pixels = new();
+    public static Texture2D Pixel(this GraphicsDevice gd)
     {
-        private readonly Func<int> _quantity;
-        public int Min { get; }
-        public int Max { get; }
-        private bool _isValid;
-        public bool IsValid
-        {
-            get
-            {
-                if (_quantity() < Min)
-                    return _isValid = true;
-                if (_quantity() > Max)
-                    return _isValid = false;
-                return _isValid;
-            }
-        }
-
-        public SRLatch(Func<int> quantity, int min, int max)
-        {
-            _quantity = quantity;
-            Min = min;
-            Max = max;
-        }
-
-        public static implicit operator bool(SRLatch latch)
-            => latch.IsValid;
+        if (_pixels.TryGetValue(gd.GetHashCode(), out var @ref) && @ref.TryGetTarget(out var pixel))
+            return pixel;
+        _pixels[gd.GetHashCode()] = new(pixel = new(gd, 1, 1));
+        pixel.SetData(new Color[] { Color.White });
+        return pixel;
     }
+
+    public static Texture2D Pixel(this SpriteBatch sb)
+        => sb.GraphicsDevice.Pixel();
 }

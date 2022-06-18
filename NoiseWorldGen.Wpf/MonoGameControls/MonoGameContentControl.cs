@@ -60,7 +60,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         }
 
         public GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice!;
-        public Window Window { get; init; } = App.Current.MainWindow;
+        public Window Window { get; init; } = (Window)App.Current.MainWindow;
 
         public bool IsDisposed { get; private set; }
 

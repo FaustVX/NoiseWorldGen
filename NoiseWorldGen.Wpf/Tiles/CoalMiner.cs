@@ -9,9 +9,9 @@ public sealed class CoalMiner : OreMiner<CoalOre>, Windows.IWindow
 
     [ModuleInitializer]
     internal static void Init()
-        => MainWindowViewModel.OnLoadContent += _ =>
+        => MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.DimGray });
             TileTemplates.Add<CoalMiner>(new TileTemplate.Dynamic((static (w, p) => new CoalMiner(w, p)), texture, "Coal Miner"));
         };

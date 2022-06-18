@@ -39,6 +39,11 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         protected MonoGameServiceProvider Services { get; private set; } = default!;
         protected ContentManager Content { get; set; } = default!;
         protected List<IGameComponent> Components { get; } = new();
+        private readonly Dictionary<object, SpriteBatch> _spriteBatches = new();
+        protected IEnumerable<SpriteBatch> SpriteBatches
+            => _spriteBatches.Values;
+        public SpriteBatch this[object id]
+            => _spriteBatches[id];
 
         public virtual void Initialize()
         {
@@ -61,9 +66,21 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
                 if (component is IUpdateable updateable && updateable.Enabled)
                     updateable.Update(gameTime);
         }
-        public virtual bool BeginDraw() => true;
+
+
+        public virtual bool BeginDraw()
+        {
+            foreach (var sb in _spriteBatches.Values)
+                sb.Begin();
+            return true;
+        }
+
+        public virtual void EndDraw()
+        {
+            foreach (var sb in _spriteBatches.Values)
+                sb.End();
+        }
         public virtual void Draw(GameTime gameTime) { }
-        public virtual void EndDraw() { }
         void IMonoGameViewModel.Draw(GameTime gameTime)
         {
             if (BeginDraw())
@@ -80,5 +97,23 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         public virtual void OnDeactivated(object sender, EventArgs args) { }
         public virtual void OnExiting(object sender, EventArgs args) { }
         public virtual void SizeChanged(object sender, SizeChangedEventArgs args) { }
+        protected SpriteBatch CreateSpriteBatch(object id)
+            => _spriteBatches[id] = new(GraphicsDevice);
+    }
+
+    public class MonoGameViewModelEmbeded : MonoGameViewModel
+    {
+        private readonly Window _window;
+        private readonly UIElement _embededElement;
+
+        public MonoGameViewModelEmbeded(Window window, UIElement embededElement)
+            => (_window, _embededElement) = (window, embededElement);
+
+        public override bool BeginDraw()
+        {
+            var origin = _embededElement.TranslatePoint(new(0, 0), _window);
+            GraphicsDevice.Viewport = new(((int)origin.X), ((int)origin.Y), ((int)_embededElement.RenderSize.Width), ((int)_embededElement.RenderSize.Height));
+            return base.BeginDraw();
+        }
     }
 }

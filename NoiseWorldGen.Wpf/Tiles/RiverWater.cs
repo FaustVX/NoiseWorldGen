@@ -16,9 +16,9 @@ public sealed class RiverWater : SoilTile, ISingletonTile<RiverWater>, Tile.IsWa
                 Frequency = .015f,
                 UsedNoiseType = NoiseType.CubicFractal,
             };
-        MainWindowViewModel.OnLoadContent += _ =>
+        MainWindowViewModel.OnCreateGraphicDevice += gd =>
         {
-            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(SpriteBatches.Pixel.GraphicsDevice, 1, 1);
+            var texture = new Microsoft.Xna.Framework.Graphics.Texture2D(gd, 1, 1);
             texture.SetData(new Color[] { Color.DarkBlue });
             TileTemplates.Add<RiverWater>(new TileTemplate.Static(() => Value, texture, "River Water"));
         };
