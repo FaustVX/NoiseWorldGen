@@ -31,7 +31,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
 {
     public sealed class MonoGameContentControl : ContentControl, IDisposable
     {
-        private static readonly MonoGameGraphicsDeviceService _graphicsDeviceService = new MonoGameGraphicsDeviceService();
+        private readonly MonoGameGraphicsDeviceService _graphicsDeviceService = new MonoGameGraphicsDeviceService();
         private int _instanceCount;
         private IMonoGameViewModel? _viewModel;
         private readonly GameTime _gameTime = new GameTime();
@@ -59,7 +59,8 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             };
         }
 
-        public static GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice!;
+        public GraphicsDevice GraphicsDevice => _graphicsDeviceService?.GraphicsDevice!;
+        public Window Window { get; init; } = App.Current.MainWindow;
 
         public bool IsDisposed { get; private set; }
 
@@ -107,15 +108,15 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             if(_isInitialized)
                 return;
 
-            if (Application.Current.MainWindow == null)
-                throw new InvalidOperationException("The application must have a MainWindow");
+            if (Window == null)
+                throw new InvalidOperationException("The application must have a Window");
 
-            Application.Current.MainWindow.Closing += (sender, args) => _viewModel?.OnExiting(this, EventArgs.Empty);
-            Application.Current.MainWindow.ContentRendered += (sender, args) =>
+            Window.Closing += (sender, args) => _viewModel?.OnExiting(this, EventArgs.Empty);
+            Window.ContentRendered += (sender, args) =>
             {
                 if (_isFirstLoad)
                 {
-                    _graphicsDeviceService.StartDirect3D(Application.Current.MainWindow);
+                    _graphicsDeviceService.StartDirect3D(Window);
                     _viewModel?.Initialize();
                     _viewModel?.LoadContent();
                     _isFirstLoad = false;
@@ -229,7 +230,7 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
             _gameTime.TotalGameTime += _gameTime.ElapsedGameTime;
             _stopwatch.Restart();
 
-            if (CanBeginDraw())
+            if (!_isFirstLoad && CanBeginDraw())
             {
                 try
                 {

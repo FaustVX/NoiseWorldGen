@@ -87,7 +87,7 @@ public abstract class TickedFeatureTile : FeatureTile, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected void OnPropertyChanged([CallerMemberName]string propertyName = null!)
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
         => PropertyChanged?.Invoke(this, new(propertyName));
 
     protected TickedFeatureTile(World world, Point pos, Color color, Texture2D? texture, Rectangle? textureRect = null)
@@ -100,14 +100,28 @@ public abstract class TickedFeatureTile : FeatureTile, INotifyPropertyChanged
     public World World { get; }
     public Point Pos { get; }
 
-    protected int _tickCount;
+    private bool _isPaused;
+    public bool IsPaused
+    {
+        get => _isPaused;
+        set
+        {
+            if (value == _isPaused)
+                return;
+            if (value)
+                TickCount = 0;
+            _isPaused = value;
+            OnPropertyChanged();
+        }
+    }
 
+    protected int _tickCount;
     public int TickCount
     {
         get => _tickCount;
         set
         {
-            if (value == _tickCount)
+            if (value == _tickCount || IsPaused)
                 return;
             _tickCount = value;
             if (TickCount < 0)

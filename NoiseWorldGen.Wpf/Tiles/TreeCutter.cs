@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.Wpf.Tiles;
 
-public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
+public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier, Windows.IWindow
 {
+    Type Windows.IWindow.WindowType => typeof(Windows.TreeCutter);
 
     [ModuleInitializer]
     internal static void Init()
@@ -19,6 +20,7 @@ public sealed class TreeCutter : TickedFeatureTile, Tile.INetworkSupplier
     public ItemStack SapplingStored { get; }
     public int Distance { get; } = 5;
     public Networks.Network Network { get; set; } = default!;
+
     private Point? _lastOrePos;
 
     protected override void OnTick()

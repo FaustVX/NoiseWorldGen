@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 
 namespace NoiseWorldGen.Wpf.Tiles;
 
-public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver
+public sealed class Forester : TickedFeatureTile, Tile.INetworkReceiver, Windows.IWindow
 {
+    Type Windows.IWindow.WindowType => typeof(Windows.TickedFeatureTileWindow);
 
     [ModuleInitializer]
     internal static void Init()

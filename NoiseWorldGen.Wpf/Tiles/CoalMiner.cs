@@ -5,7 +5,7 @@ namespace NoiseWorldGen.Wpf.Tiles;
 
 public sealed class CoalMiner : OreMiner<CoalOre>, Windows.IWindow
 {
-    Type Windows.IWindow.WindowType => typeof(Windows.OreMiner);
+    Type Windows.IWindow.WindowType => typeof(Windows.TickedFeatureTileWindow);
 
     [ModuleInitializer]
     internal static void Init()

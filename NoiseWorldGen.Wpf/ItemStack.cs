@@ -1,7 +1,15 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 namespace NoiseWorldGen.Wpf;
 
-public class ItemStack
+public class ItemStack : INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        => PropertyChanged?.Invoke(this, new(propertyName));
+
     public static readonly int Max = 99;
     private int quantity;
     public int Quantity
@@ -12,6 +20,10 @@ public class ItemStack
             if (value < 0 || value > Max)
                 return;
             quantity = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsEmpty));
+            OnPropertyChanged(nameof(IsFull));
+            OnPropertyChanged(nameof(RemainingQuantity));
         }
     }
     public Items.Item item { get; }
