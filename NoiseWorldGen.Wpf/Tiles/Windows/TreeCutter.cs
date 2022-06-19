@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,10 +6,9 @@ namespace NoiseWorldGen.Wpf.Tiles.Windows;
 
 public class TreeCutter : TickedFeatureTileWindow
 {
-    private sealed class ItemStackVM : MonoGameControls.MonoGameViewModelEmbeded
+    private sealed class ItemStackVM : MonoGameControls.MonoGameViewModel
     {
-        public ItemStackVM(ItemStack stack, UIElement space, FeatureTileWindow window)
-            : base(window, space)
+        public ItemStackVM(ItemStack stack)
         {
             Stack = stack;
         }
@@ -69,6 +67,6 @@ public class TreeCutter : TickedFeatureTileWindow
             },
         };
         _space.SetValue(Grid.RowProperty, 1);
-        _item.DataContext = _itemVM = new(Tile.SapplingStored, _space, this);
+        _item.DataContext = _itemVM = new(Tile.SapplingStored);
     }
 }

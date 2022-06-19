@@ -100,20 +100,4 @@ namespace NoiseWorldGen.Wpf.MonoGameControls
         protected SpriteBatch CreateSpriteBatch(object id)
             => _spriteBatches[id] = new(GraphicsDevice);
     }
-
-    public class MonoGameViewModelEmbeded : MonoGameViewModel
-    {
-        private readonly Window _window;
-        private readonly UIElement _embededElement;
-
-        public MonoGameViewModelEmbeded(Window window, UIElement embededElement)
-            => (_window, _embededElement) = (window, embededElement);
-
-        public override bool BeginDraw()
-        {
-            var origin = _embededElement.TranslatePoint(new(0, 0), _window);
-            GraphicsDevice.Viewport = new(((int)origin.X), ((int)origin.Y), ((int)_embededElement.RenderSize.Width), ((int)_embededElement.RenderSize.Height));
-            return base.BeginDraw();
-        }
-    }
 }
