@@ -54,12 +54,23 @@ public static class Extensions
     public static void DrawLine(this SpriteBatch sb, Point start, Point end, Color color)
         => DrawLine(sb, start.ToVector2(), end.ToVector2(), color);
 
+    public static void DrawLine(this SpriteBatch sb, Point start, Point end, float width, Color color)
+        => DrawLine(sb, start.ToVector2(), end.ToVector2(), width, color);
+
     public static void DrawLine(this SpriteBatch sb, Vector2 start, Vector2 end, Color color)
     {
         var line = end - start;
         var angleRad = MathF.Atan2(line.Y, line.X);
         var length = line.Length();
         sb.Draw(sb.Pixel(), start, null, color, angleRad, Vector2.Zero, new Vector2(length, 1), default, 0);
+    }
+
+    public static void DrawLine(this SpriteBatch sb, Vector2 start, Vector2 end, float width, Color color)
+    {
+        var line = end - start;
+        var angleRad = MathF.Atan2(line.Y, line.X);
+        var length = line.Length();
+        sb.Draw(sb.Pixel(), start, null, color, angleRad, new(0, .5f), new Vector2(length, width), default, 0);
     }
 
     public static void Request(this Tiles.Tile.INetworkReceiver from, ItemStack stack)
