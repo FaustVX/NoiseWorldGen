@@ -50,7 +50,6 @@ public class MainWindowViewModel : MonoGameViewModel
         => GraphicsDevice.Viewport.TitleSafeArea.Size;
     public bool ShowChunkBorders { get; set; }
 
-    private TimeSpan _ups, _fps;
     private Tiles.Windows.FeatureTileWindow? _windowToShow;
 
     public MainWindowViewModel()
@@ -61,14 +60,9 @@ public class MainWindowViewModel : MonoGameViewModel
     private bool _showUI = true;
     [MaybeNull]
     private SpriteBatch UI
-    {
-        get => _showUI ? base[nameof(UI)] : null;
-    }
-
+        => _showUI ? base[nameof(UI)] : null;
     private SpriteBatch Game
-    {
-        get => base[nameof(Game)];
-    }
+        => base[nameof(Game)];
 
     public override void Initialize()
     {
@@ -83,6 +77,7 @@ public class MainWindowViewModel : MonoGameViewModel
 
         Components.Add(World);
         Components.Add(World.Player);
+        Components.Add(new Components.UpdatePerSec(UI!, Content));
         Inputs.Keyboard.RegisterKey(Key.Tab);
         Inputs.Keyboard.RegisterKey(Key.F1);
         Inputs.Keyboard.RegisterKey(Key.LeftAlt);
@@ -152,7 +147,6 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public override void Update(GameTime gameTime)
     {
-        _ups = gameTime.ElapsedGameTime;
         SetViewSize();
         var cursorPos = ScreenToWorld(MousePosition).ToPoint();
 
@@ -208,7 +202,6 @@ public class MainWindowViewModel : MonoGameViewModel
 
     public override void Draw(GameTime gameTime)
     {
-        _fps = gameTime.ElapsedGameTime;
         DrawUI();
 
         for (int x = TopLeftWorldPos.X - 1; x <= BottomRightWorldPos.X + 1; x++)
@@ -242,8 +235,6 @@ public class MainWindowViewModel : MonoGameViewModel
         DrawTileInfo(sb);
 
         DrawHotBar(sb);
-
-        DrawFPS_UPS(sb);
 
         DrawNetworks(sb);
 
@@ -287,12 +278,6 @@ public class MainWindowViewModel : MonoGameViewModel
                 sb.Draw(template.Texture, new Rectangle(tl, new(TileSize)), color);
                 tl += new Point(TileSize, 0);
             }
-        }
-
-        void DrawFPS_UPS(SpriteBatch sb)
-        {
-            sb.DrawCenteredString(Textures.Font, $"{1 / _fps.TotalSeconds:00}FPS", new(WindowSize.X, 0), new(1, 0), Color.White);
-            sb.DrawCenteredString(Textures.Font, $"{1 / _ups.TotalSeconds:00}UPS", new(WindowSize.X, 0), new(1, -1), Color.White);
         }
 
         void DrawNetworks(SpriteBatch sb)

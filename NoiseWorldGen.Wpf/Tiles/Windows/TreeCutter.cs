@@ -20,6 +20,7 @@ public class TreeCutter : TickedFeatureTileWindow
         {
             base.Initialize();
             _sb = CreateSpriteBatch(nameof(_sb));
+            Components.Add(new Components.UpdatePerSec(_sb, Content));
         }
 
         public override void Draw(GameTime gameTime)
